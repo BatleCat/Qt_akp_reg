@@ -1,12 +1,10 @@
-//-------------------------------------------------------------------
+﻿//-------------------------------------------------------------------
 #ifndef DIALOG_SETUP_H
 #define DIALOG_SETUP_H
 //-------------------------------------------------------------------
 #include <QDialog>
 #include <QColor>
 #include <QString>
-//-------------------------------------------------------------------
-#include "vak32_ctl_cmd.h"
 //-------------------------------------------------------------------
 namespace Ui {
 class Dialog_setup;
@@ -19,8 +17,6 @@ class Dialog_setup : public QDialog
 public:
     explicit Dialog_setup(QWidget *parent = 0);
     ~Dialog_setup();
-
-    void    setToolMode(vak32_ctrl_command_class* mode);
 
     void    setMMColor(QColor color);
     void    setFonColor(QColor color);
@@ -63,8 +59,6 @@ public:
 
 signals:
     void cmd_RestoreFolder(void);
-    void cmd_ChangeToolModes(void);
-    void cmd_RestoreToolModes(void);
 
 private slots:
     void on_pushButtonFolderChange_clicked(void);

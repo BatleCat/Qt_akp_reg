@@ -10,11 +10,11 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>620</height>
+    <height>400</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -22,7 +22,7 @@
   <property name="minimumSize">
    <size>
     <width>800</width>
-    <height>620</height>
+    <height>400</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -53,335 +53,6 @@
    <property name="bottomMargin">
     <number>10</number>
    </property>
-   <item>
-    <widget class="QGroupBox" name="groupBox_tool_modes">
-     <property name="title">
-      <string>Настройка режимов работы</string>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_6">
-      <item>
-       <widget class="QTableWidget" name="tableWidget">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="frameShape">
-         <enum>QFrame::Box</enum>
-        </property>
-        <property name="editTriggers">
-         <set>QAbstractItemView::NoEditTriggers</set>
-        </property>
-        <property name="tabKeyNavigation">
-         <bool>false</bool>
-        </property>
-        <property name="showDropIndicator" stdset="0">
-         <bool>false</bool>
-        </property>
-        <property name="dragDropOverwriteMode">
-         <bool>false</bool>
-        </property>
-        <property name="columnCount">
-         <number>15</number>
-        </property>
-        <row>
-         <property name="text">
-          <string>Режим 1</string>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string>Режим 2</string>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string>Режим 3</string>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string>Режим 4</string>
-         </property>
-        </row>
-        <row>
-         <property name="text">
-          <string>Режим 5</string>
-         </property>
-        </row>
-        <column>
-         <property name="text">
-          <string>Тип излучателя</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Частота</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Кол-во периодов</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Тд</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Задержка</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Начало окна рег.КУ</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Ширина окна рег.КУ</string>
-         </property>
-        </column>
-        <column/>
-        <column/>
-        <column/>
-        <column/>
-        <column/>
-        <column/>
-        <column/>
-        <column/>
-        <item row="0" column="0">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="0" column="1">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="0" column="2">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="0" column="3">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="0" column="4">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="0" column="5">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="0" column="6">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="1" column="0">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="1" column="1">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="1" column="2">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="1" column="3">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="1" column="4">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="1" column="5">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="1" column="6">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="2" column="0">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="2" column="1">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="2" column="2">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="2" column="3">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="2" column="4">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="2" column="5">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="2" column="6">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="3" column="0">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="3" column="1">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="3" column="2">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="3" column="3">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="3" column="4">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="3" column="5">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="3" column="6">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="4" column="0">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="4" column="1">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="4" column="2">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="4" column="3">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="4" column="4">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="4" column="5">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-        <item row="4" column="6">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
-        <property name="spacing">
-         <number>10</number>
-        </property>
-        <item>
-         <widget class="QPushButton" name="pushButtonToolModesChange">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Изменить ...</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButtonToolModesRestore">
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Вернуть</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
    <item>
     <widget class="QGroupBox" name="groupBox_folder">
      <property name="sizePolicy">
@@ -1114,6 +785,19 @@
     </layout>
    </item>
    <item>
+    <spacer name="verticalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>10</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
       <spacer name="horizontalSpacer">
@@ -1144,8 +828,6 @@
     </layout>
    </item>
   </layout>
-  <zorder>groupBox_folder</zorder>
-  <zorder>groupBox_tool_modes</zorder>
  </widget>
  <resources/>
  <connections/>

@@ -1,4 +1,4 @@
-//-------------------------------------------------------------------
+﻿//-------------------------------------------------------------------
 #include <QPalette>
 #include <QString>
 #include <QFileDialog>
@@ -9,16 +9,11 @@
 #include "dialog_setup.h"
 #include "ui_dialog_setup.h"
 //-------------------------------------------------------------------
-#include "vak32_ctl_cmd.h"
-//-------------------------------------------------------------------
 Dialog_setup::Dialog_setup(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Dialog_setup)
 {
     ui->setupUi(this);
-
-    ui->tableWidget->setRowCount(5);
-    ui->tableWidget->setColumnCount(7);
 
     connect(ui->pushButton_ok,              SIGNAL(pressed()), this, SLOT(accept()                              ));
     connect(ui->pushButtonMMColor,          SIGNAL(pressed()), this, SLOT(on_pushButtonMMColor_clicked()        ));
@@ -30,87 +25,11 @@ Dialog_setup::Dialog_setup(QWidget *parent) :
     connect(ui->pushButtonVKColor,          SIGNAL(pressed()), this, SLOT(on_pushButtonVKColor_clicked()        ));
     connect(ui->pushButtonFolderChange,     SIGNAL(pressed()), this, SLOT(on_pushButtonFolderChange_clicked()   ));
     connect(ui->pushButtonFolderRestore,    SIGNAL(pressed()), this, SIGNAL(cmd_RestoreFolder()                 ));
-    connect(ui->pushButtonToolModesChange,  SIGNAL(pressed()), this, SIGNAL(cmd_ChangeToolModes()               ));
-    connect(ui->pushButtonToolModesRestore, SIGNAL(pressed()), this, SIGNAL(cmd_RestoreToolModes()              ));
 }
 //-------------------------------------------------------------------
 Dialog_setup::~Dialog_setup()
 {
     delete ui;
-}
-//-------------------------------------------------------------------
-void Dialog_setup::setToolMode(vak32_ctrl_command_class *mode)
-{
-    QTableWidgetItem *qsIzlType;
-    QTableWidgetItem *qsFreq;
-    QTableWidgetItem *qsPeriodNo;
-    QTableWidgetItem *qsTd;
-    QTableWidgetItem *qsDelay;
-    QTableWidgetItem *qsKuWinStart;
-    QTableWidgetItem *qsKuWinWidth;
-
-    int row = mode->get_mode_number();
-    switch (mode->get_izl_type())
-    {
-    case IZL_MONOPOL:
-        qsIzlType = new QTableWidgetItem(QString::fromUtf8("Монополь"));
-        break;
-    case IZL_DIPOL_1:
-        qsIzlType = new QTableWidgetItem(QString::fromUtf8("Диполь-1"));
-        break;
-    case IZL_DIPOL_2:
-        qsIzlType = new QTableWidgetItem(QString::fromUtf8("Диполь-2"));
-        break;
-    case IZL_QUADROPOL:
-        qsIzlType = new QTableWidgetItem(QString::fromUtf8("Квадруполь"));
-        break;
-    case IZL_SFERA_1:
-        qsIzlType = new QTableWidgetItem(QString::fromUtf8("Сфера-1"));
-        break;
-    case IZL_SFERA_2:
-        qsIzlType = new QTableWidgetItem(QString::fromUtf8("Сфера-2"));
-        break;
-    case IZL_SFERA_3:
-        qsIzlType = new QTableWidgetItem(QString::fromUtf8("Сфера-3"));
-        break;
-    case IZL_SFERA_4:
-        qsIzlType = new QTableWidgetItem(QString::fromUtf8("Сфера-4"));
-        break;
-    default:
-        qsIzlType = new QTableWidgetItem(QString::fromUtf8(""));
-        break;
-    }
-    qsFreq = new QTableWidgetItem(QString::fromUtf8("%1 кГц").arg(mode->get_Fsig()));
-    qsPeriodNo = new QTableWidgetItem(QString::fromUtf8("%1").arg(mode->get_period_number()));
-    switch (mode->get_Td())
-    {
-    case TD_4_MKS:
-        qsTd = new QTableWidgetItem(QString::fromUtf8("4 мкс"));
-        break;
-    case TD_8_MKS:
-        qsTd = new QTableWidgetItem(QString::fromUtf8("8 мкс"));
-        break;
-    case TD_16_MKS:
-        qsTd = new QTableWidgetItem(QString::fromUtf8("16 мкс"));
-        break;
-    case TD_32_MKS:
-        qsTd = new QTableWidgetItem(QString::fromUtf8("32 мкс"));
-        break;
-    default:
-        qsTd = new QTableWidgetItem(QString::fromUtf8("неизвестно"));
-        break;
-    }
-    qsDelay = new QTableWidgetItem(QString::fromUtf8("%1 мкс").arg(mode->get_rx_delay() * 2));
-    qsKuWinStart = new QTableWidgetItem(QString::fromUtf8("%1").arg(mode->get_KU_window_start()));
-    qsKuWinWidth = new QTableWidgetItem(QString::fromUtf8("%1").arg(mode->get_KU_window_width()));
-
-    ui->tableWidget->setItem(row, 0, qsIzlType);
-    ui->tableWidget->setItem(row, 1, qsFreq);
-    ui->tableWidget->setItem(row, 2, qsPeriodNo);
-    ui->tableWidget->setItem(row, 3, qsTd);
-    ui->tableWidget->setItem(row, 4, qsDelay);
-    ui->tableWidget->setItem(row, 5, qsKuWinStart);
-    ui->tableWidget->setItem(row, 6, qsKuWinWidth);
 }
 //-------------------------------------------------------------------
 void Dialog_setup::setMMColor(QColor color)
