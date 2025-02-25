@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------------
 #include <QGraphicsObject>
 #include <QRect>
 #include <QRectF>
@@ -114,19 +114,19 @@ void Qt_ML::delPoints(void)
     }
 }
 //-----------------------------------------------------------------------------
-void Qt_ML::on_changeDept(qint32 newDept)
+void Qt_ML::on_changeDept(const qint32 newDept)
 {
     curentDept = newDept;
     emit update();
 }
 //-----------------------------------------------------------------------------
-void Qt_ML::on_changeDpsY(int newDpsY)
+void Qt_ML::on_changeDpsY(const int newDpsY)
 {
     dpsY = newDpsY;
     emit update();
 }
 //-----------------------------------------------------------------------------
-void Qt_ML::on_changeDeptScale(int newScale)
+void Qt_ML::on_changeDeptScale(const int newScale)
 {
     scale = newScale;
     emit update();

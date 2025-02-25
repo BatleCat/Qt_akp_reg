@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------------
 //объект построения колонки магнитных меток
 //-----------------------------------------------------------------------------
 #ifndef QT_ML_H
@@ -61,14 +61,14 @@ signals:
     void update(void);
 
 public slots:
-    void on_changeDept(qint32 newDept);
-    void on_changeDpsY(int newDpsY);
-    void on_changeDeptScale(int newScale);
-    void on_setDirectionUp(void);
-    void on_setDirectionDown(void);
+    void on_changeDept     (const qint32 newDept);
+    void on_changeDpsY     (const int    newDpsY);
+    void on_changeDeptScale(const int    newScale);
+    void on_setDirectionUp     (void);
+    void on_setDirectionDown   (void);
     void on_setDeleteUnusePoint(void)   {bDelNoUsePoint = true;  }
-    void on_setNoDeletePoint(void)      {bDelNoUsePoint = false; }
+    void on_setNoDeletePoint   (void)   {bDelNoUsePoint = false; }
 };
-//-----------------------------------------------------------------------------
+//-------------const qint32 newDept--------------------------------------------------
 #endif // QT_ML_H
 //-----------------------------------------------------------------------------
