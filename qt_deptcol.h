@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------------
 //объект построения колонки глубин
 //-----------------------------------------------------------------------------
 #ifndef QT_DEPTCOL_H
@@ -68,10 +68,10 @@ signals:
     void changeBaseLinesShift(qint16 shift);
 
 public slots:
-    void on_changeDept(qint32 newDept);
-    void on_changeDpsY(int newDpsY);
-    void on_changeDeptScale(int newScale);
-    void on_setDirectionUp(void);
+    void on_changeDept(const qint32 newDept);
+    void on_changeDpsY(const int newDpsY);
+    void on_changeDeptScale (const int newScale);
+    void on_setDirectionUp  (void);
     void on_setDirectionDown(void);
 };
 //-----------------------------------------------------------------------------

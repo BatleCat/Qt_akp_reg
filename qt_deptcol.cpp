@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------------
 #include <QGraphicsObject>
 #include <QRect>
 #include <QGraphicsScene>
@@ -107,19 +107,19 @@ void Qt_DEPTCOL::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     emit changeBaseLinesShift(shift);
 }
 //-----------------------------------------------------------------------------
-void Qt_DEPTCOL::on_changeDept(qint32 newDept)
+void Qt_DEPTCOL::on_changeDept(const qint32 newDept)
 {
     curentDept = newDept;
     emit update();
 }
 //-----------------------------------------------------------------------------
-void Qt_DEPTCOL::on_changeDpsY(int newDpsY)
+void Qt_DEPTCOL::on_changeDpsY(const int newDpsY)
 {
     dpsY = newDpsY;
     emit update();
 }
 //-----------------------------------------------------------------------------
-void Qt_DEPTCOL::on_changeDeptScale(int newScale)
+void Qt_DEPTCOL::on_changeDeptScale(const int newScale)
 {
     scale = newScale;
     emit update();
