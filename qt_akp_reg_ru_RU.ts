@@ -2,6 +2,142 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ru_RU">
 <context>
+    <name>Dialog_setup</name>
+    <message>
+        <location filename="dialog_setup.ui" line="38"/>
+        <source>Настройка</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="163"/>
+        <source>Изменить ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="182"/>
+        <source>Вернуть</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="77"/>
+        <source>Папка для записи</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="134"/>
+        <source>Расширенное управление записью</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="221"/>
+        <source>Цветовая схема</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="238"/>
+        <source>Цвет ММ</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="273"/>
+        <source>Цвет фона</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="308"/>
+        <source>Цвет сетки</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="343"/>
+        <source>Цвет текста</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="378"/>
+        <source>Цвет затенения уровня</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="426"/>
+        <source>Цвет ФКД</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="461"/>
+        <source>Шаг построения ФКД</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="490"/>
+        <location filename="dialog_setup.ui" line="572"/>
+        <source>1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="495"/>
+        <location filename="dialog_setup.ui" line="577"/>
+        <source>2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="500"/>
+        <location filename="dialog_setup.ui" line="582"/>
+        <source>3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="508"/>
+        <source>Цвет линии ВК</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="543"/>
+        <source>Толщина линии ВК</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="609"/>
+        <source>Калибровка экрана</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="642"/>
+        <source>Ширина диалогового окна, мм</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="665"/>
+        <source>Высота диалогового окна, мм</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="733"/>
+        <source>Массштаб по глубине</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="765"/>
+        <source>1:50</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="770"/>
+        <source>1:100</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="775"/>
+        <source>1:200</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="824"/>
+        <source>Ok</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Dialog_well_info</name>
     <message>
         <location filename="dialog_well_info.ui" line="14"/>
@@ -78,7 +214,8 @@
     <name>MainWindow</name>
     <message>
         <location filename="mainwindow.ui" line="25"/>
-        <source>Программа регистрации ВАК-32</source>
+        <source>Программа регистрации АКП-76</source>
+        <oldsource>Программа регистрации ВАК-32</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -87,308 +224,108 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="182"/>
-        <source>Плоскость 1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="188"/>
+        <location filename="mainwindow.ui" line="149"/>
         <source>ВК 1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="198"/>
-        <source>ВК 5</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="205"/>
-        <source>ВК 9</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="212"/>
-        <source>ВК 13</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="219"/>
-        <source>ВК 17</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="226"/>
-        <source>ВК 21</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="233"/>
-        <source>ВК 25</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="240"/>
-        <source>ВК 29</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="248"/>
-        <source>Плоскость 2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="254"/>
+        <location filename="mainwindow.ui" line="159"/>
         <source>ВК 2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="261"/>
-        <source>ВК 6</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="268"/>
-        <source>ВК 10</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="275"/>
-        <source>ВК 14</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="282"/>
-        <source>ВК 18</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="289"/>
-        <source>ВК 22</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="296"/>
-        <source>ВК 26</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="303"/>
-        <source>ВК 30</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="311"/>
-        <source>Плоскость 3</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="317"/>
-        <source>ВК 3</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="324"/>
-        <source>ВК 7</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="331"/>
-        <source>ВК 11</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="338"/>
-        <source>ВК 15</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="345"/>
-        <source>ВК 19</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="352"/>
-        <source>ВК 23</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="359"/>
-        <source>ВК 27</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="366"/>
-        <source>ВК 31</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="382"/>
-        <source>Плоскость 4</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="388"/>
-        <source>ВК 4</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="395"/>
-        <source>ВК 8</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="402"/>
-        <source>ВК 12</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="409"/>
-        <source>ВК 16</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="416"/>
-        <source>ВК 20</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="423"/>
-        <source>ВК 24</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="430"/>
-        <source>ВК 28</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="437"/>
-        <source>ВК 32</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="817"/>
+        <location filename="mainwindow.ui" line="474"/>
         <source>Прибор</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="856"/>
+        <location filename="mainwindow.ui" line="513"/>
         <source>Настройка ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="878"/>
+        <location filename="mainwindow.ui" line="535"/>
         <source>Пуск</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="900"/>
+        <location filename="mainwindow.ui" line="557"/>
         <source>Стоп</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="922"/>
+        <location filename="mainwindow.ui" line="579"/>
         <source>Запись</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="944"/>
+        <location filename="mainwindow.ui" line="601"/>
         <source>Амплитуда</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="977"/>
+        <location filename="mainwindow.ui" line="634"/>
         <source>Увеличить</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="996"/>
+        <location filename="mainwindow.ui" line="653"/>
         <source>Уменьшить</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1018"/>
+        <location filename="mainwindow.ui" line="675"/>
         <source>Уровень ФКД</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1051"/>
+        <location filename="mainwindow.ui" line="708"/>
         <source>Поднять</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1070"/>
+        <location filename="mainwindow.ui" line="727"/>
         <source>Опустить</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1092"/>
+        <location filename="mainwindow.ui" line="749"/>
         <source>Режим излучателя</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1113"/>
+        <location filename="mainwindow.ui" line="770"/>
         <source>Монополь</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1120"/>
-        <source>5 кГц</source>
+        <location filename="mainwindow.ui" line="777"/>
+        <source>20 кГц</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1127"/>
+        <location filename="mainwindow.ui" line="837"/>
+        <source>Тд = 2 мкс</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="784"/>
         <source>2 периода</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1152"/>
+        <location filename="mainwindow.ui" line="809"/>
         <source>Режим приемников</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1173"/>
+        <location filename="mainwindow.ui" line="830"/>
         <source>Задержка 0 мкс</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="1180"/>
-        <source>Тд = 4 мкс</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="1187"/>
+        <location filename="mainwindow.ui" line="844"/>
         <source>КУ = 16</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="1212"/>
-        <source>Запись на SD-карту:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="1233"/>
-        <source>выполнена успешно</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="1276"/>
-        <source>Счет ГК</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="1283"/>
-        <source>Gx</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="1290"/>
-        <source>Gy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.ui" line="1297"/>
-        <source>Gz</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

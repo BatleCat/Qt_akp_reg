@@ -132,7 +132,7 @@
              <number>5</number>
             </property>
             <property name="leftMargin">
-             <number>5</number>
+             <number>25</number>
             </property>
             <property name="topMargin">
              <number>10</number>
@@ -144,315 +144,34 @@
              <number>5</number>
             </property>
             <item>
-             <widget class="QTabWidget" name="tabWidget">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
+             <widget class="QRadioButton" name="radioButton_VK1">
+              <property name="text">
+               <string>ВК 1</string>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>100</width>
-                <height>351</height>
-               </size>
+              <property name="checked">
+               <bool>true</bool>
               </property>
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>8</pointsize>
-                <weight>50</weight>
-                <italic>false</italic>
-                <bold>false</bold>
-                <kerning>true</kerning>
-               </font>
-              </property>
-              <property name="tabPosition">
-               <enum>QTabWidget::West</enum>
-              </property>
-              <property name="tabShape">
-               <enum>QTabWidget::Rounded</enum>
-              </property>
-              <property name="currentIndex">
-               <number>0</number>
-              </property>
-              <widget class="QWidget" name="tab_1">
-               <attribute name="title">
-                <string>Плоскость 1</string>
-               </attribute>
-               <layout class="QVBoxLayout" name="verticalLayout_2">
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK1">
-                  <property name="text">
-                   <string>ВК 1</string>
-                  </property>
-                  <property name="checked">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK5">
-                  <property name="text">
-                   <string>ВК 5</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK9">
-                  <property name="text">
-                   <string>ВК 9</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK13">
-                  <property name="text">
-                   <string>ВК 13</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK17">
-                  <property name="text">
-                   <string>ВК 17</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK21">
-                  <property name="text">
-                   <string>ВК 21</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK25">
-                  <property name="text">
-                   <string>ВК 25</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK29">
-                  <property name="text">
-                   <string>ВК 29</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-              <widget class="QWidget" name="tab_2">
-               <attribute name="title">
-                <string>Плоскость 2</string>
-               </attribute>
-               <layout class="QVBoxLayout" name="verticalLayout_3">
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK2">
-                  <property name="text">
-                   <string>ВК 2</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK6">
-                  <property name="text">
-                   <string>ВК 6</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK10">
-                  <property name="text">
-                   <string>ВК 10</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK14">
-                  <property name="text">
-                   <string>ВК 14</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK18">
-                  <property name="text">
-                   <string>ВК 18</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK22">
-                  <property name="text">
-                   <string>ВК 22</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK26">
-                  <property name="text">
-                   <string>ВК 26</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK30">
-                  <property name="text">
-                   <string>ВК 30</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-              <widget class="QWidget" name="tab_3">
-               <attribute name="title">
-                <string>Плоскость 3</string>
-               </attribute>
-               <layout class="QVBoxLayout" name="verticalLayout_4">
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK3">
-                  <property name="text">
-                   <string>ВК 3</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK7">
-                  <property name="text">
-                   <string>ВК 7</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK11">
-                  <property name="text">
-                   <string>ВК 11</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK15">
-                  <property name="text">
-                   <string>ВК 15</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK19">
-                  <property name="text">
-                   <string>ВК 19</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK23">
-                  <property name="text">
-                   <string>ВК 23</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK27">
-                  <property name="text">
-                   <string>ВК 27</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK31">
-                  <property name="text">
-                   <string>ВК 31</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-               <zorder>radioButton_VK31</zorder>
-               <zorder>radioButton_VK7</zorder>
-               <zorder>radioButton_VK27</zorder>
-               <zorder>radioButton_VK3</zorder>
-               <zorder>radioButton_VK19</zorder>
-               <zorder>radioButton_VK15</zorder>
-               <zorder>radioButton_VK23</zorder>
-               <zorder>radioButton_VK11</zorder>
-              </widget>
-              <widget class="QWidget" name="tab_4">
-               <attribute name="title">
-                <string>Плоскость 4</string>
-               </attribute>
-               <layout class="QVBoxLayout" name="verticalLayout_5">
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK4">
-                  <property name="text">
-                   <string>ВК 4</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK8">
-                  <property name="text">
-                   <string>ВК 8</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK12">
-                  <property name="text">
-                   <string>ВК 12</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK16">
-                  <property name="text">
-                   <string>ВК 16</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK20">
-                  <property name="text">
-                   <string>ВК 20</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK24">
-                  <property name="text">
-                   <string>ВК 24</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK28">
-                  <property name="text">
-                   <string>ВК 28</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="radioButton_VK32">
-                  <property name="text">
-                   <string>ВК 32</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-               <zorder>radioButton_VK32</zorder>
-               <zorder>radioButton_VK16</zorder>
-               <zorder>radioButton_VK8</zorder>
-               <zorder>radioButton_VK12</zorder>
-               <zorder>radioButton_VK28</zorder>
-               <zorder>radioButton_VK20</zorder>
-               <zorder>radioButton_VK4</zorder>
-               <zorder>radioButton_VK24</zorder>
-              </widget>
              </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="radioButton_VK5">
+              <property name="text">
+               <string>ВК 2</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </widget>
@@ -704,72 +423,6 @@
                  </size>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_Ctl2VK">
-                 <property name="spacing">
-                  <number>0</number>
-                 </property>
-                 <property name="leftMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="topMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="rightMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="bottomMargin">
-                  <number>0</number>
-                 </property>
-                </layout>
-               </widget>
-              </item>
-              <item>
-               <widget class="QWidget" name="widget_Ctl3VK" native="true">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>20</height>
-                 </size>
-                </property>
-                <layout class="QVBoxLayout" name="verticalLayout_Ctl3VK">
-                 <property name="spacing">
-                  <number>0</number>
-                 </property>
-                 <property name="leftMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="topMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="rightMargin">
-                  <number>0</number>
-                 </property>
-                 <property name="bottomMargin">
-                  <number>0</number>
-                 </property>
-                </layout>
-               </widget>
-              </item>
-              <item>
-               <widget class="QWidget" name="widget_Ctl4VK" native="true">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>20</height>
-                 </size>
-                </property>
-                <layout class="QVBoxLayout" name="verticalLayout_Ctl4VK">
                  <property name="spacing">
                   <number>0</number>
                  </property>
@@ -1121,7 +774,7 @@
          <item>
           <widget class="QLabel" name="label_IZLfreq">
            <property name="text">
-            <string>5 кГц</string>
+            <string>20 кГц</string>
            </property>
           </widget>
          </item>
@@ -1181,7 +834,7 @@
          <item>
           <widget class="QLabel" name="label_RXtd">
            <property name="text">
-            <string>Тд = 4 мкс</string>
+            <string>Тд = 2 мкс</string>
            </property>
           </widget>
          </item>
@@ -1196,113 +849,6 @@
         <zorder>label_RXtd</zorder>
         <zorder>label_RXku</zorder>
         <zorder>label_RXdelay</zorder>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="groupBox_2">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>150</width>
-          <height>40</height>
-         </size>
-        </property>
-        <property name="title">
-         <string>Запись на SD-карту:</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_14">
-         <property name="spacing">
-          <number>10</number>
-         </property>
-         <property name="leftMargin">
-          <number>5</number>
-         </property>
-         <property name="topMargin">
-          <number>10</number>
-         </property>
-         <property name="rightMargin">
-          <number>5</number>
-         </property>
-         <property name="bottomMargin">
-          <number>10</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="label_SD_error">
-           <property name="text">
-            <string>выполнена успешно</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="groupBox_7">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>150</width>
-          <height>40</height>
-         </size>
-        </property>
-        <property name="title">
-         <string/>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_15">
-         <property name="spacing">
-          <number>10</number>
-         </property>
-         <property name="leftMargin">
-          <number>5</number>
-         </property>
-         <property name="topMargin">
-          <number>10</number>
-         </property>
-         <property name="rightMargin">
-          <number>5</number>
-         </property>
-         <property name="bottomMargin">
-          <number>10</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="label_GK">
-           <property name="text">
-            <string>Счет ГК</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_Gx">
-           <property name="text">
-            <string>Gx</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_Gy">
-           <property name="text">
-            <string>Gy</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_Gz">
-           <property name="text">
-            <string>Gz</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
        </widget>
       </item>
       <item>
@@ -1329,41 +875,6 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <tabstops>
-  <tabstop>tabWidget</tabstop>
-  <tabstop>radioButton_VK1</tabstop>
-  <tabstop>radioButton_VK5</tabstop>
-  <tabstop>radioButton_VK9</tabstop>
-  <tabstop>radioButton_VK13</tabstop>
-  <tabstop>radioButton_VK17</tabstop>
-  <tabstop>radioButton_VK21</tabstop>
-  <tabstop>radioButton_VK25</tabstop>
-  <tabstop>radioButton_VK29</tabstop>
-  <tabstop>radioButton_VK2</tabstop>
-  <tabstop>radioButton_VK6</tabstop>
-  <tabstop>radioButton_VK10</tabstop>
-  <tabstop>radioButton_VK14</tabstop>
-  <tabstop>radioButton_VK18</tabstop>
-  <tabstop>radioButton_VK22</tabstop>
-  <tabstop>radioButton_VK26</tabstop>
-  <tabstop>radioButton_VK30</tabstop>
-  <tabstop>radioButton_VK3</tabstop>
-  <tabstop>radioButton_VK7</tabstop>
-  <tabstop>radioButton_VK11</tabstop>
-  <tabstop>radioButton_VK15</tabstop>
-  <tabstop>radioButton_VK19</tabstop>
-  <tabstop>radioButton_VK23</tabstop>
-  <tabstop>radioButton_VK27</tabstop>
-  <tabstop>radioButton_VK31</tabstop>
-  <tabstop>radioButton_VK4</tabstop>
-  <tabstop>radioButton_VK8</tabstop>
-  <tabstop>radioButton_VK12</tabstop>
-  <tabstop>radioButton_VK16</tabstop>
-  <tabstop>radioButton_VK20</tabstop>
-  <tabstop>radioButton_VK24</tabstop>
-  <tabstop>radioButton_VK28</tabstop>
-  <tabstop>radioButton_VK32</tabstop>
- </tabstops>
  <resources>
   <include location="app_resources.qrc"/>
  </resources>

@@ -1,11 +1,11 @@
-//-------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------------
 #include <QString>
 #include <QColor>
 #include <QDialog>
 #include <QVector>
 #include <QtNetwork/QUdpSocket>
-#include <QTimer>
-#include <QTimerEvent>
+//#include <QTimer>
+//#include <QTimerEvent>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QGraphicsItem>
@@ -18,42 +18,59 @@
 #include <QButtonGroup>
 #include <QEvent>
 #include <QResizeEvent>
-//-------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 #include <memory.h>
 #include <winsock.h>
-//-------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-//-------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 #include "dialog_setup.h"
 #include "dialog_well_info.h"
-#include "dialog_tool_mode.h"
-#include "vak32_ctl_cmd.h"
+//#include "dialog_tool_mode.h"
+//#include "vak32_ctl_cmd.h"
 #include "vak_8.h"
 #include "vak_8_2pc.h"
 //#include "qt_vak_8u_vk.h"
-#include "qt_vak_32_file.h"
+//#include "qt_vak_32_file.h"
 #include "qt_vak_32_fkd.h"
 #include "qt_deptcol.h"
 #include "qt_ml.h"
 #include "qt_vk.h"
-//-------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     app_settings(new QSettings("TNG-Group", "vak32_reg")),
     dialogSetup(NULL),
     dialogWellInfo(NULL),
-    dialogToolMode(NULL),
+    akp(parent),
+    check_state(parent),
     velocity(new CVELOCITY(this)),
-    bflag_CMD_CRC(false),
-    bflag_data_CRC(false),
-    timer_interval(500),
+    bflag_CRC1_Ok(false),
+    bflag_CRC2_Ok(false),
+    bflag_CRC3_Ok(false),
+    bflag_CRC4_Ok(false),
+    bflag_CRC5_Ok(false),
+    bflag_CRC6_Ok(false),
+    bflag_CRC7_Ok(false),
+    bflag_CRC8_Ok(false),
+//    timer_interval(500),
     port(1500),
     p_count(0),
     host(QHostAddress("10.2.22.245")),
     ToolNo(0)
 {
+    //-------------------------------------------------------------------------
+    qRegisterMetaType<TDataPocket>("TDataPocket");
+    qRegisterMetaType<TCtrlPocket>("TCtrlPocket");
+    //-------------------------------------------------------------------------
+    akp_thread = new QThread();
+    akp.moveToThread(akp_thread);
+    connect(akp_thread, SIGNAL(started(           )), &akp,         SLOT(start(       )));
+    connect(&akp,       SIGNAL(connectionClosed(  )), akp_thread,   SLOT(quit(        )));
+    connect(akp_thread, SIGNAL(finished(          )), akp_thread,   SLOT(deleteLater( )));
+    //-------------------------------------------------------------------------
     ui->setupUi(this);
     setWindowIcon(QIcon(":/images/TNG.ico"));
 //    setGeometry(0, 0, QApplication::desktop()->screen(-1)->width(), QApplication::desktop()->screen(-1)->height());
@@ -62,10 +79,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->pushButton_Stop->setDisabled(true);
 
     QCoreApplication::setOrganizationName(QString::fromUtf8("TNG-Group"));
-    QCoreApplication::setApplicationName(QString::fromUtf8("vak32_reg"));
-
+    QCoreApplication::setApplicationName(QString::fromUtf8("qt_akp_reg"));
+    //-------------------------------------------------------------------------
     load_settings();
-
+    //-------------------------------------------------------------------------
     label_Depth = new QLabel(QString::fromUtf8("Глубина: 99999.99 м"));
     label_Depth->setAlignment(Qt::AlignLeft);
     label_Depth->setMinimumSize(label_Depth->sizeHint());
@@ -96,17 +113,53 @@ MainWindow::MainWindow(QWidget *parent) :
     statusBar()->addWidget(label_BadBlk);
     label_BadBlk->setText(QString::fromUtf8("Плохие блоки: 0"));
 
-    label_CMD_CRC_check = new QLabel(QString::fromUtf8("CRC команды: ОШИБКА!!!"));
-    label_CMD_CRC_check->setAlignment(Qt::AlignLeft);
-    label_CMD_CRC_check->setMinimumSize(label_CMD_CRC_check->sizeHint());
-    statusBar()->addWidget(label_CMD_CRC_check);
-    label_CMD_CRC_check->setText(QString::fromUtf8(""));
+    label_CRC1_check = new QLabel(QString::fromUtf8("CRC1: ОШИБКА!!!"));
+    label_CRC1_check->setAlignment(Qt::AlignLeft);
+    label_CRC1_check->setMinimumSize(label_CRC1_check->sizeHint());
+    statusBar()->addWidget(label_CRC1_check);
+    label_CRC1_check->setText(QString::fromUtf8(""));
 
-    label_data_CRC_check = new QLabel(QString::fromUtf8("CRC данных: ОШИБКА!!!"));
-    label_data_CRC_check->setAlignment(Qt::AlignLeft);
-    label_data_CRC_check->setMinimumSize(label_data_CRC_check->sizeHint());
-    statusBar()->addWidget(label_data_CRC_check);
-    label_data_CRC_check->setText(QString::fromUtf8(""));
+    label_CRC2_check = new QLabel(QString::fromUtf8("CRC2: ОШИБКА!!!"));
+    label_CRC2_check->setAlignment(Qt::AlignLeft);
+    label_CRC2_check->setMinimumSize(label_CRC2_check->sizeHint());
+    statusBar()->addWidget(label_CRC2_check);
+    label_CRC2_check->setText(QString::fromUtf8(""));
+
+    label_CRC3_check = new QLabel(QString::fromUtf8("CRC3: ОШИБКА!!!"));
+    label_CRC3_check->setAlignment(Qt::AlignLeft);
+    label_CRC3_check->setMinimumSize(label_CRC3_check->sizeHint());
+    statusBar()->addWidget(label_CRC3_check);
+    label_CRC3_check->setText(QString::fromUtf8(""));
+
+    label_CRC4_check = new QLabel(QString::fromUtf8("CRC4: ОШИБКА!!!"));
+    label_CRC4_check->setAlignment(Qt::AlignLeft);
+    label_CRC4_check->setMinimumSize(label_CRC4_check->sizeHint());
+    statusBar()->addWidget(label_CRC4_check);
+    label_CRC4_check->setText(QString::fromUtf8(""));
+
+    label_CRC5_check = new QLabel(QString::fromUtf8("CRC5: ОШИБКА!!!"));
+    label_CRC5_check->setAlignment(Qt::AlignLeft);
+    label_CRC5_check->setMinimumSize(label_CRC5_check->sizeHint());
+    statusBar()->addWidget(label_CRC5_check);
+    label_CRC5_check->setText(QString::fromUtf8(""));
+
+    label_CRC6_check = new QLabel(QString::fromUtf8("CRC6: ОШИБКА!!!"));
+    label_CRC6_check->setAlignment(Qt::AlignLeft);
+    label_CRC6_check->setMinimumSize(label_CRC6_check->sizeHint());
+    statusBar()->addWidget(label_CRC6_check);
+    label_CRC6_check->setText(QString::fromUtf8(""));
+
+    label_CRC7_check = new QLabel(QString::fromUtf8("CRC7: ОШИБКА!!!"));
+    label_CRC7_check->setAlignment(Qt::AlignLeft);
+    label_CRC7_check->setMinimumSize(label_CRC7_check->sizeHint());
+    statusBar()->addWidget(label_CRC7_check);
+    label_CRC7_check->setText(QString::fromUtf8(""));
+
+    label_CRC8_check = new QLabel(QString::fromUtf8("CRC8: ОШИБКА!!!"));
+    label_CRC8_check->setAlignment(Qt::AlignLeft);
+    label_CRC8_check->setMinimumSize(label_CRC8_check->sizeHint());
+    statusBar()->addWidget(label_CRC8_check);
+    label_CRC8_check->setText(QString::fromUtf8(""));
 
     label_ML = new QLabel(QString::fromUtf8("MM"));
     label_ML->setAlignment(Qt::AlignCenter);
@@ -120,71 +173,49 @@ MainWindow::MainWindow(QWidget *parent) :
     color = palette().background().color();
     label_ML->setStyleSheet(QString::fromUtf8("background-color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
     statusBar()->addPermanentWidget(label_ML);
-
+    //-------------------------------------------------------------------------
     buttonGroup = new QButtonGroup(this);
     buttonGroup->addButton(ui->radioButton_VK1,   1);
-    buttonGroup->addButton(ui->radioButton_VK2,   2);
-    buttonGroup->addButton(ui->radioButton_VK3,   3);
-    buttonGroup->addButton(ui->radioButton_VK4,   4);
     buttonGroup->addButton(ui->radioButton_VK5,   5);
-    buttonGroup->addButton(ui->radioButton_VK6,   6);
-    buttonGroup->addButton(ui->radioButton_VK7,   7);
-    buttonGroup->addButton(ui->radioButton_VK8,   8);
-    buttonGroup->addButton(ui->radioButton_VK9,   9);
-    buttonGroup->addButton(ui->radioButton_VK10, 10);
-    buttonGroup->addButton(ui->radioButton_VK11, 11);
-    buttonGroup->addButton(ui->radioButton_VK12, 12);
-    buttonGroup->addButton(ui->radioButton_VK13, 13);
-    buttonGroup->addButton(ui->radioButton_VK14, 14);
-    buttonGroup->addButton(ui->radioButton_VK15, 15);
-    buttonGroup->addButton(ui->radioButton_VK16, 16);
-    buttonGroup->addButton(ui->radioButton_VK17, 17);
-    buttonGroup->addButton(ui->radioButton_VK18, 18);
-    buttonGroup->addButton(ui->radioButton_VK19, 19);
-    buttonGroup->addButton(ui->radioButton_VK20, 20);
-    buttonGroup->addButton(ui->radioButton_VK21, 21);
-    buttonGroup->addButton(ui->radioButton_VK22, 22);
-    buttonGroup->addButton(ui->radioButton_VK23, 23);
-    buttonGroup->addButton(ui->radioButton_VK24, 24);
-    buttonGroup->addButton(ui->radioButton_VK25, 25);
-    buttonGroup->addButton(ui->radioButton_VK26, 26);
-    buttonGroup->addButton(ui->radioButton_VK27, 27);
-    buttonGroup->addButton(ui->radioButton_VK28, 28);
-    buttonGroup->addButton(ui->radioButton_VK29, 29);
-    buttonGroup->addButton(ui->radioButton_VK30, 30);
-    buttonGroup->addButton(ui->radioButton_VK31, 31);
-    buttonGroup->addButton(ui->radioButton_VK32, 32);
-
+    //-------------------------------------------------------------------------
 //    p_count = 0;
 //    port = 1500;
 //    host = QHostAddress("10.2.22.245");
 
-    udp_socket.bind(port);
+//    udp_socket.bind(port);
 //    connect(&udp_socket,    SIGNAL( readyRead(void)         ), this, SLOT( on_udpDataRx(void)           ) );
 
-    connect(this,           SIGNAL( cmdSetDepth(void)       ), this, SLOT( on_cmdSetDepth(void)         ) );
-    connect(this,           SIGNAL( vak32CmdSend(void)      ), this, SLOT( on_vak32CmdSend(void)        ) );
+//    connect(this,           SIGNAL( cmdSetDepth(void)       ), this, SLOT( on_cmdSetDepth(void)         ) );
+//    connect(this,           SIGNAL( vak32CmdSend(void)      ), this, SLOT( on_vak32CmdSend(void)        ) );
 
-    connect(this,           SIGNAL( setDept(qint32)          ), this, SLOT( on_setDept(qint32)          ) );
-    connect(this,           SIGNAL( setML(bool)              ), this, SLOT( on_setML(bool)              ) );
-    connect(this,           SIGNAL( showNewData(void)        ), this, SLOT( on_showNewData(void)        ) );
-    connect(this,           SIGNAL( setPocketCount(qint32)   ), this, SLOT( on_setPocketCount(qint32)   ) );
-    connect(this,           SIGNAL( setBadPocketCount(qint32)), this, SLOT( on_setBadPocketCount(qint32)) );
+//    connect(this,           SIGNAL( setDept(qint32)          ), this, SLOT( on_setDept(qint32)          ) );
+//    connect(this,           SIGNAL( setML(bool)              ), this, SLOT( on_showML(bool)              ) ); // сигнал перенесен в check_state
+    connect(&check_state,   SIGNAL( VK_update(const quint16, const TVAK8_VK&) ), this, SLOT( on_showNewData(const quint16, const TVAK8_VK&) ) );
+//    connect(this,           SIGNAL( setPocketCount(qint32)   ), this, SLOT( on_showPocketCount(qint32)   ) );
+//    connect(this,           SIGNAL( setBadPocketCount(qint32)), this, SLOT( on_showBadPocketCount(qint32)) );
+    connect(&check_state,   SIGNAL( good_blk_cnt_update(const int) ),  this, SLOT( on_showPocketCount   (const int)  ) );
+    connect(&check_state,   SIGNAL( bad_blk_cnt_update (const int) ),  this, SLOT( on_showBadPocketCount(const int)  ) );
 
-    connect(this,           SIGNAL( showIZLtype(qint16)     ), this, SLOT( on_showIZLtype(qint16)       ) );
-    connect(this,           SIGNAL( showIZLfreq(qint16)     ), this, SLOT( on_showIZLfreq(qint16)       ) );
-    connect(this,           SIGNAL( showIZLnum(qint16)      ), this, SLOT( on_showIZLnum(qint16)        ) );
+//    connect(this,           SIGNAL( showIZLtype(qint16)     ), this, SLOT( on_showIZLtype(qint16)       ) );
+    connect(&check_state,   SIGNAL( Fsig_update(const bool, const quint16) ), this, SLOT( on_showIZLtype(const bool, const quint16) ) );
+//    connect(this,           SIGNAL( showIZLfreq(qint16)     ), this, SLOT( on_showIZLfreq(qint16)       ) );
+    connect(&check_state,   SIGNAL( Fsig_update(const bool, const quint16) ), this, SLOT( on_showIZLfreq(const bool, const quint16) ) );
+//    connect(this,           SIGNAL( showIZLnum(qint16)      ), this, SLOT( on_showIZLnum(qint16)        ) );
+    connect(&check_state,   SIGNAL( Fsig_update(const bool, const quint16) ), this, SLOT( on_showIZLnum(const bool, const quint16) ) );
 
-    connect(this,           SIGNAL( showRXdelay(qint16)     ), this, SLOT( on_showRXdelay(qint16)       ) );
-    connect(this,           SIGNAL( showRXtd(qint16)        ), this, SLOT( on_showRXtd(qint16)          ) );
-    connect(this,           SIGNAL( showRXku(qint16)        ), this, SLOT( on_showRXku(qint16)          ) );
+//    connect(this,           SIGNAL( showRXdelay(qint16)     ), this, SLOT( on_showRXdelay(qint16)       ) );
+    connect(&check_state,   SIGNAL( rx_delay_update(const bool, const quint16) ), SLOT( on_showRXdelay(const bool, const qint16) ));
+//    connect(this,           SIGNAL( showRXtd(qint16)        ), this, SLOT( on_showRXtd(qint16)          ) );
+    connect(&check_state,   SIGNAL( rx_delay_update(const bool, const quint16) ), SLOT( on_showRXtd(const bool, const qint16) ));
+//    connect(this,           SIGNAL( showRXku(qint16)        ), this, SLOT( on_showRXku(qint16)          ) );
+    connect(&check_state,   SIGNAL( Ku_update(const bool, const quint16) ), this, SLOT( on_showRXku(const bool, const quint16)  ) );
 
-    connect(this,           SIGNAL( showSDstatus(qint16)    ), this, SLOT( on_showSDstatus(qint16)      ) );
+//    connect(this,           SIGNAL( showSDstatus(qint16)    ), this, SLOT( on_showSDstatus(qint16)      ) );
 
-    connect(this,           SIGNAL( showGK(qint16)          ), this, SLOT( on_showGK(qint16)            ) );
-    connect(this,           SIGNAL( showGx(qint16)          ), this, SLOT( on_showGx(qint16)            ) );
-    connect(this,           SIGNAL( showGy(qint16)          ), this, SLOT( on_showGy(qint16)            ) );
-    connect(this,           SIGNAL( showGz(qint16)          ), this, SLOT( on_showGz(qint16)            ) );
+//    connect(this,           SIGNAL( showGK(qint16)          ), this, SLOT( on_showGK(qint16)            ) );
+//    connect(this,           SIGNAL( showGx(qint16)          ), this, SLOT( on_showGx(qint16)            ) );
+//    connect(this,           SIGNAL( showGy(qint16)          ), this, SLOT( on_showGy(qint16)            ) );
+//    connect(this,           SIGNAL( showGz(qint16)          ), this, SLOT( on_showGz(qint16)            ) );
 
     connect(ui->pushButton_Start,    SIGNAL( pressed() ), this, SLOT( on_pushButtonStart()      ) );
     connect(ui->pushButton_Stop,     SIGNAL( pressed() ), this, SLOT( on_pushButtonStop()       ) );
@@ -197,6 +228,43 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(buttonGroup,    SIGNAL( buttonClicked(int) ), this, SLOT( on_VKxClicked(int) )  );
     //-------------------------------------------------------------------------
+
+    connect(this,                       SIGNAL( cmdSetDepth(const qint32) ),     &akp, SLOT( on_cmdSetDepth(const qint32) ));
+//    connect(this,                       SIGNAL( cmd_do_meserment(int) ), &akp, SLOT( on_cmdDoMeserment(int) ));
+
+//    connect(ui->pushButton_set_dept,    SIGNAL( pressed() ),             this, SLOT( on_pushButton_set_dept_clicked() ));
+//    connect(ui->pushButton_read_dept,   SIGNAL( pressed() ),             &akp, SLOT( on_cmdReadDepth() ));
+
+//    connect(this,                   SIGNAL( cmdStartMeserment() ),  &akp, SLOT( on_cmdStartMeserment() ));
+//    connect(this,                   SIGNAL( cmdStopMeserment () ),  &akp, SLOT( on_cmdStopMeserment () ));
+    connect(ui->pushButton_Start,   SIGNAL( pressed() ),                    &akp, SLOT( on_cmdStartMeserment() ));
+    connect(ui->pushButton_Stop,    SIGNAL( pressed() ),                    &akp, SLOT( on_cmdStopMeserment () ));
+    connect(this,                   SIGNAL( cmdSetDeptStep(const qint32) ), &akp, SLOT( on_setDeptStep(const qint32) ));
+
+//    connect(ui->pushButton_stop,        SIGNAL( pressed() ),             &check_state, SLOT( clear_block_count() ));
+
+    connect(&akp,    SIGNAL(dataUpdate(const uint , const TDataPocket)), &check_state, SLOT(onDataUpdate(const uint, const TDataPocket)));
+
+    connect(&check_state,   SIGNAL( deptUpdate (const qint32) ), this,      SLOT( on_showDept     (const qint32) ) );
+    connect(&check_state,   SIGNAL( mlUpdate   (const bool)   ), this,      SLOT( on_showML       (const bool)   ) );
+
+    connect(&check_state,   SIGNAL( timer_clk_update           (const bool, const quint32) ), this, SLOT(on_timerClkUpdate(const bool, const quint32)          ) );
+    connect(&check_state,   SIGNAL( time_start_meserment_update(const bool, const quint32) ), this, SLOT(on_timeStartMesermentUpdate(const bool, const quint32)) );
+    connect(&check_state,   SIGNAL( time_stop_meserment_update (const bool, const quint32) ), this, SLOT(on_timeStopMesermentUpdate (const bool, const quint32)) );
+
+    connect(&check_state,   SIGNAL( CRC1_update(const bool) ), this, SLOT(on_CRC1update(const bool)) );
+    connect(&check_state,   SIGNAL( CRC2_update(const bool) ), this, SLOT(on_CRC2update(const bool)) );
+    connect(&check_state,   SIGNAL( CRC3_update(const bool) ), this, SLOT(on_CRC3update(const bool)) );
+    connect(&check_state,   SIGNAL( CRC4_update(const bool) ), this, SLOT(on_CRC4update(const bool)) );
+    connect(&check_state,   SIGNAL( CRC5_update(const bool) ), this, SLOT(on_CRC5update(const bool)) );
+    connect(&check_state,   SIGNAL( CRC6_update(const bool) ), this, SLOT(on_CRC6update(const bool)) );
+    connect(&check_state,   SIGNAL( CRC7_update(const bool) ), this, SLOT(on_CRC7update(const bool)) );
+    connect(&check_state,   SIGNAL( CRC8_update(const bool) ), this, SLOT(on_CRC8update(const bool)) );
+
+    connect(&check_state,   SIGNAL( good_blk_cnt_update(const int) ), this, SLOT(on_goodBlkCntUpdate(const int)) );
+    connect(&check_state,   SIGNAL( bad_blk_cnt_update (const int) ), this, SLOT(on_badBlkCntUpdate (const int)) );
+
+    //-------------------------------------------------------------------------
     QRect  rect;
     QRectF rectf;
     rectf.setRect(0.0, 0.0, 100.0, 100.0);
@@ -208,7 +276,7 @@ MainWindow::MainWindow(QWidget *parent) :
     view_vk->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view_vk->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    rect.setRect(0, 0, VAK32_WAVE_NUM_POINTS * FKDstep, 380);
+    rect.setRect(0, 0, VAK_8_NUM_POINTS * FKDstep, 380);
 
     vk1 = new Qt_VK(rect, scene_vk);
     vk1->setColorLine(VKColor);
@@ -244,123 +312,65 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->horizontalLayout_VK->addWidget(view_vk);
     //-------------------------------------------------------------------------
     rectf.setRect(0.0, 0.0, 100.0, 100.0);
-    rect.setRect(0, 0, VAK32_WAVE_NUM_POINTS, 100);
+    rect.setRect(0, 0, VAK_8_NUM_POINTS, 100);
 
-    scene_ctl1_vk = new QGraphicsScene(rectf);
+    scene_ctl_vk1 = new QGraphicsScene(rectf);
 
-    view_ctl1_vk = new QGraphicsView(scene_ctl1_vk);
-    view_ctl1_vk->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    view_ctl1_vk->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view_ctl1_vk->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view_ctl1_vk->scale(1.0, 1.0);
+    view_ctl_vk1 = new QGraphicsView(scene_ctl_vk1);
+    view_ctl_vk1->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    view_ctl_vk1->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_ctl_vk1->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_ctl_vk1->scale(1.0, 1.0);
 
-    ctl1_vk = new Qt_VK(rect, scene_ctl1_vk);
-    ctl1_vk->setColorLine(VKColor);
-    ctl1_vk->setColorBack(FonColor);
-    ctl1_vk->setColorText(TextColor);
-    ctl1_vk->setMaxAmpl(max_ampl);
-    ctl1_vk->setXScale(1);
-    ctl1_vk->setColorLevelBack(FonColor);
-    ctl1_vk->setCaption(QString::fromUtf8("Контроллер-1 (   )"));
+    ctl_vk1 = new Qt_VK(rect, scene_ctl_vk1);
+    ctl_vk1->setColorLine(VKColor);
+    ctl_vk1->setColorBack(FonColor);
+    ctl_vk1->setColorText(TextColor);
+    ctl_vk1->setMaxAmpl(max_ampl);
+    ctl_vk1->setXScale(1);
+    ctl_vk1->setColorLevelBack(FonColor);
+    ctl_vk1->setCaption(QString::fromUtf8("ВК-1"));
 
-    connect(this,     SIGNAL( changeVKmaxAmpl(int) ), ctl1_vk,       SLOT( on_changeMaxAmpl(int)   ) );
-    connect(ctl1_vk,  SIGNAL( update()             ), scene_ctl1_vk, SLOT( update()                ) );
+    connect(this,     SIGNAL( changeVKmaxAmpl(int) ), ctl_vk1,       SLOT( on_changeMaxAmpl(int)   ) );
+    connect(ctl_vk1,  SIGNAL( update()             ), scene_ctl_vk1, SLOT( update()                ) );
 
-    ctl1_vk_greed = new Qt_biGREED(rect, scene_ctl1_vk);
-    ctl1_vk_greed->setColorLine(GreedColor);
-    ctl1_vk_greed->setColorBack(Qt::transparent);
-    ctl1_vk_greed->setLineWidth(1);
-    ctl1_vk_greed->set_step_x_line(128);
-    ctl1_vk_greed->set_num_y_line(4);
+    ctl_vk1_greed = new Qt_biGREED(rect, scene_ctl_vk1);
+    ctl_vk1_greed->setColorLine(GreedColor);
+    ctl_vk1_greed->setColorBack(Qt::transparent);
+    ctl_vk1_greed->setLineWidth(1);
+    ctl_vk1_greed->set_step_x_line(128);
+    ctl_vk1_greed->set_num_y_line(4);
 
-    ui->verticalLayout_Ctl1VK->addWidget(view_ctl1_vk);
+    ui->verticalLayout_Ctl1VK->addWidget(view_ctl_vk1);
     //-------------------------------------------------------------------------
-    scene_ctl2_vk = new QGraphicsScene(rectf);
+    scene_ctl_vk2 = new QGraphicsScene(rectf);
 
-    view_ctl2_vk = new QGraphicsView(scene_ctl2_vk);
-    view_ctl2_vk->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    view_ctl2_vk->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view_ctl2_vk->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view_ctl2_vk->scale(1.0, 1.0);
+    view_ctl_vk2 = new QGraphicsView(scene_ctl_vk2);
+    view_ctl_vk2->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    view_ctl_vk2->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_ctl_vk2->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_ctl_vk2->scale(1.0, 1.0);
 
-    ctl2_vk = new Qt_VK(rect, scene_ctl2_vk);
-    ctl2_vk->setColorLine(VKColor);
-    ctl2_vk->setColorBack(FonColor);
-    ctl2_vk->setColorText(TextColor);
-    ctl2_vk->setMaxAmpl(max_ampl);
-    ctl2_vk->setXScale(1);
-    ctl2_vk->setColorLevelBack(FonColor);
-    ctl2_vk->setCaption(QString::fromUtf8("Контроллер-2 (   )"));
+    ctl_vk2 = new Qt_VK(rect, scene_ctl_vk2);
+    ctl_vk2->setColorLine(VKColor);
+    ctl_vk2->setColorBack(FonColor);
+    ctl_vk2->setColorText(TextColor);
+    ctl_vk2->setMaxAmpl(max_ampl);
+    ctl_vk2->setXScale(1);
+    ctl_vk2->setColorLevelBack(FonColor);
+    ctl_vk2->setCaption(QString::fromUtf8("ВК-2"));
 
-    connect(this,     SIGNAL( changeVKmaxAmpl(int) ), ctl2_vk,       SLOT( on_changeMaxAmpl(int)   ) );
-    connect(ctl2_vk,  SIGNAL( update()             ), scene_ctl2_vk, SLOT( update()                ) );
+    connect(this,     SIGNAL( changeVKmaxAmpl(int) ), ctl_vk2,       SLOT( on_changeMaxAmpl(int)   ) );
+    connect(ctl_vk2,  SIGNAL( update()             ), scene_ctl_vk2, SLOT( update()                ) );
 
-    ctl2_vk_greed = new Qt_biGREED(rect, scene_ctl2_vk);
-    ctl2_vk_greed->setColorLine(GreedColor);
-    ctl2_vk_greed->setColorBack(Qt::transparent);
-    ctl2_vk_greed->setLineWidth(1);
-    ctl2_vk_greed->set_step_x_line(128);
-    ctl2_vk_greed->set_num_y_line(4);
+    ctl_vk2_greed = new Qt_biGREED(rect, scene_ctl_vk2);
+    ctl_vk2_greed->setColorLine(GreedColor);
+    ctl_vk2_greed->setColorBack(Qt::transparent);
+    ctl_vk2_greed->setLineWidth(1);
+    ctl_vk2_greed->set_step_x_line(128);
+    ctl_vk2_greed->set_num_y_line(4);
 
-    ui->verticalLayout_Ctl2VK->addWidget(view_ctl2_vk);
-    //-------------------------------------------------------------------------
-    scene_ctl3_vk = new QGraphicsScene(rectf);
-
-    view_ctl3_vk = new QGraphicsView(scene_ctl3_vk);
-    view_ctl3_vk->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    view_ctl3_vk->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view_ctl3_vk->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view_ctl3_vk->scale(1.0, 1.0);
-
-    ctl3_vk = new Qt_VK(rect, scene_ctl3_vk);
-    ctl3_vk->setColorLine(VKColor);
-    ctl3_vk->setColorBack(FonColor);
-    ctl3_vk->setColorText(TextColor);
-    ctl3_vk->setMaxAmpl(max_ampl);
-    ctl3_vk->setXScale(1);
-    ctl3_vk->setColorLevelBack(FonColor);
-    ctl3_vk->setCaption(QString::fromUtf8("Контроллер-3 (   )"));
-
-    connect(this,     SIGNAL( changeVKmaxAmpl(int) ), ctl3_vk,       SLOT( on_changeMaxAmpl(int)   ) );
-    connect(ctl3_vk,  SIGNAL( update()             ), scene_ctl3_vk, SLOT( update()                ) );
-
-    ctl3_vk_greed = new Qt_biGREED(rect, scene_ctl3_vk);
-    ctl3_vk_greed->setColorLine(GreedColor);
-    ctl3_vk_greed->setColorBack(Qt::transparent);
-    ctl3_vk_greed->setLineWidth(1);
-    ctl3_vk_greed->set_step_x_line(128);
-    ctl3_vk_greed->set_num_y_line(4);
-
-    ui->verticalLayout_Ctl3VK->addWidget(view_ctl3_vk);
-    //-------------------------------------------------------------------------
-    scene_ctl4_vk = new QGraphicsScene(rectf);
-
-    view_ctl4_vk = new QGraphicsView(scene_ctl4_vk);
-    view_ctl4_vk->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    view_ctl4_vk->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view_ctl4_vk->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view_ctl4_vk->scale(1.0, 1.0);
-
-    ctl4_vk = new Qt_VK(rect, scene_ctl4_vk);
-    ctl4_vk->setColorLine(VKColor);
-    ctl4_vk->setColorBack(FonColor);
-    ctl4_vk->setColorText(TextColor);
-    ctl4_vk->setMaxAmpl(max_ampl);
-    ctl4_vk->setXScale(1);
-    ctl4_vk->setColorLevelBack(FonColor);
-    ctl4_vk->setCaption(QString::fromUtf8("Контроллер-4 (   )"));
-
-    connect(this,     SIGNAL( changeVKmaxAmpl(int) ), ctl4_vk,       SLOT( on_changeMaxAmpl(int)   ) );
-    connect(ctl4_vk,  SIGNAL( update()             ), scene_ctl4_vk, SLOT( update()                ) );
-
-    ctl4_vk_greed = new Qt_biGREED(rect, scene_ctl4_vk);
-    ctl4_vk_greed->setColorLine(GreedColor);
-    ctl4_vk_greed->setColorBack(Qt::transparent);
-    ctl4_vk_greed->setLineWidth(1);
-    ctl4_vk_greed->set_step_x_line(128);
-    ctl4_vk_greed->set_num_y_line(4);
-
-    ui->verticalLayout_Ctl4VK->addWidget(view_ctl4_vk);
+    ui->verticalLayout_Ctl2VK->addWidget(view_ctl_vk2);
     //-------------------------------------------------------------------------
 
 //    ui->widgetAllVK->installEventFilter(this);
@@ -374,7 +384,7 @@ MainWindow::MainWindow(QWidget *parent) :
     view_fkd->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view_fkd->scale(1.0, 1.0);
 
-    rect.setRect(0, 0, VAK32_WAVE_NUM_POINTS, 200);
+    rect.setRect(0, 0, VAK_8_NUM_POINTS, 200);
     fkd = new CVAK32_FKD(rect, scene_fkd);
     fkd->setColorBack(FonColor);
     fkd->setColorGreed(GreedColor);
@@ -388,14 +398,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->verticalLayout_FKD->addWidget(view_fkd);
 
-    connect(this,    SIGNAL( setDept(qint32)        ), fkd,         SLOT( on_changeDept(qint32)     ) );
-    connect(this,    SIGNAL( changeDpsX(int)        ), fkd,         SLOT( on_changeDpsX(int)        ) );
-    connect(this,    SIGNAL( changeDpsY(int)        ), fkd,         SLOT( on_changeDpsY(int)        ) );
-    connect(this,    SIGNAL( changeDeptScale(int)   ), fkd,         SLOT( on_changeDeptScale(int)   ) );
-    connect(this,    SIGNAL( changeFKDstep(int)     ), fkd,         SLOT( on_changeTimeScale(int)   ) );
-    connect(this,    SIGNAL( changeFKDlevel(int)    ), fkd,         SLOT( on_changeLevel(int)       ) );
-    connect(fkd,     SIGNAL( update()               ), scene_fkd,   SLOT( update()                  ) );
+    connect(&check_state,   SIGNAL( deptUpdate(const qint32)), fkd,         SLOT( on_changeDept(const qint32) ) );
+    connect(this,           SIGNAL( changeDpsX(int)         ), fkd,         SLOT( on_changeDpsX(int)          ) );
+    connect(this,           SIGNAL( changeDpsY(int)         ), fkd,         SLOT( on_changeDpsY(int)          ) );
+    connect(this,           SIGNAL( changeDeptScale(int)    ), fkd,         SLOT( on_changeDeptScale(int)     ) );
+    connect(this,           SIGNAL( changeFKDstep(int)      ), fkd,         SLOT( on_changeTimeScale(int)     ) );
+    connect(this,           SIGNAL( changeFKDlevel(int)     ), fkd,         SLOT( on_changeLevel(int)         ) );
+    connect(fkd,            SIGNAL( update()                ), scene_fkd,   SLOT( update()                    ) );
 
+    //-------------------------------------------------------------------------
     rectf.setRect(0.0, 0.0, 80.0, 150.0);
     scene_dept_col = new QGraphicsScene(rectf);
 
@@ -415,12 +426,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->verticalLayout_dept_col->addWidget(view_dept_col);
 
-    connect(this,    SIGNAL( setDept(qint32)              ), deptCol,         SLOT( on_changeDept(qint32)           ) );
-    connect(this,    SIGNAL( changeDpsY(int)              ), deptCol,         SLOT( on_changeDpsY(int)              ) );
-    connect(this,    SIGNAL( changeDeptScale(int)         ), deptCol,         SLOT( on_changeDeptScale(int)         ) );
-    connect(deptCol, SIGNAL( update()                     ), scene_dept_col,  SLOT( update()                        ) );
-    connect(deptCol, SIGNAL( changeBaseLinesShift(qint16) ), fkd,             SLOT( on_changeBaseLinesShift(qint16) ) );
+    connect(&check_state,   SIGNAL( deptUpdate(const qint32)     ), deptCol,         SLOT( on_changeDept(const qint32)     ) );
+    connect(this,           SIGNAL( changeDpsY(int)              ), deptCol,         SLOT( on_changeDpsY(int)              ) );
+    connect(this,           SIGNAL( changeDeptScale(int)         ), deptCol,         SLOT( on_changeDeptScale(int)         ) );
+    connect(deptCol,        SIGNAL( update()                     ), scene_dept_col,  SLOT( update()                        ) );
+    connect(deptCol,        SIGNAL( changeBaseLinesShift(qint16) ), fkd,             SLOT( on_changeBaseLinesShift(qint16) ) );
 
+    //-------------------------------------------------------------------------
     rectf.setRect(0.0, 0.0, 10.0, 150.0);
     scene_ml_col = new QGraphicsScene(rectf);
 
@@ -440,16 +452,21 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->verticalLayout_ML->addWidget(view_ml_col);
 
-    connect(this,    SIGNAL( setDept(qint32)        ), mlCol,           SLOT( on_changeDept(qint32)     ) );
-    connect(this,    SIGNAL( changeDpsY(int)        ), mlCol,           SLOT( on_changeDpsY(int)        ) );
-    connect(this,    SIGNAL( changeDeptScale(int)   ), mlCol,           SLOT( on_changeDeptScale(int)   ) );
-    connect(mlCol,   SIGNAL( update()               ), scene_ml_col,    SLOT( update()                  ) );
+    connect(&check_state,   SIGNAL( deptUpdate(const qint32)), mlCol,        SLOT( on_changeDept(const qint32) ) );
+    connect(this,           SIGNAL( changeDpsY(int)         ), mlCol,        SLOT( on_changeDpsY(int)          ) );
+    connect(this,           SIGNAL( changeDeptScale(int)    ), mlCol,        SLOT( on_changeDeptScale(int)     ) );
+    connect(mlCol,          SIGNAL( update()                ), scene_ml_col, SLOT( update()                    ) );
+    //-------------------------------------------------------------------------
+    akp_thread->start();
+    check_state.start();
+    //-------------------------------------------------------------------------
 }
-//-------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 MainWindow::~MainWindow()
 {
+    //-------------------------------------------------------------------------
     save_settings();
-
+    //-------------------------------------------------------------------------
     delete mlCol;
     delete view_ml_col;
     delete scene_ml_col;
@@ -462,33 +479,28 @@ MainWindow::~MainWindow()
     delete view_fkd;
     delete scene_fkd;
 
-    delete ctl4_vk;
-    delete ctl4_vk_greed;
-    delete view_ctl4_vk;
-    delete scene_ctl4_vk;
+    delete ctl_vk2;
+    delete ctl_vk2_greed;
+    delete view_ctl_vk2;
+    delete scene_ctl_vk2;
 
-    delete ctl3_vk;
-    delete ctl3_vk_greed;
-    delete view_ctl3_vk;
-    delete scene_ctl3_vk;
-
-    delete ctl2_vk;
-    delete ctl2_vk_greed;
-    delete view_ctl2_vk;
-    delete scene_ctl2_vk;
-
-    delete ctl1_vk;
-    delete ctl1_vk_greed;
-    delete view_ctl1_vk;
-    delete scene_ctl1_vk;
+    delete ctl_vk1;
+    delete ctl_vk1_greed;
+    delete view_ctl_vk1;
+    delete scene_ctl_vk1;
 
     delete time_line1;
     delete vk1_greed;
     delete vk1;
     delete view_vk;
     delete scene_vk;
-
+    //-------------------------------------------------------------------------
+    akp_thread->exit();
+    while ( akp_thread->isRunning() );
+    delete akp_thread;
+    //-------------------------------------------------------------------------
     delete ui;
+    //-------------------------------------------------------------------------
 }
 //-------------------------------------------------------------------
 void MainWindow::on_pushButtonSettings(void)
@@ -516,31 +528,20 @@ void MainWindow::on_pushButtonSettings(void)
         lastDepth    = Depth;
         velocity->add_dept_point(Depth);
         DepthStep    = dialogWellInfo->getDeptStep();
-        emit setDept(Depth);
-        emit cmdSetDepth();
+        emit showDept(Depth);
+        emit cmdSetDepth(Depth);
     }
 
     disconnect(dialogWellInfo, SIGNAL(cmd_Setup()), this, SLOT(on_dialogSetup()));
     delete dialogWellInfo;
     dialogWellInfo = NULL;
 
-    do
-    {
-        QHostAddress  sender;
-        quint16       senderPort;
-        unsigned char x_data[sizeof(TDATAPOCKET)];
+//    blk_count = 0;
+//    bad_blk = 0;
+//    emit setPocketCount(blk_count);
+//    emit setBadPocketCount(bad_blk);
 
-        memset(x_data, 0, sizeof(TDATAPOCKET));
-        udp_socket.readDatagram((char*)x_data, sizeof(TDATAPOCKET), &sender, &senderPort);
-    } while (udp_socket.hasPendingDatagrams());
-    connect(&udp_socket, SIGNAL( readyRead(void) ), this, SLOT( on_udpDataRx(void) ) );
-
-    timer_interval = 500;
-    mode = mode_list.begin();
-    blk_count = 0;
-    bad_blk = 0;
-    emit setPocketCount(blk_count);
-    emit setBadPocketCount(bad_blk);
+    check_state.clear_block_count();    //???
 
     curentDepthStep = 0;
 
@@ -548,6 +549,9 @@ void MainWindow::on_pushButtonSettings(void)
     mlCol->delPoints();
 
     ui->pushButton_Start->setDisabled(false);
+
+    delete dialogWellInfo;
+    dialogWellInfo = NULL;
 }
 //-------------------------------------------------------------------
 void MainWindow::on_dialogSetup(void)
@@ -556,15 +560,6 @@ void MainWindow::on_dialogSetup(void)
     {
         dialogSetup = new Dialog_setup(this);
         connect(dialogSetup, SIGNAL(cmd_RestoreFolder()    ), this, SLOT(on_dialogToolModeCmdRestoreFolder()    ) );
-        connect(dialogSetup, SIGNAL(cmd_ChangeToolModes()  ), this, SLOT(on_dialogToolModeCmdChangeToolModes()  ) );
-        connect(dialogSetup, SIGNAL(cmd_RestoreToolModes() ), this, SLOT(on_dialogToolModeCmdRestoreToolModes() ) );
-    }
-
-    QVector<vak32_ctrl_command_class*>::iterator mode = mode_list.begin();
-    for (; mode != mode_list.end(); ++mode)
-    {
-        vak32_ctrl_command_class* cmd = *mode;
-        dialogSetup->setToolMode(cmd);
     }
 
     dialogSetup->setMMColor(MMColor);
@@ -625,37 +620,21 @@ void MainWindow::on_dialogSetup(void)
         fkd->setColorGreed(GreedColor);
         fkd->setColorLine(FKDColor);
 
-        ctl1_vk->setColorBack(FonColor);
-        ctl1_vk->setColorLevelBack(FonColor);
-        ctl1_vk->setColorLevelLine(FonColor);
-        ctl1_vk->setColorLine(VKColor);
-        ctl1_vk->setColorText(TextColor);
+        ctl_vk1->setColorBack(FonColor);
+        ctl_vk1->setColorLevelBack(FonColor);
+        ctl_vk1->setColorLevelLine(FonColor);
+        ctl_vk1->setColorLine(VKColor);
+        ctl_vk1->setColorText(TextColor);
 
-        ctl1_vk_greed->setColorLine(GreedColor);
+        ctl_vk1_greed->setColorLine(GreedColor);
 
-        ctl2_vk->setColorBack(FonColor);
-        ctl2_vk->setColorLevelBack(FonColor);
-        ctl2_vk->setColorLevelLine(FonColor);
-        ctl2_vk->setColorLine(VKColor);
-        ctl2_vk->setColorText(TextColor);
+        ctl_vk2->setColorBack(FonColor);
+        ctl_vk2->setColorLevelBack(FonColor);
+        ctl_vk2->setColorLevelLine(FonColor);
+        ctl_vk2->setColorLine(VKColor);
+        ctl_vk2->setColorText(TextColor);
 
-        ctl2_vk_greed->setColorLine(GreedColor);
-
-        ctl3_vk->setColorBack(FonColor);
-        ctl3_vk->setColorLevelBack(FonColor);
-        ctl3_vk->setColorLevelLine(FonColor);
-        ctl3_vk->setColorLine(VKColor);
-        ctl3_vk->setColorText(TextColor);
-
-        ctl3_vk_greed->setColorLine(GreedColor);
-
-        ctl4_vk->setColorBack(FonColor);
-        ctl4_vk->setColorLevelBack(FonColor);
-        ctl4_vk->setColorLevelLine(FonColor);
-        ctl4_vk->setColorLine(VKColor);
-        ctl4_vk->setColorText(TextColor);
-
-        ctl4_vk_greed->setColorLine(GreedColor);
+        ctl_vk2_greed->setColorLine(GreedColor);
 
         FolderName  = dialogSetup->getFolder();
         dialogWellInfo->setFolderName(FolderName);
@@ -664,64 +643,65 @@ void MainWindow::on_dialogSetup(void)
     }
 
     disconnect(dialogSetup, SIGNAL(cmd_RestoreFolder()    ), this, SLOT(on_dialogToolModeCmdRestoreFolder()    ) );
-    disconnect(dialogSetup, SIGNAL(cmd_ChangeToolModes()  ), this, SLOT(on_dialogToolModeCmdChangeToolModes()  ) );
-    disconnect(dialogSetup, SIGNAL(cmd_RestoreToolModes() ), this, SLOT(on_dialogToolModeCmdRestoreToolModes() ) );
+//    disconnect(dialogSetup, SIGNAL(cmd_ChangeToolModes()  ), this, SLOT(on_dialogToolModeCmdChangeToolModes()  ) );
+//    disconnect(dialogSetup, SIGNAL(cmd_RestoreToolModes() ), this, SLOT(on_dialogToolModeCmdRestoreToolModes() ) );
+
     delete dialogSetup;
     dialogSetup = NULL;
 }
 //-------------------------------------------------------------------
-void MainWindow::on_dialogToolModeCmdRestoreFolder(void)
-{
-    dialogSetup->setFolder(FolderName);
-}
+//void MainWindow::on_dialogToolModeCmdRestoreFolder(void)
+//{
+//    dialogSetup->setFolder(FolderName);
+//}
 //-------------------------------------------------------------------
-void MainWindow::on_dialogToolModeCmdChangeToolModes(void)
-{
-    if (!dialogToolMode)
-    {
-        dialogToolMode = new Dialog_Tool_Mode(this);
-    }
+//void MainWindow::on_dialogToolModeCmdChangeToolModes(void)
+//{
+//    if (!dialogToolMode)
+//    {
+//        dialogToolMode = new Dialog_Tool_Mode(this);
+//    }
 
-    mode = mode_list.begin();
-    for (; mode != mode_list.end(); ++mode)
-    {
-        vak32_ctrl_command_class* cmd = *mode;
+//    mode = mode_list.begin();
+//    for (; mode != mode_list.end(); ++mode)
+//    {
+//        vak32_ctrl_command_class* cmd = *mode;
 
-        dialogToolMode->set_izl_type(cmd->get_izl_type());
-        dialogToolMode->set_Fsig(cmd->get_Fsig());
-        dialogToolMode->set_ampl_sig(cmd->get_ampl_sig());
-        dialogToolMode->set_period_number(cmd->get_period_number());
+//        dialogToolMode->set_izl_type(cmd->get_izl_type());
+//        dialogToolMode->set_Fsig(cmd->get_Fsig());
+//        dialogToolMode->set_ampl_sig(cmd->get_ampl_sig());
+//        dialogToolMode->set_period_number(cmd->get_period_number());
 
-        dialogToolMode->set_rx_type(cmd->get_rx_type());
-        dialogToolMode->set_Td(cmd->get_Td());
-        dialogToolMode->set_rx_delay(cmd->get_rx_delay());
-        dialogToolMode->set_KU_window_start(cmd->get_KU_window_start());
-        dialogToolMode->set_KU_window_width(cmd->get_KU_window_width());
+//        dialogToolMode->set_rx_type(cmd->get_rx_type());
+//        dialogToolMode->set_Td(cmd->get_Td());
+//        dialogToolMode->set_rx_delay(cmd->get_rx_delay());
+//        dialogToolMode->set_KU_window_start(cmd->get_KU_window_start());
+//        dialogToolMode->set_KU_window_width(cmd->get_KU_window_width());
 
-        if (dialogToolMode->exec() == QDialog::Accepted)
-        {
-            cmd->on_set_izl_type(dialogToolMode->get_izl_type());
-            cmd->on_set_Fsig(dialogToolMode->get_Fsig());
-            cmd->on_set_ampl_sig(dialogToolMode->get_ampl_sig());
-            cmd->on_set_period_number(dialogToolMode->get_period_number());
+//        if (dialogToolMode->exec() == QDialog::Accepted)
+//        {
+//            cmd->on_set_izl_type(dialogToolMode->get_izl_type());
+//            cmd->on_set_Fsig(dialogToolMode->get_Fsig());
+//            cmd->on_set_ampl_sig(dialogToolMode->get_ampl_sig());
+//            cmd->on_set_period_number(dialogToolMode->get_period_number());
 
-            cmd->on_set_rx_type(dialogToolMode->get_rx_type());
-            cmd->on_set_Td(dialogToolMode->get_Td());
-            cmd->on_set_rx_delay(dialogToolMode->get_rx_delay());
-            cmd->on_set_KU_window_start(dialogToolMode->get_KU_window_start());
-            cmd->on_set_KU_window_width(dialogToolMode->get_KU_window_width());
+//            cmd->on_set_rx_type(dialogToolMode->get_rx_type());
+//            cmd->on_set_Td(dialogToolMode->get_Td());
+//            cmd->on_set_rx_delay(dialogToolMode->get_rx_delay());
+//            cmd->on_set_KU_window_start(dialogToolMode->get_KU_window_start());
+//            cmd->on_set_KU_window_width(dialogToolMode->get_KU_window_width());
 
-            dialogSetup->setToolMode(cmd);
-        }
-    }
+//            dialogSetup->setToolMode(cmd);
+//        }
+//    }
 
-    delete dialogToolMode;
-    dialogToolMode = NULL;
-}
+//    delete dialogToolMode;
+//    dialogToolMode = NULL;
+//}
 //-------------------------------------------------------------------
-void MainWindow::on_dialogToolModeCmdRestoreToolModes(void)
-{
-}
+//void MainWindow::on_dialogToolModeCmdRestoreToolModes(void)
+//{
+//}
 //-------------------------------------------------------------------
 void MainWindow::on_cmdIncAmpl(void)
 {
@@ -765,8 +745,6 @@ void MainWindow::on_cmdDecLevel(void)
 //-------------------------------------------------------------------
 void MainWindow::on_pushButtonStart(void)
 {
-    mode = mode_list.begin();
-
     ui->pushButton_Start->setDisabled(true);
     ui->pushButton_Start->setVisible(false);
 
@@ -777,7 +755,8 @@ void MainWindow::on_pushButtonStart(void)
 
     ui->pushButton_Settings->setDisabled(true);
 
-    emit vak32CmdSend();
+    emit cmdSetDeptStep(0);       //???
+//    emit cmdStartMeserment();
 }
 //-------------------------------------------------------------------
 void MainWindow::on_pushButtonStop(void)
@@ -792,11 +771,9 @@ void MainWindow::on_pushButtonStop(void)
 
     ui->pushButton_Settings->setDisabled(false);
 
-    ui->tabWidget->setDisabled(false);
-
     bWriteEnable = false;
 
-    disconnect(&udp_socket, SIGNAL( readyRead(void) ), this, SLOT( on_udpDataRx(void) ) );
+//    emit cmdStopMeserment();
 }
 //-------------------------------------------------------------------
 void MainWindow::on_pushButtonRecord(void)
@@ -805,17 +782,16 @@ void MainWindow::on_pushButtonRecord(void)
     QDate   date = QDate::currentDate();
 
     ui->pushButton_Record->setDisabled(true);
-    ui->tabWidget->setDisabled(true);
 
-    mode = mode_list.begin();
+//    blk_count = 0;
+//    bad_blk = 0;
+//    emit setPocketCount(blk_count);
+//    emit setBadPocketCount(bad_blk);
 
-    blk_count = 0;
-    bad_blk = 0;
-    emit setPocketCount(blk_count);
-    emit setBadPocketCount(bad_blk);
+    check_state.clear_block_count();    //???
 
     curentDepthStep = -DepthStep;
-    timer_interval = 50;
+    akp.on_setDeptStep(DepthStep);       //???
 
     FileName = FolderName;
     if (bExtFolderCtl)
@@ -853,7 +829,7 @@ void MainWindow::on_pushButtonRecord(void)
     FileName += FileExt;
 
     qDebug() << QString::fromUtf8("%1").arg(FileName);
-
+/*
     write_vak32_head(FileName, QDate::currentDate(), FildName, WellNo,
                           OperatorName, Depth, QString::fromUtf8("ВАК-32"), ToolNo,
                             393, 393, 393, 393,
@@ -865,231 +841,205 @@ void MainWindow::on_pushButtonRecord(void)
                             453, 453, 453, 453,
                             463, 463, 463, 463
                           );
+*/
     bWriteEnable = true;
 
     startDepth = Depth;
 }
 //-------------------------------------------------------------------
-#pragma pack(1)
-void MainWindow::on_cmdSetDepth(void)
-{
-    TCTRLPOCKET                 ctl_pocket;
-    u_short                     cmd = (u_short)COMAND_SET_DEPT;
-
-    memset((char*)&ctl_pocket, 0, sizeof(TCTRLPOCKET));
-    ctl_pocket.id = htons(cmd);
-    p_count++;
-    ctl_pocket.n_pocket = htons(p_count);
-    ctl_pocket.dept = htonl(Depth);
-
-    udp_socket.writeDatagram((char*)&ctl_pocket, sizeof(TCTRLPOCKET), host, port);
-}
-#pragma pack()
+//#pragma pack(1)
+//void MainWindow::on_cmdSetDepth(void)
+//{
+//    akp.on_cmdSetDepth(Depth);
+//}
+//#pragma pack()
 //-------------------------------------------------------------------
-#pragma pack(1)
-void MainWindow::on_vak32CmdSend(void)
-{
-    TCTRLPOCKET                 ctl_pocket;
-    unsigned char               ctl_cmd[21];
-    vak32_ctrl_command_class*   vak32_ctl_cmd;
-    u_short                     cmd = (u_short)COMAND_VAK32_DO_MESERMENT;
+//#pragma pack(1)
+//void MainWindow::on_vak32CmdSend(void)
+//{
+//    TCTRLPOCKET                 ctl_pocket;
+//    unsigned char               ctl_cmd[21];
+//    vak32_ctrl_command_class*   vak32_ctl_cmd;
+//    u_short                     cmd = (u_short)COMAND_VAK32_DO_MESERMENT;
 
-    timer.stop();
-    timer.setInterval(timer_interval);
+//    timer.stop();
+//    timer.setInterval(timer_interval);
 
-    memset((char*)&ctl_pocket, 0, sizeof(TCTRLPOCKET));
-    ctl_pocket.id = htons(cmd);
-    p_count++;
-    ctl_pocket.n_pocket = htons(p_count);
-    ctl_pocket.dept = htonl(curentDepthStep);
+//    memset((char*)&ctl_pocket, 0, sizeof(TCTRLPOCKET));
+//    ctl_pocket.id = htons(cmd);
+//    p_count++;
+//    ctl_pocket.n_pocket = htons(p_count);
+//    ctl_pocket.dept = htonl(curentDepthStep);
 
-    if (mode == mode_list.end()) mode = mode_list.begin();
-    vak32_ctl_cmd = *mode;
-    mode++;
+//    if (mode == mode_list.end()) mode = mode_list.begin();
+//    vak32_ctl_cmd = *mode;
+//    mode++;
 
-    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    if (vak32_ctl_cmd->get_mode_number() == (unsigned int)modeNum4fkd)
-    {
-        vak32_ctl_cmd->on_set_vk_number(0x1F & vkNum4fkd);
-    }
-    else
-    {
-        vkNum += 8;
-        if (vkNum == 39) vkNum = 0;
-        if (vkNum >  31) vkNum -= 31;
-        vak32_ctl_cmd->on_set_vk_number(0x1F & vkNum);
-    }
-    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//    if (vak32_ctl_cmd->get_mode_number() == (unsigned int)modeNum4fkd)
+//    {
+//        vak32_ctl_cmd->on_set_vk_number(0x1F & vkNum4fkd);
+//    }
+//    else
+//    {
+//        vkNum += 8;
+//        if (vkNum == 39) vkNum = 0;
+//        if (vkNum >  31) vkNum -= 31;
+//        vak32_ctl_cmd->on_set_vk_number(0x1F & vkNum);
+//    }
+//    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    vak32_ctl_cmd->write_command(ctl_cmd);
-    int i;
-    for (i = 0; i < 21; i++)
-        ctl_pocket.rezerv[i] = htons(ctl_cmd[i]);
+//    vak32_ctl_cmd->write_command(ctl_cmd);
+//    int i;
+//    for (i = 0; i < 21; i++)
+//        ctl_pocket.rezerv[i] = htons(ctl_cmd[i]);
 
-    udp_socket.writeDatagram((char*)&ctl_pocket, sizeof(TCTRLPOCKET), host, port);
-}
-#pragma pack()
+//    udp_socket.writeDatagram((char*)&ctl_pocket, sizeof(TCTRLPOCKET), host, port);
+//}
+//#pragma pack()
 //-------------------------------------------------------------------
-#pragma pack(1)
-void MainWindow::on_udpDataRx(void)
-{
-    int                         i;
-    unsigned char               x_data[sizeof(TDATAPOCKET)];
-    TCTRLPOCKET*                pctrl_pocket = (TCTRLPOCKET*)&x_data;
-    TDATAPOCKET*                pdata_pocket = (TDATAPOCKET*)&x_data;
-    QHostAddress                sender;
-    quint16                     senderPort;
-    vak32_ctrl_command_class    rx_cmd;
-//    unsigned char               rx_cmd_data[21];
-    TVAK32_4SD                  data_4sd;
-    quint16                     rx_data_CRC16;
+//#pragma pack(1)
+//void MainWindow::on_udpDataRx(void)
+//{
+//    int                         i;
+//    unsigned char               x_data[sizeof(TDATAPOCKET)];
+//    TCTRLPOCKET*                pctrl_pocket = (TCTRLPOCKET*)&x_data;
+//    TDATAPOCKET*                pdata_pocket = (TDATAPOCKET*)&x_data;
+//    QHostAddress                sender;
+//    quint16                     senderPort;
+//    vak32_ctrl_command_class    rx_cmd;
+////    unsigned char               rx_cmd_data[21];
+//    TVAK32_4SD                  data_4sd;
+//    quint16                     rx_data_CRC16;
 
-    do
-    {
-        memset(x_data, 0, sizeof(TDATAPOCKET));
-        udp_socket.readDatagram((char*)x_data, sizeof(TDATAPOCKET), &sender, &senderPort);
-    } while (udp_socket.hasPendingDatagrams());
+//    do
+//    {
+//        memset(x_data, 0, sizeof(TDATAPOCKET));
+//        udp_socket.readDatagram((char*)x_data, sizeof(TDATAPOCKET), &sender, &senderPort);
+//    } while (udp_socket.hasPendingDatagrams());
 
-    for(i = 0; i < VAK_8_NUM_POINTS; i++) v8_data[i] = ntohs(pdata_pocket->data[i]);
+//    for(i = 0; i < VAK_8_NUM_POINTS; i++) v8_data[i] = ntohs(pdata_pocket->data[i]);
 
-    rx_data_CRC16 = calc_rx_data_CRC16();
-    if (rx_data_CRC16 == 0)
-    {
-        bflag_data_CRC = false;
-        label_data_CRC_check->setText(QString::fromUtf8("CRC данных: Ок"));
-        ToolNo = v8_data[474];
-    }
-    else
-    {
-        bflag_data_CRC = true;
-        label_data_CRC_check->setText(QString::fromUtf8("CRC данных: Ошибка!"));
-    }
+//    rx_data_CRC16 = calc_rx_data_CRC16();
+//    if (rx_data_CRC16 == 0)
+//    {
+//        bflag_data_CRC = false;
+//        label_data_CRC_check->setText(QString::fromUtf8("CRC данных: Ок"));
+//        ToolNo = v8_data[474];
+//    }
+//    else
+//    {
+//        bflag_data_CRC = true;
+//        label_data_CRC_check->setText(QString::fromUtf8("CRC данных: Ошибка!"));
+//    }
 
-    Depth = ntohl(pctrl_pocket->dept);
-    velocity->add_dept_point(Depth);
-    emit setDept(Depth);
+////    Depth = ntohl(pctrl_pocket->dept);
+////    velocity->add_dept_point(Depth);
+////    emit showDept(Depth);
 
-    for(i = 0; i < 21; i++)
-//        rx_cmd_data[i] = (unsigned char)v8_data[490 + i];
-        data_4sd.cmd_data[i] = (unsigned char)v8_data[490 + i];
-//    rx_cmd.read_command(rx_cmd_data);
-    rx_cmd.read_command(data_4sd.cmd_data);
+//    for(i = 0; i < 21; i++)
+////        rx_cmd_data[i] = (unsigned char)v8_data[490 + i];
+//        data_4sd.cmd_data[i] = (unsigned char)v8_data[490 + i];
+////    rx_cmd.read_command(rx_cmd_data);
+//    rx_cmd.read_command(data_4sd.cmd_data);
 
-    if (rx_cmd.calc_CRC16() == 0)
-    {
-        bflag_CMD_CRC = false;
-        label_CMD_CRC_check->setText(QString::fromUtf8("CRC команды: Ок"));
-    }
-    else
-    {
-        bflag_CMD_CRC = true;
-        label_CMD_CRC_check->setText(QString::fromUtf8("CRC команды: Ошибка!"));
-    }
+//    if (rx_cmd.calc_CRC16() == 0)
+//    {
+//        bflag_CMD_CRC = false;
+//        label_CMD_CRC_check->setText(QString::fromUtf8("CRC команды: Ок"));
+//    }
+//    else
+//    {
+//        bflag_CMD_CRC = true;
+//        label_CMD_CRC_check->setText(QString::fromUtf8("CRC команды: Ошибка!"));
+//    }
 
-    if (bWriteEnable)
-    {
-        data_4sd.vak32_rx_data_CRC16 = v8_data[511];
-        data_4sd.vak32_calc_data_CRC16 = rx_data_CRC16;
-        data_4sd.SD_error_flag = v8_data[485];
-        data_4sd.SD_file_char = v8_data[472];
-        data_4sd.blk_count = blk_count;
-        data_4sd.bad_blk = bad_blk;
-        data_4sd.log_velocity = velocity->get_velocity();
-//        rx_cmd.write_command(data_4sd.cmd_data);
-        write_vak32_4SD_data(FileName, data_4sd);
-    }
+//    if (bWriteEnable)
+//    {
+//        data_4sd.vak32_rx_data_CRC16 = v8_data[511];
+//        data_4sd.vak32_calc_data_CRC16 = rx_data_CRC16;
+//        data_4sd.SD_error_flag = v8_data[485];
+//        data_4sd.SD_file_char = v8_data[472];
+//        data_4sd.blk_count = blk_count;
+//        data_4sd.bad_blk = bad_blk;
+//        data_4sd.log_velocity = velocity->get_velocity();
+////        rx_cmd.write_command(data_4sd.cmd_data);
+//        write_vak32_4SD_data(FileName, data_4sd);
+//    }
 
-    try
-    {
-        emit showIZLtype(rx_cmd.get_izl_type());
-        emit showIZLfreq(rx_cmd.get_Fsig());
-        emit showIZLnum(rx_cmd.get_period_number());
+//    try
+//    {
+////        emit showIZLtype(rx_cmd.get_izl_type());
+////        emit showIZLfreq(rx_cmd.get_Fsig());
+////        emit showIZLnum(rx_cmd.get_period_number());
 
-        emit showRXtd(rx_cmd.get_Td());
-        emit showRXdelay(rx_cmd.get_rx_delay());
+////        emit showRXtd(rx_cmd.get_Td());
+////        emit showRXdelay(rx_cmd.get_rx_delay());
 
-        modeNum = rx_cmd.get_mode_number();
-        vkNumRx = rx_cmd.get_vk_number();
-        switch(vkNumRx)
-        {
-            case 0:
-                emit showRXku(v8_data[486]);
-                break;
-            case 1:
-                emit showRXku(v8_data[487]);
-                break;
-            case 2:
-                emit showRXku(v8_data[488]);
-                break;
-            case 3:
-                emit showRXku(v8_data[489]);
-                break;
-            case 4:
-                emit showRXku(v8_data[486]);
-                break;
-            case 5:
-                emit showRXku(v8_data[487]);
-                break;
-            case 6:
-                emit showRXku(v8_data[488]);
-                break;
-            case 7:
-                emit showRXku(v8_data[489]);
-                break;
-            default:
-                emit showRXku(-1);
-                break;
-        }
+//        modeNum = rx_cmd.get_mode_number();
+//        vkNumRx = rx_cmd.get_vk_number();
+////        switch(vkNumRx)
+////        {
+////            case 0:
+////                emit showRXku(v8_data[486]);
+////                break;
+////            case 1:
+////                emit showRXku(v8_data[487]);
+////                break;
+////            case 2:
+////                emit showRXku(v8_data[488]);
+////                break;
+////            case 3:
+////                emit showRXku(v8_data[489]);
+////                break;
+////            case 4:
+////                emit showRXku(v8_data[486]);
+////                break;
+////            case 5:
+////                emit showRXku(v8_data[487]);
+////                break;
+////            case 6:
+////                emit showRXku(v8_data[488]);
+////                break;
+////            case 7:
+////                emit showRXku(v8_data[489]);
+////                break;
+////            default:
+////                emit showRXku(-1);
+////                break;
+////        }
 
-        if (vkNumRx < 8)
-        {
-            emit showGx(v8_data[476]);
-            emit showGy(v8_data[478]);
-            emit showGz(v8_data[480]);
-            emit showGK(v8_data[484]);
-        }
-        else
-        {
-            emit showGx(0x0F00);
-            emit showGy(0x0F00);
-            emit showGz(0x0F00);
-            emit showGK(-1);
-        }
+//        emit showNewData();
 
-        emit showSDstatus(v8_data[485]);
+//    }
+//    catch (vak32_ctrl_cmd_error_class err)
+//    {
+//        qDebug() << err.get_error_msg();
+//    }
 
-        emit showNewData();
+//    if (bflag_CMD_CRC | bflag_data_CRC) bad_blk++;
+//    else blk_count++;
 
-        emit setML( rx_cmd.get_MM() );
-    }
-    catch (vak32_ctrl_cmd_error_class err)
-    {
-        qDebug() << err.get_error_msg();
-    }
+////    emit setPocketCount(blk_count);
+////    emit setBadPocketCount(bad_blk);
 
-    if (bflag_CMD_CRC | bflag_data_CRC) bad_blk++;
-    else blk_count++;
+//    cmd_id = 0;
 
-    emit setPocketCount(blk_count);
-    emit setBadPocketCount(bad_blk);
-
-    cmd_id = 0;
-
-    timer.singleShot(timer_interval, this, SLOT(on_vak32CmdSend()));
-}
-#pragma pack()
+//    timer.singleShot(timer_interval, this, SLOT(on_vak32CmdSend()));
+//}
+//#pragma pack()
 //-------------------------------------------------------------------
-void MainWindow::on_setPocketCount(qint32 count)
+void MainWindow::on_showPocketCount(const int count)
 {
     label_GoodBlk->setText(QString::fromUtf8("Хорошие блоки: %1").arg(count));
 }
 //-------------------------------------------------------------------
-void MainWindow::on_setBadPocketCount(qint32 count)
+void MainWindow::on_showBadPocketCount(const int count)
 {
     label_BadBlk->setText(QString::fromUtf8("Плохие блоки: %1").arg(count));
 }
 //-------------------------------------------------------------------
-void MainWindow::on_setDept(qint32 dept)
+void MainWindow::on_showDept(const qint32 dept)
 {
     if ( ((lastDepth + curentDepthStep) != dept) && bWriteEnable )
     {
@@ -1114,230 +1064,186 @@ void MainWindow::on_setDept(qint32 dept)
                                    .arg( abs(startDepth - dept) / 100.0, 0, 'f', 2)
                             );
 
+    velocity->add_dept_point(dept);
     label_Velocity->setText(QString::fromUtf8("Скорость: %1 м/ч")
                                    .arg(velocity->get_velocity())
                             );
 }
 //-------------------------------------------------------------------
-void MainWindow::on_setML(bool ml)
+void MainWindow::on_showML(const bool ml)
 {
     QColor  color;
 
     if (ml)
     {
         color = MMColor;
-        mlCol->setML(Depth);
+        mlCol->setML(Depth);    //==========>>??????
     }
     else    color = palette().background().color();
 
     label_ML->setStyleSheet(QString::fromUtf8("background-color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
 }
 //-------------------------------------------------------------------
-void MainWindow::on_showNewData(void)
+void MainWindow::on_showNewData(const quint16 vk_no, const TVAK8_VK &vk)
 {
-    TVAK32_WAVE x1;
-    memset(x1, 0, sizeof(TVAK32_WAVE));
-    for (int i = 0; i < 472; i++)//VAK_8U_WAVE_NUM_POINTS; i++)
-        x1[i] = v8_data[i];
-
-    if ((modeNum == modeNum4fkd) && (vkNumRx == vkNum4fkd))
+    if (vk_no == vkNum4fkd)
     {
         vk1->setCaption(QString::fromUtf8("ВК-%1  ").arg(vkNum4fkd + 1));
-        vk1->AddData(x1);
+        vk1->AddData(vk);
 
-        fkd->addData(Depth, (PVAK32_WAVE)v8_data);
+        fkd->addData(lastDepth, vk);
     }
-    else
+    if (vk_no == 0)
     {
-        if (vkNumRx < 8)
-        {
-            ctl1_vk->setCaption(QString::fromUtf8("Контроллер-1 (ВК-%1) ").arg(vkNumRx + 1));
-            ctl1_vk->AddData(x1);
-        }
-        else if(vkNumRx < 16)
-        {
-            ctl2_vk->setCaption(QString::fromUtf8("Контроллер-2 (ВК-%1) ").arg(vkNumRx + 1));
-            ctl2_vk->AddData(x1);
-        }
-        else if(vkNumRx < 24)
-        {
-            ctl3_vk->setCaption(QString::fromUtf8("Контроллер-3 (ВК-%1) ").arg(vkNumRx + 1));
-            ctl3_vk->AddData(x1);
-        }
-        else if(vkNumRx < 32)
-        {
-            ctl4_vk->setCaption(QString::fromUtf8("Контроллер-4 (ВК-%1) ").arg(vkNumRx + 1));
-            ctl4_vk->AddData(x1);
-        }
+        ctl_vk1->setCaption(QString::fromUtf8("ВК-1"));
+        ctl_vk1->AddData(vk);
+    }
+    else if(vk_no == 5)
+    {
+        ctl_vk2->setCaption(QString::fromUtf8("ВК-2"));
+        ctl_vk2->AddData(vk);
     }
 }
 //-------------------------------------------------------------------
-void MainWindow::on_showIZLtype(qint16 value)
+void MainWindow::on_showIZLtype(const bool crc, const quint16 value)
 {
-    switch (value)
-    {
-    case IZL_MONOPOL:
-        ui->label_IZLtype->setText("Монополь");
-        break;
-    case IZL_DIPOL_1:
-        ui->label_IZLtype->setText("Диполь-1");
-        break;
-    case IZL_DIPOL_2:
-        ui->label_IZLtype->setText("Диполь-2");
-        break;
-    case IZL_QUADROPOL:
-        ui->label_IZLtype->setText("Квадруполь");
-        break;
-    case IZL_SFERA_1:
-        ui->label_IZLtype->setText("Сфера-1");
-        break;
-    case IZL_SFERA_2:
-        ui->label_IZLtype->setText("Сфера-2");
-        break;
-    case IZL_SFERA_3:
-        ui->label_IZLtype->setText("Сфера-3");
-        break;
-    case IZL_SFERA_4:
-        ui->label_IZLtype->setText("Сфера-4");
-        break;
-    default:
-        ui->label_IZLtype->setText("НЕИЗВЕСТНО");
-        break;
-    }
+    Q_UNUSED(crc);
+    Q_UNUSED(value);
+
+    ui->label_IZLtype->setText("Монополь");
+//    switch (value)
+//    {
+//    case IZL_MONOPOL:
+//        ui->label_IZLtype->setText("Монополь");
+//        break;
+//    case IZL_DIPOL_1:
+//        ui->label_IZLtype->setText("Диполь-1");
+//        break;
+//    case IZL_DIPOL_2:
+//        ui->label_IZLtype->setText("Диполь-2");
+//        break;
+//    case IZL_QUADROPOL:
+//        ui->label_IZLtype->setText("Квадруполь");
+//        break;
+//    case IZL_SFERA_1:
+//        ui->label_IZLtype->setText("Сфера-1");
+//        break;
+//    case IZL_SFERA_2:
+//        ui->label_IZLtype->setText("Сфера-2");
+//        break;
+//    case IZL_SFERA_3:
+//        ui->label_IZLtype->setText("Сфера-3");
+//        break;
+//    case IZL_SFERA_4:
+//        ui->label_IZLtype->setText("Сфера-4");
+//        break;
+//    default:
+//        ui->label_IZLtype->setText("НЕИЗВЕСТНО");
+//        break;
+//    }
 }
 //-------------------------------------------------------------------
-void MainWindow::on_showIZLfreq(qint16 value)
+void MainWindow::on_showIZLfreq(const bool crc, const quint16 value)
 {
+    QColor  color = get_color_on_CRC(crc);
+    ui->label_IZLfreq->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
     ui->label_IZLfreq->setText(QString::fromUtf8("%1 кГц").arg(value));
 }
 //-------------------------------------------------------------------
-void MainWindow::on_showIZLnum(qint16 value)
+void MainWindow::on_showIZLnum(const bool crc, const quint16 value)
 {
-    switch (value)
-    {
-        case 1:
-            ui->label_IZLnum->setText(QString::fromUtf8("1 период"));
-            break;
-        case 2:
-            ui->label_IZLnum->setText(QString::fromUtf8("2 периода"));
-            break;
-        case 3:
-            ui->label_IZLnum->setText(QString::fromUtf8("3 периода"));
-            break;
-        case 4:
-            ui->label_IZLnum->setText(QString::fromUtf8("4 периода"));
-            break;
-        case 5:
-            ui->label_IZLnum->setText(QString::fromUtf8("5 периодов"));
-            break;
-        case 6:
-            ui->label_IZLnum->setText(QString::fromUtf8("6 периодов"));
-            break;
-        case 7:
-            ui->label_IZLnum->setText(QString::fromUtf8("7 периодов"));
-            break;
-        case 8:
-            ui->label_IZLnum->setText(QString::fromUtf8("8 периодов"));
-            break;
-        default:
-            ui->label_IZLnum->setText(QString::fromUtf8("НЕИЗВЕСТНО"));
-            break;
-    }
+    Q_UNUSED(crc);
+    Q_UNUSED(value);
+
+    ui->label_IZLnum->setText(QString::fromUtf8("2 периода"));
+//    switch (value)
+//    {
+//        case 1:
+//            ui->label_IZLnum->setText(QString::fromUtf8("1 период"));
+//            break;
+//        case 2:
+//            ui->label_IZLnum->setText(QString::fromUtf8("2 периода"));
+//            break;
+//        case 3:
+//            ui->label_IZLnum->setText(QString::fromUtf8("3 периода"));
+//            break;
+//        case 4:
+//            ui->label_IZLnum->setText(QString::fromUtf8("4 периода"));
+//            break;
+//        case 5:
+//            ui->label_IZLnum->setText(QString::fromUtf8("5 периодов"));
+//            break;
+//        case 6:
+//            ui->label_IZLnum->setText(QString::fromUtf8("6 периодов"));
+//            break;
+//        case 7:
+//            ui->label_IZLnum->setText(QString::fromUtf8("7 периодов"));
+//            break;
+//        case 8:
+//            ui->label_IZLnum->setText(QString::fromUtf8("8 периодов"));
+//            break;
+//        default:
+//            ui->label_IZLnum->setText(QString::fromUtf8("НЕИЗВЕСТНО"));
+//            break;
+//    }
 }
 //-------------------------------------------------------------------
-void MainWindow::on_showRXdelay(qint16 value)
+void MainWindow::on_showRXdelay(const bool crc, const qint16 value)
 {
     qint16 delay = 2 * value;
     time_line1->set_time_zero(delay / time_line1->get_time_step());
+
+    QColor  color = get_color_on_CRC(crc);
+    ui->label_RXdelay->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
     ui->label_RXdelay->setText(QString::fromUtf8("Задержка %1 мкс").arg(delay));
 }
 //-------------------------------------------------------------------
-void MainWindow::on_showRXtd(qint16 value)
+void MainWindow::on_showRXtd(const bool crc, const qint16 value)
 {
-    switch (value)
-    {
-    case TD_4_MKS:
-        Td = 4;
-        time_line1->set_time_step(Td);
-        ui->label_RXtd->setText(QString::fromUtf8("Тд = %1 мкс").arg(Td));
-        break;
-    case TD_8_MKS:
-        Td = 8;
-        time_line1->set_time_step(Td);
-        ui->label_RXtd->setText(QString::fromUtf8("Тд = %1 мкс").arg(Td));
-        break;
-    case TD_16_MKS:
-        Td = 16;
-        time_line1->set_time_step(Td);
-        ui->label_RXtd->setText(QString::fromUtf8("Тд = %1 мкс").arg(Td));
-        break;
-    case TD_32_MKS:
-        Td = 32;
-        time_line1->set_time_step(Td);
-        ui->label_RXtd->setText(QString::fromUtf8("Тд = %1 мкс").arg(Td));
-        break;
-    default:
-        ui->label_RXtd->setText(QString::fromUtf8("Тд - НЕИЗВЕСТНО"));
-        //time_line1->set_time_step(?);
-        break;
-    }
+    Q_UNUSED(crc);
+    Q_UNUSED(value);
+
+    Td = 2;
+    time_line1->set_time_step(Td);
+    ui->label_RXtd->setText(QString::fromUtf8("Тд = %1 мкс").arg(Td));
+
+//    switch (value)
+//    {
+//    case TD_4_MKS:
+//        Td = 4;
+//        time_line1->set_time_step(Td);
+//        ui->label_RXtd->setText(QString::fromUtf8("Тд = %1 мкс").arg(Td));
+//        break;
+//    case TD_8_MKS:
+//        Td = 8;
+//        time_line1->set_time_step(Td);
+//        ui->label_RXtd->setText(QString::fromUtf8("Тд = %1 мкс").arg(Td));
+//        break;
+//    case TD_16_MKS:
+//        Td = 16;
+//        time_line1->set_time_step(Td);
+//        ui->label_RXtd->setText(QString::fromUtf8("Тд = %1 мкс").arg(Td));
+//        break;
+//    case TD_32_MKS:
+//        Td = 32;
+//        time_line1->set_time_step(Td);
+//        ui->label_RXtd->setText(QString::fromUtf8("Тд = %1 мкс").arg(Td));
+//        break;
+//    default:
+//        ui->label_RXtd->setText(QString::fromUtf8("Тд - НЕИЗВЕСТНО"));
+//        //time_line1->set_time_step(?);
+//        break;
+//    }
 }
 //-------------------------------------------------------------------
-void MainWindow::on_showRXku(qint16 value)
+void MainWindow::on_showRXku(const bool crc, const quint16 value)
 {
+    QColor  color = get_color_on_CRC(crc);
+    ui->label_RXku->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
     if (value < 0)
         ui->label_RXku->setText(QString::fromUtf8("КУ = нет данных"));
     else
         ui->label_RXku->setText(QString::fromUtf8("КУ = %1").arg(value + 1));
-}
-//-------------------------------------------------------------------
-void MainWindow::on_showGK(qint16 value)
-{
-    if (value < 0)
-        ui->label_GK->setText(QString::fromUtf8("Счет ГК = нет данных"));
-    else
-        ui->label_GK->setText(QString::fromUtf8("Счет ГК = %1").arg(value));
-}
-//-------------------------------------------------------------------
-void MainWindow::on_showGx(qint16 value)
-{
-    if (value == 0x0F00)
-        ui->label_Gx->setText(QString::fromUtf8("Gx = нет данных"));
-    else
-    {
-        qreal gx = 0.0004625 * ((qreal)value);
-        ui->label_Gx->setText(QString::fromUtf8("Gx = %1").arg(gx));
-    }
-}
-//-------------------------------------------------------------------
-void MainWindow::on_showGy(qint16 value)
-{
-    if (value == 0x0F00)
-        ui->label_Gy->setText(QString::fromUtf8("Gy = нет данных"));
-    else
-    {
-        qreal gy = 0.0004625 * ((qreal)value);
-        ui->label_Gy->setText(QString::fromUtf8("Gy = %1").arg(gy));
-    }
-}
-//-------------------------------------------------------------------
-void MainWindow::on_showGz(qint16 value)
-{
-    if (value == 0x0F00)
-        ui->label_Gz->setText(QString::fromUtf8("Gz = нет данных"));
-    else
-    {
-        qreal gz = 0.0004625 * ((qreal)value);
-        ui->label_Gz->setText(QString::fromUtf8("Gz = %1").arg(gz));
-    }
-}
-//-------------------------------------------------------------------
-void MainWindow::on_showSDstatus(qint16 value)
-{
-    if (value == 0)
-        ui->label_SD_error->setText(QString::fromUtf8("ОШИБКА"));
-    else
-        ui->label_SD_error->setText(QString::fromUtf8("выполнена успешно"));
 }
 //-------------------------------------------------------------------
 void MainWindow::on_VKxClicked(int id)
@@ -1345,52 +1251,18 @@ void MainWindow::on_VKxClicked(int id)
     vkNum4fkd = id - 1;
 }
 //-------------------------------------------------------------------
-#pragma pack(1)
-quint16 MainWindow::calc_rx_data_CRC16(void)
+QColor MainWindow::get_color_on_CRC(const bool crc)
 {
-    const quint16 polinom = 0xA001;//обратный полином x16+x15+x2+x0 -> 8005h
-    quint16 CRC16 = 0x0FFFF;
-    quint16 x;
-
-    quint16 k;
-    for (k = 0; k < VAK_8_NUM_POINTS - 1; k++)
+    if (crc)
     {
-        x = 0x0FF & ((quint16)v8_data[k]);
-        CRC16 ^= x;
-        quint16 i;
-        for (i = 0; i < 8; i++)
-        {
-            if ((CRC16 & 0x1) != 0)
-            {
-                CRC16 >>= 1;
-                CRC16 ^= polinom;
-            }
-            else
-                CRC16 >>= 1;
-        }
-        CRC16 &= 0x0FFFF;
-
-        x = 0x0FF & ((quint16)v8_data[k] >> 8);
-        CRC16 ^= x;
-        for (i = 0; i < 8; i++)
-        {
-            if ((CRC16 & 0x1) != 0)
-            {
-                CRC16 >>= 1;
-                CRC16 ^= polinom;
-            }
-            else
-                CRC16 >>= 1;
-        }
-        CRC16 &= 0x0FFFF;
+        return QColor(Qt::black);
     }
-    x = (quint16)v8_data[VAK_8_NUM_POINTS - 1];
-    CRC16 ^= x;
-    CRC16 &= 0x0FFFF;
-    return CRC16;
+    else
+    {
+        return QColor(Qt::red);
+    }
 }
-#pragma pack(0)
-//-----------------------------------------------------------------------------
+//-------------------------------------------------------------------
 void MainWindow::load_settings(void)
 {
     app_settings->beginGroup(QString::fromUtf8("/Settings"));
@@ -1436,143 +1308,40 @@ void MainWindow::load_settings(void)
     dpsX            = app_settings->value(QString::fromUtf8("/dpsX"),          26                          ).toInt();
     dpsY            = app_settings->value(QString::fromUtf8("/dpsY"),          36                          ).toInt();
 
-    vkNum           = 0;
-    vkNumRx         = 0;
+//    vkNum           = 0;
+//    vkNumRx         = 0;
     vkNum4fkd       = 0;
-    modeNum         = 0;
-    modeNum4fkd     = 0;
+//    modeNum         = 0;
+//    modeNum4fkd     = 0;
 
     max_ampl        = app_settings->value(QString::fromUtf8("/MaxAmpl"),       32000                       ).toInt();
     fkd_level       = app_settings->value(QString::fromUtf8("/FkdLevel"),      0                           ).toInt();
 
-    int mode_count  = app_settings->value(QString::fromUtf8("/ModeCount"),      5                          ).toInt();
-    int izl_type;
-    int freq;
-    int period_num;
-    int Td;
-    int delay;
-    int KU_win_start;
-    int KU_win_width;
-    int i = 0;
-    app_settings->beginGroup(QString::fromUtf8("Mode_%1").arg(i+1));
-        izl_type        = app_settings->value(QString::fromUtf8("/IzlType"),        IZL_MONOPOL ).toInt();
-        freq            = app_settings->value(QString::fromUtf8("/IzlFreq"),        16          ).toInt();
-        period_num      = app_settings->value(QString::fromUtf8("/PeriodNum"),      2           ).toInt();
-        Td              = app_settings->value(QString::fromUtf8("/Td"),             TD_4_MKS    ).toInt();
-        delay           = app_settings->value(QString::fromUtf8("/Delay"),          125         ).toInt();
-        KU_win_start    = app_settings->value(QString::fromUtf8("/KU_win_start"),   20          ).toInt();
-        KU_win_width    = app_settings->value(QString::fromUtf8("/KU_win_width"),   200         ).toInt();
+//    int izl_type;
+//    int freq;
+//    int period_num;
+//    int Td;
+//    int delay;
+//    int KU_win_start;
+//    int KU_win_width;
+//    int i = 0;
+//    app_settings->beginGroup(QString::fromUtf8("Mode_%1").arg(i+1));
+//        izl_type        = app_settings->value(QString::fromUtf8("/IzlType"),        IZL_MONOPOL ).toInt();
+//        freq            = app_settings->value(QString::fromUtf8("/IzlFreq"),        20          ).toInt();
+//        period_num      = app_settings->value(QString::fromUtf8("/PeriodNum"),      2           ).toInt();
+//        Td              = app_settings->value(QString::fromUtf8("/Td"),             TD_2_MKS    ).toInt();
+//        delay           = app_settings->value(QString::fromUtf8("/Delay"),          0           ).toInt();
+//        KU_win_start    = app_settings->value(QString::fromUtf8("/KU_win_start"),   60          ).toInt();
+//        KU_win_width    = app_settings->value(QString::fromUtf8("/KU_win_width"),   290         ).toInt();
 
-        vak32_ctrl_command_class* mode = new vak32_ctrl_command_class(this);
-        mode->on_set_mode_count(mode_count);
-        mode->on_set_mode_number(i);
-        mode->on_set_izl_type(izl_type);
-        mode->on_set_Fsig(freq);
-        mode->on_set_period_number(period_num);
-        mode->on_set_Td(Td);
-        mode->on_set_rx_delay(delay);
-        mode->on_set_KU_window_start(KU_win_start);;
-        mode->on_set_KU_window_width(KU_win_width);
-        mode_list.append(mode);
-    app_settings->endGroup();
-
-    i++;
-    app_settings->beginGroup(QString::fromUtf8("Mode_%1").arg(i+1));
-        izl_type        = app_settings->value(QString::fromUtf8("/IzlType"),        IZL_MONOPOL ).toInt();
-        freq            = app_settings->value(QString::fromUtf8("/IzlFreq"),        8           ).toInt();
-        period_num      = app_settings->value(QString::fromUtf8("/PeriodNum"),      2           ).toInt();
-        Td              = app_settings->value(QString::fromUtf8("/Td"),             TD_8_MKS    ).toInt();
-        delay           = app_settings->value(QString::fromUtf8("/Delay"),          150         ).toInt();
-        KU_win_start    = app_settings->value(QString::fromUtf8("/KU_win_start"),   20          ).toInt();
-        KU_win_width    = app_settings->value(QString::fromUtf8("/KU_win_width"),   400         ).toInt();
-
-        mode = new vak32_ctrl_command_class(this);
-        mode->on_set_mode_count(mode_count);
-        mode->on_set_mode_number(i);
-        mode->on_set_izl_type(izl_type);
-        mode->on_set_Fsig(freq);
-        mode->on_set_period_number(period_num);
-        mode->on_set_Td(Td);
-        mode->on_set_rx_delay(delay);
-        mode->on_set_KU_window_start(KU_win_start);;
-        mode->on_set_KU_window_width(KU_win_width);
-        mode_list.append(mode);
-    app_settings->endGroup();
-
-    i++;
-    app_settings->beginGroup(QString::fromUtf8("Mode_%1").arg(i+1));
-        izl_type        = app_settings->value(QString::fromUtf8("/IzlType"),        IZL_MONOPOL ).toInt();
-        freq            = app_settings->value(QString::fromUtf8("/IzlFreq"),        5           ).toInt();
-        period_num      = app_settings->value(QString::fromUtf8("/PeriodNum"),      2           ).toInt();
-        Td              = app_settings->value(QString::fromUtf8("/Td"),             TD_8_MKS    ).toInt();
-        delay           = app_settings->value(QString::fromUtf8("/Delay"),          400         ).toInt();
-        KU_win_start    = app_settings->value(QString::fromUtf8("/KU_win_start"),   20          ).toInt();
-        KU_win_width    = app_settings->value(QString::fromUtf8("/KU_win_width"),   500         ).toInt();
-
-        mode = new vak32_ctrl_command_class(this);
-        mode->on_set_mode_count(mode_count);
-        mode->on_set_mode_number(i);
-        mode->on_set_izl_type(izl_type);
-        mode->on_set_Fsig(freq);
-        mode->on_set_period_number(period_num);
-        mode->on_set_Td(Td);
-        mode->on_set_rx_delay(delay);
-        mode->on_set_KU_window_start(KU_win_start);;
-        mode->on_set_KU_window_width(KU_win_width);
-        mode_list.append(mode);
-    app_settings->endGroup();
-
-    i++;
-    app_settings->beginGroup(QString::fromUtf8("Mode_%1").arg(i+1));
-        izl_type        = app_settings->value(QString::fromUtf8("/IzlType"),        IZL_DIPOL_1 ).toInt();
-        freq            = app_settings->value(QString::fromUtf8("/IzlFreq"),        5           ).toInt();
-        period_num      = app_settings->value(QString::fromUtf8("/PeriodNum"),      2           ).toInt();
-        Td              = app_settings->value(QString::fromUtf8("/Td"),             TD_8_MKS    ).toInt();
-        delay           = app_settings->value(QString::fromUtf8("/Delay"),          150         ).toInt();
-        KU_win_start    = app_settings->value(QString::fromUtf8("/KU_win_start"),   20          ).toInt();
-        KU_win_width    = app_settings->value(QString::fromUtf8("/KU_win_width"),   400         ).toInt();
-
-        mode = new vak32_ctrl_command_class(this);
-        mode->on_set_mode_count(mode_count);
-        mode->on_set_mode_number(i);
-        mode->on_set_izl_type(izl_type);
-        mode->on_set_Fsig(freq);
-        mode->on_set_period_number(period_num);
-        mode->on_set_Td(Td);
-        mode->on_set_rx_delay(delay);
-        mode->on_set_KU_window_start(KU_win_start);;
-        mode->on_set_KU_window_width(KU_win_width);
-        mode_list.append(mode);
-    app_settings->endGroup();
-
-    i++;
-    app_settings->beginGroup(QString::fromUtf8("Mode_%1").arg(i+1));
-        izl_type        = app_settings->value(QString::fromUtf8("/IzlType"),        IZL_DIPOL_2 ).toInt();
-        freq            = app_settings->value(QString::fromUtf8("/IzlFreq"),        5           ).toInt();
-        period_num      = app_settings->value(QString::fromUtf8("/PeriodNum"),      2           ).toInt();
-        Td              = app_settings->value(QString::fromUtf8("/Td"),             TD_8_MKS    ).toInt();
-        delay           = app_settings->value(QString::fromUtf8("/Delay"),          150         ).toInt();
-        KU_win_start    = app_settings->value(QString::fromUtf8("/KU_win_start"),   20          ).toInt();
-        KU_win_width    = app_settings->value(QString::fromUtf8("/KU_win_width"),   400         ).toInt();
-
-        mode = new vak32_ctrl_command_class(this);
-        mode->on_set_mode_count(mode_count);
-        mode->on_set_mode_number(i);
-        mode->on_set_izl_type(izl_type);
-        mode->on_set_Fsig(freq);
-        mode->on_set_period_number(period_num);
-        mode->on_set_Td(Td);
-        mode->on_set_rx_delay(delay);
-        mode->on_set_KU_window_start(KU_win_start);;
-        mode->on_set_KU_window_width(KU_win_width);
-        mode_list.append(mode);
-    app_settings->endGroup();
+//    app_settings->endGroup();
 
     app_settings->endGroup();
 }
 //-----------------------------------------------------------------------------
 void MainWindow::save_settings(void)
 {
+/*
     app_settings->beginGroup(QString::fromUtf8("/Settings"));
 
     app_settings->setValue(QString::fromUtf8("/OperatorName"), OperatorName         );
@@ -1621,59 +1390,9 @@ void MainWindow::save_settings(void)
         app_settings->setValue(QString::fromUtf8("/KU_win_width"),   modeX->get_KU_window_width());
     app_settings->endGroup();
 
-    i++;
-    mode++;
-    app_settings->beginGroup(QString::fromUtf8("Mode_%1").arg(i+1));
-        modeX = *mode;
-        app_settings->setValue(QString::fromUtf8("/IzlType"),        modeX->get_izl_type()       );
-        app_settings->setValue(QString::fromUtf8("/IzlFreq"),        modeX->get_Fsig()           );
-        app_settings->setValue(QString::fromUtf8("/PeriodNum"),      modeX->get_period_number()  );
-        app_settings->setValue(QString::fromUtf8("/Td"),             modeX->get_Td()             );
-        app_settings->setValue(QString::fromUtf8("/Delay"),          modeX->get_rx_delay()       );
-        app_settings->setValue(QString::fromUtf8("/KU_win_start"),   modeX->get_KU_window_start());
-        app_settings->setValue(QString::fromUtf8("/KU_win_width"),   modeX->get_KU_window_width());
-    app_settings->endGroup();
-
-    i++;
-    mode++;
-    app_settings->beginGroup(QString::fromUtf8("Mode_%1").arg(i+1));
-        modeX = *mode;
-        app_settings->setValue(QString::fromUtf8("/IzlType"),        modeX->get_izl_type()       );
-        app_settings->setValue(QString::fromUtf8("/IzlFreq"),        modeX->get_Fsig()           );
-        app_settings->setValue(QString::fromUtf8("/PeriodNum"),      modeX->get_period_number()  );
-        app_settings->setValue(QString::fromUtf8("/Td"),             modeX->get_Td()             );
-        app_settings->setValue(QString::fromUtf8("/Delay"),          modeX->get_rx_delay()       );
-        app_settings->setValue(QString::fromUtf8("/KU_win_start"),   modeX->get_KU_window_start());
-        app_settings->setValue(QString::fromUtf8("/KU_win_width"),   modeX->get_KU_window_width());
-    app_settings->endGroup();
-
-    i++;
-    mode++;
-    app_settings->beginGroup(QString::fromUtf8("Mode_%1").arg(i+1));
-        modeX = *mode;
-        app_settings->setValue(QString::fromUtf8("/IzlType"),        modeX->get_izl_type()       );
-        app_settings->setValue(QString::fromUtf8("/IzlFreq"),        modeX->get_Fsig()           );
-        app_settings->setValue(QString::fromUtf8("/PeriodNum"),      modeX->get_period_number()  );
-        app_settings->setValue(QString::fromUtf8("/Td"),             modeX->get_Td()             );
-        app_settings->setValue(QString::fromUtf8("/Delay"),          modeX->get_rx_delay()       );
-        app_settings->setValue(QString::fromUtf8("/KU_win_start"),   modeX->get_KU_window_start());
-        app_settings->setValue(QString::fromUtf8("/KU_win_width"),   modeX->get_KU_window_width());
-    app_settings->endGroup();
-
-    i++;
-    mode++;
-    app_settings->beginGroup(QString::fromUtf8("Mode_%1").arg(i+1));
-        modeX = *mode;
-        app_settings->setValue(QString::fromUtf8("/IzlType"),        modeX->get_izl_type()       );
-        app_settings->setValue(QString::fromUtf8("/IzlFreq"),        modeX->get_Fsig()           );
-        app_settings->setValue(QString::fromUtf8("/PeriodNum"),      modeX->get_period_number()  );
-        app_settings->setValue(QString::fromUtf8("/Td"),             modeX->get_Td()             );
-        app_settings->setValue(QString::fromUtf8("/Delay"),          modeX->get_rx_delay()       );
-        app_settings->setValue(QString::fromUtf8("/KU_win_start"),   modeX->get_KU_window_start());
-        app_settings->setValue(QString::fromUtf8("/KU_win_width"),   modeX->get_KU_window_width());
-    app_settings->endGroup();
 
     app_settings->endGroup();
+*/
 }
 //-----------------------------------------------------------------------------
 /*

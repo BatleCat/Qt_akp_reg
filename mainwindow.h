@@ -1,4 +1,4 @@
-//-------------------------------------------------------------------
+﻿//-------------------------------------------------------------------
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 //-------------------------------------------------------------------
@@ -15,21 +15,25 @@
 #include <QLabel>
 #include <QSettings>
 #include <QButtonGroup>
+#include <QThread>
+//-------------------------------------------------------------------
+#include "akp_class.h"
+#include "akp_check_state.h"
 //-------------------------------------------------------------------
 #include "dialog_setup.h"
 #include "dialog_well_info.h"
-#include "dialog_tool_mode.h"
-#include "vak32_ctl_cmd.h"
+//-------------------------------------------------------------------
 #include "vak_8.h"
 #include "vak_8_2pc.h"
-#include "velocity.h"
 //#include "qt_vak_8u_vk.h"
+//-------------------------------------------------------------------
+#include "qt_vk.h"
+#include "qt_bigreed.h"
+#include "qt_time_line.h"
 #include "qt_vak_32_fkd.h"
 #include "qt_deptcol.h"
 #include "qt_ml.h"
-#include "qt_time_line.h"
-#include "qt_bigreed.h"
-#include "qt_vk.h"
+#include "velocity.h"
 //-------------------------------------------------------------------
 namespace Ui {
 class MainWindow;
@@ -45,28 +49,25 @@ public:
 //    bool eventFilter(QObject *target, QEvent *event);
 
 signals:
-    void cmdSetDepth(void);
-    void vak32CmdSend(void);
-    void setPocketCount(qint32 count);
-    void setBadPocketCount(qint32 count);
-    void setDept(qint32 dept);
-    void setML(bool ml);
+//    void cmdStartMeserment(void);
+//    void cmdStopMeserment(void);
+
+    void cmdSetDepth(const qint32 dept_cm);
+    void cmdSetDeptStep(const qint32 dept_step_cm);
+//    void vak32CmdSend(void);
+//    void setPocketCount(qint32 count);
+//    void setBadPocketCount(qint32 count);
+    void showDept(const qint32 dept);
+//    void setML(bool ml);
     void showNewData(void);
 
-    void showIZLtype(qint16 value);
-    void showIZLfreq(qint16 value);
-    void showIZLnum(qint16 value);
+//    void showIZLtype(qint16 value);
+//    void showIZLfreq(qint16 value);
+//    void showIZLnum(qint16 value);
 
-    void showRXdelay(qint16 value);
-    void showRXtd(qint16 value);
-    void showRXku(qint16 value);
-
-    void showGK(qint16 value);
-    void showGx(qint16 value);
-    void showGy(qint16 value);
-    void showGz(qint16 value);
-
-    void showSDstatus(qint16 value);
+//    void showRXdelay(qint16 value);
+//    void showRXtd(qint16 value);
+//    void showRXku(qint16 value);
 
     void changeFKDstep(int newStep);
     void changeDpsX(int newDpsX);
@@ -78,15 +79,19 @@ signals:
 public slots:
 
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow*     ui;
 
     QSettings*          app_settings;
     Dialog_setup*       dialogSetup;
     Dialog_well_info*   dialogWellInfo;
-    Dialog_Tool_Mode*   dialogToolMode;
 
     QButtonGroup*       buttonGroup;
 
+    //-------------------------------------------------------------------
+    akp_class           akp;
+    QThread*            akp_thread;
+    akp_check_state     check_state;
+    //-------------------------------------------------------------------
     CVELOCITY*          velocity;
     //-------------------------------------------------------------------
     QGraphicsScene*     scene_vk;
@@ -95,25 +100,15 @@ private:
     Qt_biGREED*         vk1_greed;
     Qt_TIME_LINE*       time_line1;
     //-------------------------------------------------------------------
-    QGraphicsScene*     scene_ctl1_vk;
-    QGraphicsView*      view_ctl1_vk;
-    Qt_VK*              ctl1_vk;
-    Qt_biGREED*         ctl1_vk_greed;
+    QGraphicsScene*     scene_ctl_vk1;
+    QGraphicsView*      view_ctl_vk1;
+    Qt_VK*              ctl_vk1;
+    Qt_biGREED*         ctl_vk1_greed;
 
-    QGraphicsScene*     scene_ctl2_vk;
-    QGraphicsView*      view_ctl2_vk;
-    Qt_VK*              ctl2_vk;
-    Qt_biGREED*         ctl2_vk_greed;
-
-    QGraphicsScene*     scene_ctl3_vk;
-    QGraphicsView*      view_ctl3_vk;
-    Qt_VK*              ctl3_vk;
-    Qt_biGREED*         ctl3_vk_greed;
-
-    QGraphicsScene*     scene_ctl4_vk;
-    QGraphicsView*      view_ctl4_vk;
-    Qt_VK*              ctl4_vk;
-    Qt_biGREED*         ctl4_vk_greed;
+    QGraphicsScene*     scene_ctl_vk2;
+    QGraphicsView*      view_ctl_vk2;
+    Qt_VK*              ctl_vk2;
+    Qt_biGREED*         ctl_vk2_greed;
     //-------------------------------------------------------------------
     QGraphicsScene*     scene_fkd;
     QGraphicsView*      view_fkd;
@@ -133,26 +128,39 @@ private:
     QLabel*             label_Depth;
     QLabel*             label_Distance;
     QLabel*             label_Velocity;
-    QLabel*             label_CMD_CRC_check;
-    bool                bflag_CMD_CRC;
-    QLabel*             label_data_CRC_check;
-    bool                bflag_data_CRC;
+
+    QLabel*             label_CRC1_check;
+    bool                bflag_CRC1_Ok;
+    QLabel*             label_CRC2_check;
+    bool                bflag_CRC2_Ok;
+    QLabel*             label_CRC3_check;
+    bool                bflag_CRC3_Ok;
+    QLabel*             label_CRC4_check;
+    bool                bflag_CRC4_Ok;
+    QLabel*             label_CRC5_check;
+    bool                bflag_CRC5_Ok;
+    QLabel*             label_CRC6_check;
+    bool                bflag_CRC6_Ok;
+    QLabel*             label_CRC7_check;
+    bool                bflag_CRC7_Ok;
+    QLabel*             label_CRC8_check;
+    bool                bflag_CRC8_Ok;
 
     QLabel*             label_ML;
 
-    QTimer              timer;
-    int                 timer_id;
-    int                 timer_interval;
+//    QTimer              timer;
+//    int                 timer_id;
+//    int                 timer_interval;
 
     int                 port;
     short int           p_count;
     short int           cmd_id;
     QUdpSocket          udp_socket;
     QHostAddress        host;
-    TVAK_8_DATA         v8_data;
+//    TVAK_8_DATA         v8_data;
 
-    QVector<vak32_ctrl_command_class*>              mode_list;
-    QVector<vak32_ctrl_command_class*>::iterator    mode;
+//    QVector<vak32_ctrl_command_class*>              mode_list;
+//    QVector<vak32_ctrl_command_class*>::iterator    mode;
 
     QString OperatorName;
     QString WellNo;
@@ -181,11 +189,11 @@ private:
     int     dpsX;
     int     dpsY;
 
-    int     vkNum;
-    int     vkNumRx;
+//    int     vkNum;
+//    int     vkNumRx;
     int     vkNum4fkd;
-    int     modeNum;
-    int     modeNum4fkd;
+//    int     modeNum;
+//    int     modeNum4fkd;
 
     int     max_ampl;
     int     fkd_level;
@@ -195,14 +203,13 @@ private:
     qint32  blk_count;
     qint32  bad_blk;
 
-    quint16 calc_rx_data_CRC16(void);
-
+    QColor  get_color_on_CRC(const bool crc);
     void    load_settings(void);
     void    save_settings(void);
 
 private slots:
     void on_cmdSetDepth(void);
-    void on_vak32CmdSend(void);
+//    void on_vak32CmdSend(void);
     void on_udpDataRx(void);
 
     void on_pushButtonSettings(void);
@@ -210,9 +217,9 @@ private slots:
     void on_pushButtonStop(void);
     void on_pushButtonRecord(void);
     void on_dialogSetup(void);
-    void on_dialogToolModeCmdRestoreFolder(void);
-    void on_dialogToolModeCmdChangeToolModes(void);
-    void on_dialogToolModeCmdRestoreToolModes(void);
+//    void on_dialogToolModeCmdRestoreFolder(void);
+//    void on_dialogToolModeCmdChangeToolModes(void);
+//    void on_dialogToolModeCmdRestoreToolModes(void);
 
     void on_cmdIncAmpl(void);
     void on_cmdDecAmpl(void);
@@ -220,26 +227,19 @@ private slots:
     void on_cmdIncLevel(void);
     void on_cmdDecLevel(void);
 
-    void on_setPocketCount(qint32 count);
-    void on_setBadPocketCount(qint32 count);
-    void on_setDept(qint32 dept);
-    void on_setML(bool ml);
-    void on_showNewData(void);
+    void on_showPocketCount(const int count);
+    void on_showBadPocketCount(const int count);
+    void on_showDept(const qint32 dept);
+    void on_showML(const bool ml);
+    void on_showNewData(const quint16 vk_no, const TVAK8_VK &vk);
 
-    void on_showIZLtype(qint16 value);
-    void on_showIZLfreq(qint16 value);
-    void on_showIZLnum(qint16 value);
+    void on_showIZLtype(const bool crc, const quint16 value);
+    void on_showIZLfreq(const bool crc, const quint16 value);
+    void on_showIZLnum(const bool crc, const quint16 value);
 
-    void on_showRXdelay(qint16 value);
-    void on_showRXtd(qint16 value);
-    void on_showRXku(qint16 value);
-
-    void on_showGK(qint16 value);
-    void on_showGx(qint16 value);
-    void on_showGy(qint16 value);
-    void on_showGz(qint16 value);
-
-    void on_showSDstatus(qint16 value);
+    void on_showRXdelay(const bool crc, const qint16 value);
+    void on_showRXtd(const bool crc, const qint16 value);
+    void on_showRXku(const bool crc, const quint16 value);
 
     void on_VKxClicked(int id);
 };
