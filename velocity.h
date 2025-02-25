@@ -1,4 +1,4 @@
-//---------------------------------------------------------------------------
+﻿//---------------------------------------------------------------------------
 #ifndef velocityH
 #define velocityH
 //---------------------------------------------------------------------------
@@ -22,8 +22,8 @@ public:
   explicit CVELOCITY(QObject *parent = 0);
   ~CVELOCITY(void);
 
-  void add_dept_point(qint32 new_dept);
-  qint16  get_velocity(void);
+  void   add_dept_point(const qint32 new_dept);
+  qint16 get_velocity  (void);
 };
 //---------------------------------------------------------------------------
 #endif //velocityH
