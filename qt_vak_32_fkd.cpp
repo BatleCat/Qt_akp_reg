@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------------
 #include <QGraphicsObject>
 #include <QGraphicsScene>
 #include <QList>
@@ -237,49 +237,49 @@ void CVAK32_FKD::delete_no_use_points(void)
     }
 }
 //-----------------------------------------------------------------------------
-void CVAK32_FKD::on_changeBaseLinesShift(qint16 newShift)
+void CVAK32_FKD::on_changeBaseLinesShift(const qint16 newShift)
 {
     line_shift = newShift;
     emit update();
 }
 //-----------------------------------------------------------------------------
-void CVAK32_FKD::on_changeDept(qint32 newDept)
+void CVAK32_FKD::on_changeDept(const qint32 newDept)
 {
     curentDept = newDept;
     emit update();
 }
 //-----------------------------------------------------------------------------
-void CVAK32_FKD::on_changeDpsX(int newDpsX)
+void CVAK32_FKD::on_changeDpsX(const int newDpsX)
 {
     dpsX = newDpsX;
     emit update();
 }
 //-----------------------------------------------------------------------------
-void CVAK32_FKD::on_changeDpsY(int newDpsY)
+void CVAK32_FKD::on_changeDpsY(const int newDpsY)
 {
     dpsY = newDpsY;
     emit update();
 }
 //-----------------------------------------------------------------------------
-void CVAK32_FKD::on_changeDeptScale(int newScale)
+void CVAK32_FKD::on_changeDeptScale(const int newScale)
 {
     scale = newScale;
     emit update();
 }
 //-----------------------------------------------------------------------------
-void CVAK32_FKD::on_changeTimeScale(int newScale)
+void CVAK32_FKD::on_changeTimeScale(const int newScale)
 {
     x_scale = newScale;
     emit update();
 }
 //-----------------------------------------------------------------------------
-void CVAK32_FKD::on_changeLevel(int newLevel)
+void CVAK32_FKD::on_changeLevel(const int newLevel)
 {
     level = newLevel;
     emit update();
 }
 //-----------------------------------------------------------------------------
-void CVAK32_FKD::on_changeGreedStepX(int newStep)
+void CVAK32_FKD::on_changeGreedStepX(const int newStep)
 {
     step_x_line = newStep;
     emit update();

@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------------
 #ifndef QT_CVAK32_FKD_H
 #define QT_CVAK32_FKD_H
 //-----------------------------------------------------------------------------
@@ -78,15 +78,15 @@ signals:
     void update(void);
 
 public slots:
-    void on_changeBaseLinesShift(qint16 newShift);
-    void on_changeDept(qint32 newDept);
-    void on_changeDpsX(int newDpsX);
-    void on_changeDpsY(int newDpsY);
-    void on_changeDeptScale(int newScale);
-    void on_changeTimeScale(int newScale);
-    void on_changeLevel(int newLevel);
-    void on_changeGreedStepX(int newStep);
-    void on_setDirectionUp(void);
+    void on_changeBaseLinesShift(const qint16 newShift);
+    void on_changeDept(const qint32 newDept);
+    void on_changeDpsX(const int    newDpsX);
+    void on_changeDpsY(const int    newDpsY);
+    void on_changeDeptScale (const int newScale);
+    void on_changeTimeScale (const int newScale);
+    void on_changeLevel     (const int newLevel);
+    void on_changeGreedStepX(const int newStep);
+    void on_setDirectionUp  (void);
     void on_setDirectionDown(void);
 
 };
