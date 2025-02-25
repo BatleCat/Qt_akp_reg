@@ -47,17 +47,17 @@ void akp_class::send_cmd(TCtrlPocket &ctl_pocket)
 //#pragma pack()
 //-----------------------------------------------------------------------------
 //#pragma pack(1)
-void akp_class::set_dept_step(const qint32 step_cm)
+void akp_class::on_setDeptStep(const qint32 step_cm)
  {
     dept_step_cm = step_cm;
 
     if (dept_step_cm == 0) timer_interval = 500;
-    else timer_interval = 50;
+    else timer_interval = 125;   // не меньше 104 мс !
 }
 //#pragma pack()
 //-----------------------------------------------------------------------------
 //#pragma pack(1)
-void akp_class::on_cmdSetDepth(qint32 dept_cm)
+void akp_class::on_cmdSetDepth(const qint32 dept_cm)
 {
     TCtrlPocket ctl_pocket;
     memset((char*)&ctl_pocket, 0, sizeof(TCtrlPocket));

@@ -75,7 +75,6 @@ private:
     void    send_cmd(TCtrlPocket &ctl_pocket);
 
 public:
-    void    set_dept_step(const qint32 step_cm);
     qint32  get_dept_step(void)                 {return dept_step_cm;}
 
 //    void    set_timer_interval(int time_ms)     {timer_interval = time_ms;}
@@ -93,8 +92,9 @@ private slots:
 public slots:
     void start              (void);
 
-    void on_cmdSetDepth     (qint32 dept_cm);
+    void on_cmdSetDepth     (const qint32 dept_cm);
     void on_cmdReadDepth    (void);
+    void on_setDeptStep     (const qint32 step_cm);
 
     void on_cmdDoSingleMeserment (void);
     void on_cmdStartMeserment    (void);
