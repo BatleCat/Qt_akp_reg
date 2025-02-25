@@ -703,6 +703,18 @@ void akp_check_state::onDataUpdate(const uint blk_cnt, const TDataPocket &data)
             emit CRC8_update(CRC8_OK);
         }
         //---------------------------------------------------------------------
+        {
+            int     i;
+            quint16 x;
+            for (i = 0; i < VAK_8_NUM_POINTS; i++)
+            {
+                x = 0x3FFF & data.data[i];
+                if ( 0 == (x & 0x2000) ) vk[i] = x;
+                else vk[i] = -x;
+            }
+            emit VK_update(get_vk_number(), vk);
+        }
+        //---------------------------------------------------------------------
     }
     //-------------------------------------------------------------------------
 //    emit logMessage(QString::fromUtf8("Пакет %1 : Счетчик переданных пакетов не изменился.").arg(blk_cnt));

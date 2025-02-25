@@ -10,6 +10,8 @@
 //-----------------------------------------------------------------------------
 #include "vak_8_2pc.h"
 //-----------------------------------------------------------------------------
+typedef qint16 TVAK8_VK[VAK_8_NUM_POINTS];
+//-----------------------------------------------------------------------------
 class akp_check_state : public QObject
 {
     Q_OBJECT
@@ -28,6 +30,8 @@ private:
     int     good_block_cnt;
 
     int     old_bad_block_cnt;
+
+    TVAK8_VK vk;
 
     quint16 frame_label;
     quint16 vk_number;
@@ -199,7 +203,7 @@ signals:
 
     void good_blk_cnt_update        (const int cnt);
     void bad_blk_cnt_update         (const int cnt);
-//    void dataUpdate(const int blk_cnt, const TDataPocket &data);
+    void VK_update(const quint16 vk_no, const TVAK8_VK &vk);
 
 public slots:
     void start(void);
