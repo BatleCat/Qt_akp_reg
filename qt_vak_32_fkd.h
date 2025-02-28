@@ -10,12 +10,12 @@
 #include <QWidget>
 #include <QList>
 //-----------------------------------------------------------------------------
-#include "qt_vak_32_file.h"
+#include "vak_8.h"
 //-----------------------------------------------------------------------------
 typedef struct
 {
   qint32       dept;
-  TVAK32_WAVE  vk_data;
+  TVAK8_WAVE   vk_data;
 } TVK_POINT;
 //-----------------------------------------------------------------------------
 //класс построения ФКД
@@ -44,7 +44,7 @@ public:
     void    setColorGreed(QColor color) {clGreed = color;}
     QColor  colorGreed() const {return clGreed;}
 
-    void addData(qint32 dept, PVAK32_WAVE data);
+    void addData(const qint32 dept, const TVAK8_WAVE &data);
     void clearData(void);
     void delete_no_use_points(void);
 

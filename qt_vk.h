@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------------
 #ifndef QT_VK_H
 #define QT_VK_H
 //-----------------------------------------------------------------------------
@@ -11,7 +11,7 @@
 #include <QFont>
 #include <QString>
 //-----------------------------------------------------------------------------
-#include "qt_vak_32_file.h"
+#include "vak_8.h"
 //-----------------------------------------------------------------------------
 //класс построения Волновых Картинок
 //-----------------------------------------------------------------------------
@@ -21,7 +21,7 @@ class Qt_VK: public QGraphicsObject
 public:
     explicit Qt_VK(const QRect &rect, QGraphicsScene *scene);
 
-    void            AddData(const TVAK32_WAVE &data);
+    void            AddData(const TVAK8_WAVE &data);
     virtual QRectF  boundingRect() const {return QRectF(QRect(0, 0, Width, Height));}
     virtual void    paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
@@ -81,7 +81,7 @@ private:
     QFont   font;
     QString Caption;
 
-    TVAK32_WAVE vk_data;
+    TVAK8_WAVE vk_data;
 
 signals:
     void update(void);

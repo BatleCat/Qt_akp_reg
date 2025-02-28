@@ -118,7 +118,7 @@ void CVAK32_FKD::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
             pvk_point = (TVK_POINT*)list->at(list->count() - i - 1);
             x1 = 0;
             y2 = ((pvk_point->dept - top_dept) * dpsY) / scale;
-            for(k = 0; k < VAK32_WAVE_NUM_POINTS; k++)
+            for(k = 0; k < VAK_8_NUM_POINTS; k++)
             {
                 x2 = x1 + x_scale;
                 if(pvk_point->vk_data[k] > level)
@@ -187,7 +187,7 @@ void CVAK32_FKD::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 }
 //-----------------------------------------------------------------------------
 #pragma pack(1)
-void CVAK32_FKD::addData(qint32 dept, PVAK32_WAVE data)
+void CVAK32_FKD::addData(const qint32 dept, const TVAK8_WAVE &data)
 {
     pvk_point = new(TVK_POINT);
     pvk_point->dept = dept;
@@ -199,7 +199,7 @@ void CVAK32_FKD::addData(qint32 dept, PVAK32_WAVE data)
       else pvk_point->vk_data[i] = (*data)[i] & 0x1FFF;
     }
 */
-    memcpy(&(pvk_point->vk_data), data, sizeof(TVAK32_WAVE));
+    memcpy(&(pvk_point->vk_data), data, sizeof(TVAK8_WAVE));
     list->append(pvk_point);
     emit update();
 }

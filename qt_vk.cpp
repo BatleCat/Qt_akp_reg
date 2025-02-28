@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------------
 #include <QGraphicsObject>
 #include <QGraphicsScene>
 #include <QRectF>
@@ -31,16 +31,16 @@ Qt_VK::Qt_VK(const QRect &rect, QGraphicsScene *scene):
     font(QFont()),
     Caption(QString::fromUtf8("Волновая картинка"))
 {
-    memset(&vk_data, 0, sizeof(TVAK32_WAVE));
+    memset(&vk_data, 0, sizeof(TVAK8_WAVE));
     setPos(rect.topLeft());
     scene->addItem(this);
 }
 //-----------------------------------------------------------------------------
 #pragma pack(1)
-void Qt_VK::AddData(const TVAK32_WAVE &data)
+void Qt_VK::AddData(const TVAK8_WAVE &data)
 {
     int i;
-    for (i = 0; i < VAK32_WAVE_NUM_POINTS; i++)
+    for (i = 0; i < VAK_8_NUM_POINTS; i++)
     {
         vk_data[i] = data[i];
 /*
@@ -122,7 +122,7 @@ void Qt_VK::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     if (y1 > Height) y1 = Height;
     if (y1 < 0) y1 = 0;
 
-    for(int i = 1; i < VAK32_WAVE_NUM_POINTS; i++)
+    for(int i = 1; i < VAK_8_NUM_POINTS; i++)
     {
         x2 = x1 + x_scale;
         y2 = zero - vk_data[i] / y_scale;
