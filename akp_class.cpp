@@ -144,6 +144,8 @@ void akp_class::onUdpDataRx(void)
         data_list << datagram;
 */
         TDataPocket* pdata = new(TDataPocket);
+//        qDebug() << QString::fromUtf8("AKP class : ") << pdata;
+
         udp_socket->readDatagram((char*) pdata, sizeof(TDataPocket), &senderAdr, &senderPort);
 
         pdata->id         = ntohs(pdata->id);
@@ -161,6 +163,7 @@ void akp_class::onUdpDataRx(void)
 
         emit dataUpdate(rx_blk_count, (*pdata));
 
+        delete pdata;
     }
 
 }
