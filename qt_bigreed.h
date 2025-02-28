@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------------
+﻿//-----------------------------------------------------------------------------
 #ifndef QT_BIGREED_H
 #define QT_BIGREED_H
 //-----------------------------------------------------------------------------
@@ -37,6 +37,12 @@ public:
     void    set_num_x_line(int num_line);
     void    set_num_y_line(int num_line);
     void    set_step_x_line(int step);
+
+    int     get_num_x_line()  const {return num_x_line; }
+    int     get_num_y_line()  const {return num_y_line; }
+    int     get_step_x_line() const {return step_x_line;}
+    int     get_step_y_line() const {return step_y_line;}
+
 
 private:
     int     Width;          //ширина
