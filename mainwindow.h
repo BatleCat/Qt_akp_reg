@@ -208,9 +208,9 @@ private:
     void    save_settings(void);
 
 private slots:
-    void on_cmdSetDepth(void);
+//    void on_cmdSetDepth(void);
 //    void on_vak32CmdSend(void);
-    void on_udpDataRx(void);
+//    void on_udpDataRx(void);
 
     void on_pushButtonSettings(void);
     void on_pushButtonStart(void);
@@ -227,21 +227,31 @@ private slots:
     void on_cmdIncLevel(void);
     void on_cmdDecLevel(void);
 
-    void on_showPocketCount(const int count);
-    void on_showBadPocketCount(const int count);
-    void on_showDept(const qint32 dept);
-    void on_showML(const bool ml);
-    void on_showNewData(const quint16 vk_no, const TVAK8_VK &vk);
+    void on_showPocketCount     (const int count);
+    void on_showBadPocketCount  (const int count);
+    void on_showDept    (const qint32 dept);
+    void on_showML      (const bool ml);
+    void on_showNewData (const quint16 vk_no, const TVAK8_WAVE &vk);
 
-    void on_showIZLtype(const bool crc, const quint16 value);
-    void on_showIZLfreq(const bool crc, const quint16 value);
-    void on_showIZLnum(const bool crc, const quint16 value);
+    void on_showIZLtype (const bool crc, const quint16 value);
+    void on_showIZLfreq (const bool crc, const quint16 value);
+    void on_showIZLnum  (const bool crc, const quint16 value);
 
-    void on_showRXdelay(const bool crc, const qint16 value);
-    void on_showRXtd(const bool crc, const qint16 value);
-    void on_showRXku(const bool crc, const quint16 value);
+    void on_showRXdelay (const bool crc, const quint16 value);
+    void on_showRXtd    (const bool crc, const quint16 value);
+    void on_showRXku    (const bool crc, const quint16 value);
 
     void on_VKxClicked(int id);
+
+    void on_showCRC1 (const bool crc);
+    void on_showCRC2 (const bool crc);
+    void on_showCRC3 (const bool crc);
+    void on_showCRC4 (const bool crc);
+    void on_showCRC5 (const bool crc);
+    void on_showCRC6 (const bool crc);
+    void on_showCRC7 (const bool crc);
+    void on_showCRC8 (const bool crc);
+
 };
 //-------------------------------------------------------------------
 #endif // MAINWINDOW_H

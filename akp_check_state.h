@@ -8,9 +8,8 @@
 #include <QObject>
 #include <QString>
 //-----------------------------------------------------------------------------
+#include "vak_8.h"
 #include "vak_8_2pc.h"
-//-----------------------------------------------------------------------------
-typedef qint16 TVAK8_VK[VAK_8_NUM_POINTS];
 //-----------------------------------------------------------------------------
 class akp_check_state : public QObject
 {
@@ -31,12 +30,16 @@ private:
 
     int     old_bad_block_cnt;
 
-    TVAK8_VK vk;
+    TVAK8_WAVE vk;
 
     quint16 frame_label;
     quint16 vk_number;
     quint16 rx_type;
+    quint16 Td;
     quint16 Fsig;
+    quint16 izl_type;
+    quint16 izl_ampl;
+    quint16 izl_periods;
     quint16 rx_delay;
     quint16 Ku;
     quint16 tool_type;
@@ -62,7 +65,11 @@ private:
 
     quint16 old_vk_number;
     quint16 old_rx_type;
+    quint16 old_Td;
     quint16 old_Fsig;
+    quint16 old_izl_type;
+    quint16 old_izl_ampl;
+    quint16 old_izl_periods;
     quint16 old_rx_delay;
     quint16 old_Ku;
     quint16 old_tool_type;
@@ -113,29 +120,33 @@ public:
     bool    get_ml_state(void)  {return ml;     }
     qint32  get_dept(void)      {return dept_cm;}
 
-    int     get_bad_block_count(void)           {return bad_block_cnt;}
-    int     get_good_block_count(void)          {return good_block_cnt;}
+    int     get_bad_block_count(void)           {return bad_block_cnt;  }
+    int     get_good_block_count(void)          {return good_block_cnt; }
     void    clear_block_count(void);
 
     quint16 get_frame_label(void)               {return frame_label;}
-    quint16 get_vk_number(void)                 {return vk_number;}
-    quint16 get_rx_type(void)                   {return rx_type;}
-    quint16 get_Fsig(void)                      {return Fsig;}
-    quint16 get_rx_delay(void)                  {return rx_delay;}
-    quint16 get_Ku(void)                        {return Ku;}
-    quint16 get_tool_type(void)                 {return tool_type;}
+    quint16 get_vk_number(void)                 {return vk_number;  }
+    quint16 get_rx_type(void)                   {return rx_type;    }
+    quint16 get_Td(void)                        {return Td;         }
+    quint16 get_Fsig(void)                      {return Fsig;       }
+    quint16 get_izl_type(void)                  {return izl_type;   }
+    quint16 get_izl_ampl(void)                  {return izl_ampl;   }
+    quint16 get_izl_periods(void)               {return izl_periods;}
+    quint16 get_rx_delay(void)                  {return rx_delay;   }
+    quint16 get_Ku(void)                        {return Ku;         }
+    quint16 get_tool_type(void)                 {return tool_type;  }
     quint16 get_mode_number(void)               {return mode_number;}
-    quint16	get_mode_count(void)                {return mode_count;}
+    quint16	get_mode_count(void)                {return mode_count; }
     quint16 get_vk_calibration_amplitude(void)  {return vk_calibration_amplitude;}
-    quint16 get_vk_calibration_offset(void)     {return vk_calibration_offset;}
-    quint16 get_tool_no(void)                   {return tool_no;}
-    quint16 get_soft_version_major(void)        {return soft_version_major;}
-    quint16 get_soft_version_minor(void)        {return soft_version_minor;}
-    quint32 get_timer_clk(void)                 {return timer_clk;}
-    quint32 get_time_start_meserment(void)      {return time_start_meserment;}
-    quint32 get_time_stop_meserment(void)       {return time_stop_meserment;}
+    quint16 get_vk_calibration_offset(void)     {return vk_calibration_offset;   }
+    quint16 get_tool_no(void)                   {return tool_no;            }
+    quint16 get_soft_version_major(void)        {return soft_version_major; }
+    quint16 get_soft_version_minor(void)        {return soft_version_minor; }
+    quint32 get_timer_clk(void)                 {return timer_clk;          }
+    quint32 get_time_start_meserment(void)      {return time_start_meserment; }
+    quint32 get_time_stop_meserment(void)       {return time_stop_meserment;  }
 
-    bool is_CRC_OK(void)                         {return CRC_OK;}
+    bool is_CRC_OK(void)                         {return CRC_OK; }
 
     bool is_CRC_OK_for_frame_label(void)         {return CRC1_OK;}
     bool is_CRC_OK_for_vk_number(void)           {return CRC1_OK;}
@@ -171,12 +182,16 @@ signals:
 
     void frame_sync_error           (void);
     void vk_number_update           (const bool crc, const quint16 vk_number);
-    void rx_type_update             (const bool crc, const quint16 rx_type);
-    void Ku_update                  (const bool crc, const quint16 Ku);
+    void rx_type_update             (const bool crc, const quint16 rx_type  );
+    void Td_update                  (const bool crc, const quint16 Td       );
+    void Ku_update                  (const bool crc, const quint16 Ku       );
 
-    void rx_delay_update            (const bool crc, const quint16 rx_delay);
-    void Fsig_update                (const bool crc, const quint16 Fsig);
-    void tool_type_update           (const bool crc, const quint16 tool_type);
+    void rx_delay_update            (const bool crc, const quint16 rx_delay   );
+    void Fsig_update                (const bool crc, const quint16 Fsig       );
+    void izl_type_update            (const bool crc, const quint16 izl_type   );
+    void izl_ampl_update            (const bool crc, const quint16 izl_ampl   );
+    void izl_periods_update         (const bool crc, const quint16 izl_periods);
+    void tool_type_update           (const bool crc, const quint16 tool_type  );
     void mode_number_update         (const bool crc, const quint16 mode_number);
 
     void mode_count_update          (const bool crc, const quint16 mode_count);
@@ -203,7 +218,7 @@ signals:
 
     void good_blk_cnt_update        (const int cnt);
     void bad_blk_cnt_update         (const int cnt);
-    void VK_update(const quint16 vk_no, const TVAK8_VK &vk);
+    void VK_update(const quint16 vk_no, const TVAK8_WAVE &vk);
 
 public slots:
     void start(void);

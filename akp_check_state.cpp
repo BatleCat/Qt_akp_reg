@@ -80,6 +80,16 @@ typedef union
     } word16;
 } __attribute__ ((__packed__)) TWORD32_BYTES;
 //-----------------------------------------------------------------------------
+typedef union
+{
+    quint16 word16;
+    struct
+    {
+        quint8 lo;
+        quint8 hi;
+    } word8;
+} __attribute__ ((__packed__)) TWORD16_BYTES;
+//-----------------------------------------------------------------------------
 akp_check_state::akp_check_state(QObject *parent):
     QObject(parent)
 {
@@ -152,14 +162,43 @@ void akp_check_state::encode_vk_number(const TDataPocket &data)
 //-----------------------------------------------------------------------------
 void akp_check_state::encode_Rx_type(const TDataPocket &data)
 {
+    TWORD16_BYTES x;
+
     old_rx_type = rx_type;
-    rx_type     = take_from_14th_bit(frame_pos_Rx_type, data.data);
+    old_Td      = Td;
+
+    x.word16    = take_from_14th_bit(frame_pos_Rx_type, data.data);
+
+    rx_type     = x.word8.lo;
+    Td          = x.word8.hi;
+
 }
 //-----------------------------------------------------------------------------
 void akp_check_state::encode_freq_value(const TDataPocket &data)
 {
-    old_Fsig = Fsig;
-    Fsig     = take_from_14th_bit(frame_pos_freq, data.data);
+    union
+    {
+        uint16_t ui16;
+        struct
+        {
+            uint16_t freq   : 8;
+            uint16_t type   : 3;
+            uint16_t ampl   : 2;
+            uint16_t period : 3;
+        } filds;
+    } izl;
+
+    old_Fsig        = Fsig;
+    old_izl_type    = izl_type;
+    old_izl_ampl    = izl_ampl;
+    old_izl_periods = izl_periods;
+
+    izl.ui16        = take_from_14th_bit(frame_pos_freq, data.data);
+
+    Fsig        = izl.filds.freq;
+    izl_type    = izl.filds.type;
+    izl_ampl    = izl.filds.ampl;
+    izl_periods = izl.filds.period;
 }
 //-----------------------------------------------------------------------------
 void akp_check_state::encode_delay_value(const TDataPocket &data)
@@ -389,7 +428,11 @@ void akp_check_state::start(void)
     frame_label = 0;
     vk_number = 0;
     rx_type = 0;
+    Td = 0;
     Fsig = 0;
+    izl_type = 0;
+    izl_ampl = 0;
+    izl_periods = 0;
     rx_delay = 0;
     Ku = 0;
     tool_type = TOOL_UNKNOW;
@@ -421,12 +464,16 @@ void akp_check_state::start(void)
     //---------------------------------------------------------------------
     emit vk_number_update(false, vk_number);
     emit rx_type_update  (false, rx_type);
+    emit Td_update       (false, Td);
     emit Ku_update       (false, Ku);
     //---------------------------------------------------------------------
     // CRC2 check
     //---------------------------------------------------------------------
     emit rx_delay_update   (false, rx_delay);
     emit Fsig_update       (false, Fsig);
+    emit izl_type_update   (false, izl_type);
+    emit izl_ampl_update   (false, izl_ampl);
+    emit izl_periods_update(false, izl_periods);
     emit tool_type_update  (false, tool_type);
     emit mode_number_update(false, mode_number);
     //---------------------------------------------------------------------
@@ -474,6 +521,9 @@ void akp_check_state::start(void)
 void akp_check_state::onDataUpdate(const uint blk_cnt, const TDataPocket &data)
 {
     Q_UNUSED(blk_cnt);
+
+//    qDebug() << QString::fromUtf8("AKP check state : ") << &data;
+
     //-------------------------------------------------------------------------
     // Проверка идентефикатора ответа data.id
     //-------------------------------------------------------------------------
@@ -527,6 +577,11 @@ void akp_check_state::onDataUpdate(const uint blk_cnt, const TDataPocket &data)
                 emit rx_type_update(true, rx_type);
             }
 
+            if (old_Td != Td)
+            {
+                emit Td_update(true, Td);
+            }
+
             if (old_Ku != Ku)
             {
                 emit Ku_update(true, Ku);
@@ -536,6 +591,7 @@ void akp_check_state::onDataUpdate(const uint blk_cnt, const TDataPocket &data)
         {
             emit vk_number_update(false, vk_number);
             emit rx_type_update  (false, rx_type);
+            emit Td_update       (false, Td);
             emit Ku_update       (false, Ku);
         }
         //---------------------------------------------------------------------
@@ -553,6 +609,21 @@ void akp_check_state::onDataUpdate(const uint blk_cnt, const TDataPocket &data)
                 emit Fsig_update(true, Fsig);
             }
 
+            if (old_izl_type != izl_type)
+            {
+                emit izl_type_update(true, izl_type);
+            }
+
+            if (old_izl_ampl != izl_ampl)
+            {
+                emit izl_ampl_update(true, izl_ampl);
+            }
+
+            if (old_izl_periods != izl_periods)
+            {
+                emit izl_periods_update(true, izl_periods);
+            }
+
             if (old_tool_type != tool_type)
             {
                 emit tool_type_update(true, tool_type);
@@ -567,6 +638,9 @@ void akp_check_state::onDataUpdate(const uint blk_cnt, const TDataPocket &data)
         {
             emit rx_delay_update   (false, rx_delay);
             emit Fsig_update       (false, Fsig);
+            emit izl_type_update   (false, izl_type);
+            emit izl_ampl_update   (false, izl_ampl);
+            emit izl_periods_update(false, izl_periods);
             emit tool_type_update  (false, tool_type);
             emit mode_number_update(false, mode_number);
         }
@@ -704,13 +778,15 @@ void akp_check_state::onDataUpdate(const uint blk_cnt, const TDataPocket &data)
         }
         //---------------------------------------------------------------------
         {
+            //            quint16 x;
             int     i;
-            quint16 x;
             for (i = 0; i < VAK_8_NUM_POINTS; i++)
             {
-                x = 0x3FFF & data.data[i];
-                if ( 0 == (x & 0x2000) ) vk[i] = x;
-                else vk[i] = -x;
+//                x = 0x3FFF & data.data[i];
+//                if ( 0 == (x & 0x2000) ) vk[i] = x;
+//                else vk[i] = -x;
+                if ( (data.data[i] & 0x2000 ) != 0) vk[i] = data.data[i] | 0xC000;
+                else vk[i] = data.data[i] & 0x1FFF;
             }
             emit VK_update(get_vk_number(), vk);
         }

@@ -190,25 +190,34 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    connect(this,           SIGNAL( setDept(qint32)          ), this, SLOT( on_setDept(qint32)          ) );
 //    connect(this,           SIGNAL( setML(bool)              ), this, SLOT( on_showML(bool)              ) ); // сигнал перенесен в check_state
-    connect(&check_state,   SIGNAL( VK_update(const quint16, const TVAK8_VK&) ), this, SLOT( on_showNewData(const quint16, const TVAK8_VK&) ) );
+    connect(&check_state,   SIGNAL( VK_update(const quint16, const TVAK8_WAVE) ), this, SLOT( on_showNewData(const quint16, const TVAK8_WAVE) ) );
 //    connect(this,           SIGNAL( setPocketCount(qint32)   ), this, SLOT( on_showPocketCount(qint32)   ) );
 //    connect(this,           SIGNAL( setBadPocketCount(qint32)), this, SLOT( on_showBadPocketCount(qint32)) );
     connect(&check_state,   SIGNAL( good_blk_cnt_update(const int) ),  this, SLOT( on_showPocketCount   (const int)  ) );
     connect(&check_state,   SIGNAL( bad_blk_cnt_update (const int) ),  this, SLOT( on_showBadPocketCount(const int)  ) );
 
 //    connect(this,           SIGNAL( showIZLtype(qint16)     ), this, SLOT( on_showIZLtype(qint16)       ) );
-    connect(&check_state,   SIGNAL( Fsig_update(const bool, const quint16) ), this, SLOT( on_showIZLtype(const bool, const quint16) ) );
+    connect(&check_state,   SIGNAL( izl_type_update(const bool, const quint16) ), this, SLOT( on_showIZLtype(const bool, const quint16) ) );
 //    connect(this,           SIGNAL( showIZLfreq(qint16)     ), this, SLOT( on_showIZLfreq(qint16)       ) );
     connect(&check_state,   SIGNAL( Fsig_update(const bool, const quint16) ), this, SLOT( on_showIZLfreq(const bool, const quint16) ) );
 //    connect(this,           SIGNAL( showIZLnum(qint16)      ), this, SLOT( on_showIZLnum(qint16)        ) );
-    connect(&check_state,   SIGNAL( Fsig_update(const bool, const quint16) ), this, SLOT( on_showIZLnum(const bool, const quint16) ) );
+    connect(&check_state,   SIGNAL( izl_periods_update(const bool, const quint16) ), this, SLOT( on_showIZLnum(const bool, const quint16) ) );
 
 //    connect(this,           SIGNAL( showRXdelay(qint16)     ), this, SLOT( on_showRXdelay(qint16)       ) );
-    connect(&check_state,   SIGNAL( rx_delay_update(const bool, const quint16) ), SLOT( on_showRXdelay(const bool, const qint16) ));
+    connect(&check_state,   SIGNAL( rx_delay_update(const bool, const quint16) ), SLOT( on_showRXdelay(const bool, const quint16) ));
 //    connect(this,           SIGNAL( showRXtd(qint16)        ), this, SLOT( on_showRXtd(qint16)          ) );
-    connect(&check_state,   SIGNAL( rx_delay_update(const bool, const quint16) ), SLOT( on_showRXtd(const bool, const qint16) ));
+    connect(&check_state,   SIGNAL( Td_update(const bool, const quint16) ), SLOT( on_showRXtd(const bool, const quint16) ));
 //    connect(this,           SIGNAL( showRXku(qint16)        ), this, SLOT( on_showRXku(qint16)          ) );
     connect(&check_state,   SIGNAL( Ku_update(const bool, const quint16) ), this, SLOT( on_showRXku(const bool, const quint16)  ) );
+
+    connect(&check_state,   SIGNAL( CRC1_update(const bool) ), this, SLOT( on_showCRC1 (const bool) ) );
+    connect(&check_state,   SIGNAL( CRC2_update(const bool) ), this, SLOT( on_showCRC2 (const bool) ) );
+    connect(&check_state,   SIGNAL( CRC3_update(const bool) ), this, SLOT( on_showCRC3 (const bool) ) );
+    connect(&check_state,   SIGNAL( CRC4_update(const bool) ), this, SLOT( on_showCRC4 (const bool) ) );
+    connect(&check_state,   SIGNAL( CRC5_update(const bool) ), this, SLOT( on_showCRC5 (const bool) ) );
+    connect(&check_state,   SIGNAL( CRC6_update(const bool) ), this, SLOT( on_showCRC6 (const bool) ) );
+    connect(&check_state,   SIGNAL( CRC7_update(const bool) ), this, SLOT( on_showCRC7 (const bool) ) );
+    connect(&check_state,   SIGNAL( CRC8_update(const bool) ), this, SLOT( on_showCRC8 (const bool) ) );
 
 //    connect(this,           SIGNAL( showSDstatus(qint16)    ), this, SLOT( on_showSDstatus(qint16)      ) );
 
@@ -248,21 +257,18 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&check_state,   SIGNAL( deptUpdate (const qint32) ), this,      SLOT( on_showDept     (const qint32) ) );
     connect(&check_state,   SIGNAL( mlUpdate   (const bool)   ), this,      SLOT( on_showML       (const bool)   ) );
 
-    connect(&check_state,   SIGNAL( timer_clk_update           (const bool, const quint32) ), this, SLOT(on_timerClkUpdate(const bool, const quint32)          ) );
-    connect(&check_state,   SIGNAL( time_start_meserment_update(const bool, const quint32) ), this, SLOT(on_timeStartMesermentUpdate(const bool, const quint32)) );
-    connect(&check_state,   SIGNAL( time_stop_meserment_update (const bool, const quint32) ), this, SLOT(on_timeStopMesermentUpdate (const bool, const quint32)) );
+//    connect(&check_state,   SIGNAL( timer_clk_update           (const bool, const quint32) ), this, SLOT(on_timerClkUpdate(const bool, const quint32)          ) );
+//    connect(&check_state,   SIGNAL( time_start_meserment_update(const bool, const quint32) ), this, SLOT(on_timeStartMesermentUpdate(const bool, const quint32)) );
+//    connect(&check_state,   SIGNAL( time_stop_meserment_update (const bool, const quint32) ), this, SLOT(on_timeStopMesermentUpdate (const bool, const quint32)) );
 
-    connect(&check_state,   SIGNAL( CRC1_update(const bool) ), this, SLOT(on_CRC1update(const bool)) );
-    connect(&check_state,   SIGNAL( CRC2_update(const bool) ), this, SLOT(on_CRC2update(const bool)) );
-    connect(&check_state,   SIGNAL( CRC3_update(const bool) ), this, SLOT(on_CRC3update(const bool)) );
-    connect(&check_state,   SIGNAL( CRC4_update(const bool) ), this, SLOT(on_CRC4update(const bool)) );
-    connect(&check_state,   SIGNAL( CRC5_update(const bool) ), this, SLOT(on_CRC5update(const bool)) );
-    connect(&check_state,   SIGNAL( CRC6_update(const bool) ), this, SLOT(on_CRC6update(const bool)) );
-    connect(&check_state,   SIGNAL( CRC7_update(const bool) ), this, SLOT(on_CRC7update(const bool)) );
-    connect(&check_state,   SIGNAL( CRC8_update(const bool) ), this, SLOT(on_CRC8update(const bool)) );
-
-    connect(&check_state,   SIGNAL( good_blk_cnt_update(const int) ), this, SLOT(on_goodBlkCntUpdate(const int)) );
-    connect(&check_state,   SIGNAL( bad_blk_cnt_update (const int) ), this, SLOT(on_badBlkCntUpdate (const int)) );
+//    connect(&check_state,   SIGNAL( CRC1_update(const bool) ), this, SLOT(on_CRC1update(const bool)) );
+//    connect(&check_state,   SIGNAL( CRC2_update(const bool) ), this, SLOT(on_CRC2update(const bool)) );
+//    connect(&check_state,   SIGNAL( CRC3_update(const bool) ), this, SLOT(on_CRC3update(const bool)) );
+//    connect(&check_state,   SIGNAL( CRC4_update(const bool) ), this, SLOT(on_CRC4update(const bool)) );
+//    connect(&check_state,   SIGNAL( CRC5_update(const bool) ), this, SLOT(on_CRC5update(const bool)) );
+//    connect(&check_state,   SIGNAL( CRC6_update(const bool) ), this, SLOT(on_CRC6update(const bool)) );
+//    connect(&check_state,   SIGNAL( CRC7_update(const bool) ), this, SLOT(on_CRC7update(const bool)) );
+//    connect(&check_state,   SIGNAL( CRC8_update(const bool) ), this, SLOT(on_CRC8update(const bool)) );
 
     //-------------------------------------------------------------------------
     QRect  rect;
@@ -304,7 +310,7 @@ MainWindow::MainWindow(QWidget *parent) :
     time_line1->setColorBack(Qt::transparent);
     time_line1->set_step_x_line(128);
     time_line1->set_time_zero(0);
-    time_line1->set_time_step(4);
+    time_line1->set_time_step(2);       // Td 2mks
     time_line1->set_x_scale(FKDstep);
 
     connect(this, SIGNAL( changeFKDstep(int) ), time_line1, SLOT( on_changeTimeScale(int) ) );
@@ -1084,23 +1090,27 @@ void MainWindow::on_showML(const bool ml)
     label_ML->setStyleSheet(QString::fromUtf8("background-color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
 }
 //-------------------------------------------------------------------
-void MainWindow::on_showNewData(const quint16 vk_no, const TVAK8_VK &vk)
+void MainWindow::on_showNewData(const quint16 vk_no, const TVAK8_WAVE &vk)
 {
+//    vk1->setCaption(QString::fromUtf8("ВК-%1  ").arg(vk_no + 1));
+//    vk1->AddData(vk);
+//    qDebug() << vk_no;
+
     if (vk_no == vkNum4fkd)
     {
-        vk1->setCaption(QString::fromUtf8("ВК-%1  ").arg(vkNum4fkd + 1));
+//        vk1->setCaption(QString::fromUtf8("ВК-%1  ").arg(vkNum4fkd + 1));
         vk1->AddData(vk);
 
         fkd->addData(lastDepth, vk);
     }
     if (vk_no == 0)
     {
-        ctl_vk1->setCaption(QString::fromUtf8("ВК-1"));
+//        ctl_vk1->setCaption(QString::fromUtf8("ВК-1"));
         ctl_vk1->AddData(vk);
     }
-    else if(vk_no == 5)
+    else if(vk_no == 4)
     {
-        ctl_vk2->setCaption(QString::fromUtf8("ВК-2"));
+//        ctl_vk2->setCaption(QString::fromUtf8("ВК-2"));
         ctl_vk2->AddData(vk);
     }
 }
@@ -1188,7 +1198,7 @@ void MainWindow::on_showIZLnum(const bool crc, const quint16 value)
 //    }
 }
 //-------------------------------------------------------------------
-void MainWindow::on_showRXdelay(const bool crc, const qint16 value)
+void MainWindow::on_showRXdelay(const bool crc, const quint16 value)
 {
     qint16 delay = 2 * value;
     time_line1->set_time_zero(delay / time_line1->get_time_step());
@@ -1198,7 +1208,7 @@ void MainWindow::on_showRXdelay(const bool crc, const qint16 value)
     ui->label_RXdelay->setText(QString::fromUtf8("Задержка %1 мкс").arg(delay));
 }
 //-------------------------------------------------------------------
-void MainWindow::on_showRXtd(const bool crc, const qint16 value)
+void MainWindow::on_showRXtd(const bool crc, const quint16 value)
 {
     Q_UNUSED(crc);
     Q_UNUSED(value);
@@ -1240,6 +1250,7 @@ void MainWindow::on_showRXku(const bool crc, const quint16 value)
 {
     QColor  color = get_color_on_CRC(crc);
     ui->label_RXku->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
+
     if (value < 0)
         ui->label_RXku->setText(QString::fromUtf8("КУ = нет данных"));
     else
@@ -1249,6 +1260,99 @@ void MainWindow::on_showRXku(const bool crc, const quint16 value)
 void MainWindow::on_VKxClicked(int id)
 {
     vkNum4fkd = id - 1;
+
+    if (vkNum4fkd == 0)
+        vk1->setCaption(QString::fromUtf8("ВК-1"));
+    else
+        vk1->setCaption(QString::fromUtf8("ВК-2"));
+}
+//-------------------------------------------------------------------
+void MainWindow::on_showCRC1 (const bool crc)
+{
+    QColor  color = get_color_on_CRC(crc);
+    label_CRC1_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
+
+    if (crc)
+        label_CRC1_check->setText(QString::fromUtf8("CRC1: Ok"));
+    else
+        label_CRC1_check->setText(QString::fromUtf8("CRC1: ОШИБКА!!!"));
+}
+//-------------------------------------------------------------------
+void MainWindow::on_showCRC2 (const bool crc)
+{
+    QColor  color = get_color_on_CRC(crc);
+    label_CRC2_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
+
+    if (crc)
+        label_CRC2_check->setText(QString::fromUtf8("CRC2: Ok"));
+    else
+        label_CRC2_check->setText(QString::fromUtf8("CRC2: ОШИБКА!!!"));
+}
+//-------------------------------------------------------------------
+void MainWindow::on_showCRC3 (const bool crc)
+{
+    QColor  color = get_color_on_CRC(crc);
+    label_CRC3_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
+
+    if (crc)
+        label_CRC3_check->setText(QString::fromUtf8("CRC3: Ok"));
+    else
+        label_CRC3_check->setText(QString::fromUtf8("CRC3: ОШИБКА!!!"));
+}
+//-------------------------------------------------------------------
+void MainWindow::on_showCRC4 (const bool crc)
+{
+    QColor  color = get_color_on_CRC(crc);
+    label_CRC4_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
+
+    if (crc)
+        label_CRC4_check->setText(QString::fromUtf8("CRC4: Ok"));
+    else
+        label_CRC4_check->setText(QString::fromUtf8("CRC4: ОШИБКА!!!"));
+}
+//-------------------------------------------------------------------
+void MainWindow::on_showCRC5 (const bool crc)
+{
+    QColor  color = get_color_on_CRC(crc);
+    label_CRC5_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
+
+    if (crc)
+        label_CRC5_check->setText(QString::fromUtf8("CRC5: Ok"));
+    else
+        label_CRC5_check->setText(QString::fromUtf8("CRC5: ОШИБКА!!!"));
+}
+//-------------------------------------------------------------------
+void MainWindow::on_showCRC6 (const bool crc)
+{
+    QColor  color = get_color_on_CRC(crc);
+    label_CRC6_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
+
+    if (crc)
+        label_CRC6_check->setText(QString::fromUtf8("CRC6: Ok"));
+    else
+        label_CRC6_check->setText(QString::fromUtf8("CRC6: ОШИБКА!!!"));
+}
+//-------------------------------------------------------------------
+void MainWindow::on_showCRC7 (const bool crc)
+{
+    QColor  color = get_color_on_CRC(crc);
+    label_CRC7_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
+
+    if (crc)
+        label_CRC7_check->setText(QString::fromUtf8("CRC7: Ok"));
+    else
+        label_CRC7_check->setText(QString::fromUtf8("CRC7: ОШИБКА!!!"));
+}
+//-------------------------------------------------------------------
+void MainWindow::on_showCRC8 (const bool crc)
+{
+    QColor  color = get_color_on_CRC(crc);
+    label_CRC8_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
+
+    if (crc)
+        label_CRC8_check->setText(QString::fromUtf8("CRC8: Ok"));
+    else
+        label_CRC8_check->setText(QString::fromUtf8("CRC8: ОШИБКА!!!"));
 }
 //-------------------------------------------------------------------
 QColor MainWindow::get_color_on_CRC(const bool crc)

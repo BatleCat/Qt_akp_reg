@@ -9,16 +9,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="dialog_setup.ui" line="163"/>
-        <source>Изменить ...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="dialog_setup.ui" line="182"/>
-        <source>Вернуть</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="dialog_setup.ui" line="77"/>
         <source>Папка для записи</source>
         <translation type="unfinished"></translation>
@@ -26,6 +16,16 @@
     <message>
         <location filename="dialog_setup.ui" line="134"/>
         <source>Расширенное управление записью</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="163"/>
+        <source>Изменить ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_setup.ui" line="182"/>
+        <source>Вернуть</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -215,7 +215,6 @@
     <message>
         <location filename="mainwindow.ui" line="25"/>
         <source>Программа регистрации АКП-76</source>
-        <oldsource>Программа регистрации ВАК-32</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -304,11 +303,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="837"/>
-        <source>Тд = 2 мкс</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="mainwindow.ui" line="784"/>
         <source>2 периода</source>
         <translation type="unfinished"></translation>
@@ -321,6 +315,11 @@
     <message>
         <location filename="mainwindow.ui" line="830"/>
         <source>Задержка 0 мкс</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="837"/>
+        <source>Тд = 2 мкс</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
