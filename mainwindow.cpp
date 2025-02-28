@@ -41,25 +41,25 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    app_settings(new QSettings("TNG-Group", "vak32_reg")),
+    app_settings(new QSettings("TNG-Group", "qt_akp_reg")),
     dialogSetup(NULL),
     dialogWellInfo(NULL),
     akp(parent),
     check_state(parent),
     velocity(new CVELOCITY(this)),
-    bflag_CRC1_Ok(false),
-    bflag_CRC2_Ok(false),
-    bflag_CRC3_Ok(false),
-    bflag_CRC4_Ok(false),
-    bflag_CRC5_Ok(false),
-    bflag_CRC6_Ok(false),
-    bflag_CRC7_Ok(false),
-    bflag_CRC8_Ok(false),
+//    bflag_CRC1_Ok(false),
+//    bflag_CRC2_Ok(false),
+//    bflag_CRC3_Ok(false),
+//    bflag_CRC4_Ok(false),
+//    bflag_CRC5_Ok(false),
+//    bflag_CRC6_Ok(false),
+//    bflag_CRC7_Ok(false),
+//    bflag_CRC8_Ok(false),
 //    timer_interval(500),
     port(1500),
-    p_count(0),
-    host(QHostAddress("10.2.22.245")),
-    ToolNo(0)
+//    p_count(0),
+    host(QHostAddress("10.2.22.245"))
+//    ToolNo(0)
 {
     //-------------------------------------------------------------------------
     qRegisterMetaType<TDataPocket>("TDataPocket");
@@ -711,26 +711,139 @@ void MainWindow::on_dialogSetup(void)
 //-------------------------------------------------------------------
 void MainWindow::on_cmdIncAmpl(void)
 {
-    int new_max = vk1->maxAmpl();
-    if (new_max < 16000)
+    int new_max;
+    int new_step;
+
+    new_max = vk1->maxAmpl();
+    new_step = new_max / vk1_greed->get_num_y_line();
+
+    switch(new_step)
     {
-        new_max = new_max * 2;
-        max_ampl = new_max;
-        emit changeVKmaxAmpl(max_ampl);
+//        case 10000:
+//        {
+//            new_step =  5000;
+//            break;
+//        }
+        case 5000:
+        {
+            new_step =  2000;
+            break;
+        }
+        case 2000:
+        {
+            new_step =  1000;
+            break;
+        }
+        case 1000:
+        {
+            new_step =  500;
+            break;
+        }
+        case 500:
+        {
+            new_step =  200;
+            break;
+        }
+        case 200:
+        {
+            new_step =  100;
+            break;
+        }
+        case 100:
+        {
+            new_step =  50;
+            break;
+        }
+        case 50:
+        {
+//            new_step =  20;
+            break;
+        }
+//        case 20:
+//        {
+//            new_step =  10;
+//            break;
+//        }
+        default:
+        {
+            new_step =  50;
+            break;
+        }
     }
-    ui->groupBox_3->setTitle(QString::fromUtf8("Амплитуда (%1)").arg(new_max));
+
+    new_max = new_step * vk1_greed->get_num_y_line();
+    max_ampl = new_max;
+    emit changeVKmaxAmpl(max_ampl);
+
+    ui->groupBox_3->setTitle(QString::fromUtf8("Амплитуда (%1 / div)").arg(new_step));
 }
 //-------------------------------------------------------------------
 void MainWindow::on_cmdDecAmpl(void)
 {
-    int new_max = vk1->maxAmpl();
-    if (new_max > 100)
+    int new_max;
+    int new_step;
+
+    new_max = vk1->maxAmpl();
+    new_step = new_max / vk1_greed->get_num_y_line();
+    switch(new_step)
     {
-        new_max = new_max / 2;
-        max_ampl = new_max;
-        emit changeVKmaxAmpl(max_ampl);
+        case 5000:
+        {
+//            new_step =  10000;
+            break;
+        }
+        case 2000:
+        {
+            new_step =  5000;
+            break;
+        }
+        case 1000:
+        {
+            new_step =  2000;
+            break;
+        }
+        case 500:
+        {
+            new_step =  1000;
+            break;
+        }
+        case 200:
+        {
+            new_step =  500;
+            break;
+        }
+        case 100:
+        {
+            new_step =  200;
+            break;
+        }
+        case 50:
+        {
+            new_step =  100;
+            break;
+        }
+//        case 20:
+//        {
+//            new_step =  50;
+//            break;
+//        }
+//        case 10:
+//        {
+//            new_step =  20;
+//            break;
+//        }
+        default:
+        {
+            new_step =  5000;
+            break;
+        }
     }
-    ui->groupBox_3->setTitle(QString::fromUtf8("Амплитуда (%1)").arg(new_max));
+
+    new_max = new_step * vk1_greed->get_num_y_line();
+    max_ampl = new_max;
+    emit changeVKmaxAmpl(max_ampl);
+
+    ui->groupBox_3->setTitle(QString::fromUtf8("Амплитуда (%1 / div)").arg(new_step));
 }
 //-------------------------------------------------------------------
 void MainWindow::on_cmdIncLevel(void)
@@ -1418,7 +1531,7 @@ void MainWindow::load_settings(void)
 //    modeNum         = 0;
 //    modeNum4fkd     = 0;
 
-    max_ampl        = app_settings->value(QString::fromUtf8("/MaxAmpl"),       32000                       ).toInt();
+    max_ampl        = app_settings->value(QString::fromUtf8("/MaxAmpl"),       8000                        ).toInt();
     fkd_level       = app_settings->value(QString::fromUtf8("/FkdLevel"),      0                           ).toInt();
 
 //    int izl_type;

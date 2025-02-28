@@ -130,21 +130,21 @@ private:
     QLabel*             label_Velocity;
 
     QLabel*             label_CRC1_check;
-    bool                bflag_CRC1_Ok;
+//    bool                bflag_CRC1_Ok;
     QLabel*             label_CRC2_check;
-    bool                bflag_CRC2_Ok;
+//    bool                bflag_CRC2_Ok;
     QLabel*             label_CRC3_check;
-    bool                bflag_CRC3_Ok;
+//    bool                bflag_CRC3_Ok;
     QLabel*             label_CRC4_check;
-    bool                bflag_CRC4_Ok;
+//    bool                bflag_CRC4_Ok;
     QLabel*             label_CRC5_check;
-    bool                bflag_CRC5_Ok;
+//    bool                bflag_CRC5_Ok;
     QLabel*             label_CRC6_check;
-    bool                bflag_CRC6_Ok;
+//    bool                bflag_CRC6_Ok;
     QLabel*             label_CRC7_check;
-    bool                bflag_CRC7_Ok;
+//    bool                bflag_CRC7_Ok;
     QLabel*             label_CRC8_check;
-    bool                bflag_CRC8_Ok;
+//    bool                bflag_CRC8_Ok;
 
     QLabel*             label_ML;
 
@@ -153,9 +153,9 @@ private:
 //    int                 timer_interval;
 
     int                 port;
-    short int           p_count;
-    short int           cmd_id;
-    QUdpSocket          udp_socket;
+//    short int           p_count;
+//    short int           cmd_id;
+//    QUdpSocket          udp_socket;
     QHostAddress        host;
 //    TVAK_8_DATA         v8_data;
 
@@ -197,8 +197,10 @@ private:
 
     int     max_ampl;
     int     fkd_level;
+//    int     num_y_line_on_grid;
+//    int     step_x_line_on_grid;
 
-    int     ToolNo;
+//    int     ToolNo;
 
     qint32  blk_count;
     qint32  bad_blk;
