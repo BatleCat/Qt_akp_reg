@@ -327,5 +327,15 @@
         <source>КУ = 16</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="mainwindow.ui" line="890"/>
+        <source>№ прибора: ххх</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="897"/>
+        <source>Версия прошивки: Х.Х</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

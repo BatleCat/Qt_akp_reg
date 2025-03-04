@@ -210,6 +210,9 @@ MainWindow::MainWindow(QWidget *parent) :
 //    connect(this,           SIGNAL( showRXku(qint16)        ), this, SLOT( on_showRXku(qint16)          ) );
     connect(&check_state,   SIGNAL( Ku_update(const bool, const quint16) ), this, SLOT( on_showRXku(const bool, const quint16)  ) );
 
+    connect(&check_state,   SIGNAL( tool_no_update     (const bool, const quint16)                ), this, SLOT( on_showToolNo (const bool, const quint16)                ) );
+    connect(&check_state,   SIGNAL( soft_version_update(const bool, const quint16, const quint16) ), this, SLOT( on_showSoftVer(const bool, const quint16, const quint16) ) );
+
     connect(&check_state,   SIGNAL( CRC1_update(const bool) ), this, SLOT( on_showCRC1 (const bool) ) );
     connect(&check_state,   SIGNAL( CRC2_update(const bool) ), this, SLOT( on_showCRC2 (const bool) ) );
     connect(&check_state,   SIGNAL( CRC3_update(const bool) ), this, SLOT( on_showCRC3 (const bool) ) );
@@ -246,7 +249,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    connect(this,                   SIGNAL( cmdStartMeserment() ),  &akp, SLOT( on_cmdStartMeserment() ));
 //    connect(this,                   SIGNAL( cmdStopMeserment () ),  &akp, SLOT( on_cmdStopMeserment () ));
+
+//    connect(ui->pushButton_Start,   SIGNAL( pressed() ),                    &akp, SLOT( on_cmdDoSingleMeserment() ));
     connect(ui->pushButton_Start,   SIGNAL( pressed() ),                    &akp, SLOT( on_cmdStartMeserment() ));
+
     connect(ui->pushButton_Stop,    SIGNAL( pressed() ),                    &akp, SLOT( on_cmdStopMeserment () ));
     connect(this,                   SIGNAL( cmdSetDeptStep(const qint32) ), &akp, SLOT( on_setDeptStep(const qint32) ));
 
@@ -1230,40 +1236,44 @@ void MainWindow::on_showNewData(const quint16 vk_no, const TVAK8_WAVE &vk)
 //-------------------------------------------------------------------
 void MainWindow::on_showIZLtype(const bool crc, const quint16 value)
 {
-    Q_UNUSED(crc);
-    Q_UNUSED(value);
+//    Q_UNUSED(crc);
+//    Q_UNUSED(value);
 
-    ui->label_IZLtype->setText("Монополь");
-//    switch (value)
-//    {
-//    case IZL_MONOPOL:
-//        ui->label_IZLtype->setText("Монополь");
-//        break;
-//    case IZL_DIPOL_1:
-//        ui->label_IZLtype->setText("Диполь-1");
-//        break;
-//    case IZL_DIPOL_2:
-//        ui->label_IZLtype->setText("Диполь-2");
-//        break;
-//    case IZL_QUADROPOL:
-//        ui->label_IZLtype->setText("Квадруполь");
-//        break;
-//    case IZL_SFERA_1:
-//        ui->label_IZLtype->setText("Сфера-1");
-//        break;
-//    case IZL_SFERA_2:
-//        ui->label_IZLtype->setText("Сфера-2");
-//        break;
-//    case IZL_SFERA_3:
-//        ui->label_IZLtype->setText("Сфера-3");
-//        break;
-//    case IZL_SFERA_4:
-//        ui->label_IZLtype->setText("Сфера-4");
-//        break;
-//    default:
-//        ui->label_IZLtype->setText("НЕИЗВЕСТНО");
-//        break;
-//    }
+    QColor  color = get_color_on_CRC(crc);
+    ui->label_IZLtype->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
+
+
+//    ui->label_IZLtype->setText("Монополь");
+    switch (value)
+    {
+        case 0: //IZL_MONOPOL:
+            ui->label_IZLtype->setText("Монополь");
+            break;
+//        case IZL_DIPOL_1:
+//            ui->label_IZLtype->setText("Диполь-1");
+//            break;
+//        case IZL_DIPOL_2:
+//            ui->label_IZLtype->setText("Диполь-2");
+//            break;
+//        case IZL_QUADROPOL:
+//            ui->label_IZLtype->setText("Квадруполь");
+//            break;
+//        case IZL_SFERA_1:
+//            ui->label_IZLtype->setText("Сфера-1");
+//            break;
+//        case IZL_SFERA_2:
+//            ui->label_IZLtype->setText("Сфера-2");
+//            break;
+//        case IZL_SFERA_3:
+//            ui->label_IZLtype->setText("Сфера-3");
+//            break;
+//        case IZL_SFERA_4:
+//            ui->label_IZLtype->setText("Сфера-4");
+//            break;
+        default:
+            ui->label_IZLtype->setText("НЕИЗВЕСТНО");
+            break;
+    }
 }
 //-------------------------------------------------------------------
 void MainWindow::on_showIZLfreq(const bool crc, const quint16 value)
@@ -1275,40 +1285,39 @@ void MainWindow::on_showIZLfreq(const bool crc, const quint16 value)
 //-------------------------------------------------------------------
 void MainWindow::on_showIZLnum(const bool crc, const quint16 value)
 {
-    Q_UNUSED(crc);
-    Q_UNUSED(value);
+    QColor  color = get_color_on_CRC(crc);
+    ui->label_IZLnum->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
 
-    ui->label_IZLnum->setText(QString::fromUtf8("2 периода"));
-//    switch (value)
-//    {
-//        case 1:
-//            ui->label_IZLnum->setText(QString::fromUtf8("1 период"));
-//            break;
-//        case 2:
-//            ui->label_IZLnum->setText(QString::fromUtf8("2 периода"));
-//            break;
-//        case 3:
-//            ui->label_IZLnum->setText(QString::fromUtf8("3 периода"));
-//            break;
-//        case 4:
-//            ui->label_IZLnum->setText(QString::fromUtf8("4 периода"));
-//            break;
-//        case 5:
-//            ui->label_IZLnum->setText(QString::fromUtf8("5 периодов"));
-//            break;
-//        case 6:
-//            ui->label_IZLnum->setText(QString::fromUtf8("6 периодов"));
-//            break;
-//        case 7:
-//            ui->label_IZLnum->setText(QString::fromUtf8("7 периодов"));
-//            break;
-//        case 8:
-//            ui->label_IZLnum->setText(QString::fromUtf8("8 периодов"));
-//            break;
-//        default:
-//            ui->label_IZLnum->setText(QString::fromUtf8("НЕИЗВЕСТНО"));
-//            break;
-//    }
+    switch (value)
+    {
+        case 1:
+            ui->label_IZLnum->setText(QString::fromUtf8("1 период"));
+            break;
+        case 2:
+            ui->label_IZLnum->setText(QString::fromUtf8("2 периода"));
+            break;
+        case 3:
+            ui->label_IZLnum->setText(QString::fromUtf8("3 периода"));
+            break;
+        case 4:
+            ui->label_IZLnum->setText(QString::fromUtf8("4 периода"));
+            break;
+        case 5:
+            ui->label_IZLnum->setText(QString::fromUtf8("5 периодов"));
+            break;
+        case 6:
+            ui->label_IZLnum->setText(QString::fromUtf8("6 периодов"));
+            break;
+        case 7:
+            ui->label_IZLnum->setText(QString::fromUtf8("7 периодов"));
+            break;
+        case 8:
+            ui->label_IZLnum->setText(QString::fromUtf8("8 периодов"));
+            break;
+        default:
+            ui->label_IZLnum->setText(QString::fromUtf8("НЕИЗВЕСТНО"));
+            break;
+    }
 }
 //-------------------------------------------------------------------
 void MainWindow::on_showRXdelay(const bool crc, const quint16 value)
@@ -1368,6 +1377,22 @@ void MainWindow::on_showRXku(const bool crc, const quint16 value)
         ui->label_RXku->setText(QString::fromUtf8("КУ = нет данных"));
     else
         ui->label_RXku->setText(QString::fromUtf8("КУ = %1").arg(value + 1));
+}
+//-------------------------------------------------------------------
+void MainWindow::on_showToolNo  (const bool crc, const quint16 value)
+{
+    QColor  color = get_color_on_CRC(crc);
+    ui->label_ToolNo->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
+
+    ui->label_ToolNo->setText(QString::fromUtf8("Прибор № %1").arg(value));
+}
+//-------------------------------------------------------------------
+void MainWindow::on_showSoftVer (const bool crc, const quint16 soft_version_major, const quint16 soft_version_minor)
+{
+    QColor  color = get_color_on_CRC(crc);
+    ui->label_SoftVer->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
+
+    ui->label_SoftVer->setText(QString::fromUtf8("Версия прошивки: %1.%2").arg(soft_version_major).arg(soft_version_minor));
 }
 //-------------------------------------------------------------------
 void MainWindow::on_VKxClicked(int id)

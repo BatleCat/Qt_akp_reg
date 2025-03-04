@@ -243,6 +243,9 @@ private slots:
     void on_showRXtd    (const bool crc, const quint16 value);
     void on_showRXku    (const bool crc, const quint16 value);
 
+    void on_showToolNo  (const bool crc, const quint16 value);
+    void on_showSoftVer (const bool crc, const quint16 soft_version_major, const quint16 soft_version_minor);
+
     void on_VKxClicked(int id);
 
     void on_showCRC1 (const bool crc);
