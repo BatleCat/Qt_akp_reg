@@ -785,8 +785,12 @@ void akp_check_state::onDataUpdate(const uint blk_cnt, const TDataPocket &data)
 //                x = 0x3FFF & data.data[i];
 //                if ( 0 == (x & 0x2000) ) vk[i] = x;
 //                else vk[i] = -x;
-                if ( (data.data[i] & 0x2000 ) != 0) vk[i] = data.data[i] | 0xC000;
-                else vk[i] = data.data[i] & 0x1FFF;
+
+//                if ( (data.data[i] & 0x2000 ) != 0) vk[i] = data.data[i] | 0xC000;
+//                else vk[i] = data.data[i] & 0x1FFF;
+
+                qint16 smpl = 0x3FFF & data.data[i];
+                vk[i] = smpl | ((smpl & 0x2000) * 7);
             }
             emit VK_update(get_vk_number(), vk);
         }
