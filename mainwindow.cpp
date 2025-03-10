@@ -203,6 +203,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    connect(this,           SIGNAL( showIZLnum(qint16)      ), this, SLOT( on_showIZLnum(qint16)        ) );
     connect(&check_state,   SIGNAL( izl_periods_update(const bool, const quint16) ), this, SLOT( on_showIZLnum(const bool, const quint16) ) );
 
+    connect(&check_state,   SIGNAL( rx_type_update(const bool, const quint16) ), SLOT( on_showRXtype(const bool, const quint16) ));
 //    connect(this,           SIGNAL( showRXdelay(qint16)     ), this, SLOT( on_showRXdelay(qint16)       ) );
     connect(&check_state,   SIGNAL( rx_delay_update(const bool, const quint16) ), SLOT( on_showRXdelay(const bool, const quint16) ));
 //    connect(this,           SIGNAL( showRXtd(qint16)        ), this, SLOT( on_showRXtd(qint16)          ) );
@@ -213,7 +214,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&check_state,   SIGNAL( tool_no_update     (const bool, const quint16)                ), this, SLOT( on_showToolNo (const bool, const quint16)                ) );
     connect(&check_state,   SIGNAL( soft_version_update(const bool, const quint16, const quint16) ), this, SLOT( on_showSoftVer(const bool, const quint16, const quint16) ) );
 
-    connect(&check_state,   SIGNAL( CRC1_update(const bool) ), this, SLOT( on_showCRC1 (const bool) ) );
+    connect(&check_state,   SIGNAL( time_meserment_update(const bool, const quint32) ), this, SLOT( on_showTimeMeserment(const bool, const quint32) ) );
+
+                                    connect(&check_state,   SIGNAL( CRC1_update(const bool) ), this, SLOT( on_showCRC1 (const bool) ) );
     connect(&check_state,   SIGNAL( CRC2_update(const bool) ), this, SLOT( on_showCRC2 (const bool) ) );
     connect(&check_state,   SIGNAL( CRC3_update(const bool) ), this, SLOT( on_showCRC3 (const bool) ) );
     connect(&check_state,   SIGNAL( CRC4_update(const bool) ), this, SLOT( on_showCRC4 (const bool) ) );
@@ -1320,6 +1323,20 @@ void MainWindow::on_showIZLnum(const bool crc, const quint16 value)
     }
 }
 //-------------------------------------------------------------------
+void MainWindow::on_showRXtype  (const bool crc, const quint16 value)
+{
+    QColor  color = get_color_on_CRC(crc);
+    ui->label_RXtype->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
+    if (0 == value)
+    {
+        ui->label_RXtype->setText(QString::fromUtf8("Монополь"));
+    }
+    else
+    {
+        ui->label_RXtype->setText(QString::fromUtf8("Тип неизвестен"));
+    }
+}
+//-------------------------------------------------------------------
 void MainWindow::on_showRXdelay(const bool crc, const quint16 value)
 {
     qint16 delay = 2 * value;
@@ -1393,6 +1410,14 @@ void MainWindow::on_showSoftVer (const bool crc, const quint16 soft_version_majo
     ui->label_SoftVer->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
 
     ui->label_SoftVer->setText(QString::fromUtf8("Версия прошивки: %1.%2").arg(soft_version_major).arg(soft_version_minor));
+}
+//-------------------------------------------------------------------
+void MainWindow::on_showTimeMeserment(const bool crc, const quint32 time_meserment)
+{
+    QColor  color = get_color_on_CRC(crc);
+    ui->label_TimeOfMeserment->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
+
+    ui->label_TimeOfMeserment->setText(QString::fromUtf8("Интервал = %1 мкс").arg(time_meserment));
 }
 //-------------------------------------------------------------------
 void MainWindow::on_VKxClicked(int id)

@@ -239,12 +239,15 @@ private slots:
     void on_showIZLfreq (const bool crc, const quint16 value);
     void on_showIZLnum  (const bool crc, const quint16 value);
 
+    void on_showRXtype  (const bool crc, const quint16 value);
     void on_showRXdelay (const bool crc, const quint16 value);
     void on_showRXtd    (const bool crc, const quint16 value);
     void on_showRXku    (const bool crc, const quint16 value);
 
     void on_showToolNo  (const bool crc, const quint16 value);
     void on_showSoftVer (const bool crc, const quint16 soft_version_major, const quint16 soft_version_minor);
+
+    void on_showTimeMeserment(const bool crc, const quint32 time_meserment);
 
     void on_VKxClicked(int id);
 

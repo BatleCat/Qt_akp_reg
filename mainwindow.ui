@@ -825,6 +825,13 @@
           <number>10</number>
          </property>
          <item>
+          <widget class="QLabel" name="label_RXtype">
+           <property name="text">
+            <string>Монополь</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QLabel" name="label_RXdelay">
            <property name="text">
             <string>Задержка 0 мкс</string>
@@ -845,10 +852,19 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QLabel" name="label_TimeOfMeserment">
+           <property name="text">
+            <string>Интервал = 1024 мкс</string>
+           </property>
+          </widget>
+         </item>
         </layout>
         <zorder>label_RXtd</zorder>
         <zorder>label_RXku</zorder>
         <zorder>label_RXdelay</zorder>
+        <zorder>label_RXtype</zorder>
+        <zorder>label_TimeOfMeserment</zorder>
        </widget>
       </item>
       <item>

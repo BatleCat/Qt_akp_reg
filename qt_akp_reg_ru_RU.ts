@@ -294,6 +294,7 @@
     </message>
     <message>
         <location filename="mainwindow.ui" line="770"/>
+        <location filename="mainwindow.ui" line="830"/>
         <source>Монополь</source>
         <translation type="unfinished"></translation>
     </message>
@@ -313,27 +314,32 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="830"/>
+        <location filename="mainwindow.ui" line="837"/>
         <source>Задержка 0 мкс</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="837"/>
+        <location filename="mainwindow.ui" line="844"/>
         <source>Тд = 2 мкс</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="844"/>
+        <location filename="mainwindow.ui" line="851"/>
         <source>КУ = 16</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="890"/>
+        <location filename="mainwindow.ui" line="858"/>
+        <source>Интервал = 1024 мкс</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="906"/>
         <source>№ прибора: ххх</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="897"/>
+        <location filename="mainwindow.ui" line="913"/>
         <source>Версия прошивки: Х.Х</source>
         <translation type="unfinished"></translation>
     </message>
