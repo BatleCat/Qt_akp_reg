@@ -53,6 +53,7 @@ private:
     quint32 timer_clk;
     quint32 time_start_meserment;
     quint32 time_stop_meserment;
+    quint32 time_meserment;
     bool    CRC1_OK;
     bool    CRC2_OK;
     bool    CRC3_OK;
@@ -83,6 +84,7 @@ private:
     quint32 old_timer_clk;
     quint32 old_time_start_meserment;
     quint32 old_time_stop_meserment;
+    quint32 old_time_meserment;
     bool    old_CRC1_OK;
     bool    old_CRC2_OK;
     bool    old_CRC3_OK;
@@ -113,6 +115,8 @@ private:
     void    check_CRC                  (const TDataPocket &data);
     void    check_ml                   (const TDataPocket &data);
     void    check_dept                 (const TDataPocket &data);
+
+    void    calc_time_meserment        (void);
 
 public:
     void    set_state(const TDataPocket &data);
@@ -145,6 +149,7 @@ public:
     quint32 get_timer_clk(void)                 {return timer_clk;          }
     quint32 get_time_start_meserment(void)      {return time_start_meserment; }
     quint32 get_time_stop_meserment(void)       {return time_stop_meserment;  }
+    quint32 get_time_meserment(void)            {return time_meserment;       }
 
     bool is_CRC_OK(void)                         {return CRC_OK; }
 
@@ -206,6 +211,8 @@ signals:
     void time_start_meserment_update(const bool crc, const quint32 time_start_meserment);
 
     void time_stop_meserment_update (const bool crc, const quint32 time_stop_meserment);
+
+    void time_meserment_update      (const bool crc, const quint32 time_meserment);
 
     void CRC1_update             (const bool crc);
     void CRC2_update             (const bool crc);

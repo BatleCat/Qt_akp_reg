@@ -371,6 +371,20 @@ void akp_check_state::check_dept(const TDataPocket &data)
     dept_cm = (data.dept);
 }
 //-----------------------------------------------------------------------------
+void akp_check_state::calc_time_meserment(void)
+{
+    quint32 delta;
+    quint32 freq;
+    quint32 time;
+
+    old_time_meserment = time_meserment;
+
+    delta = (time_start_meserment - time_stop_meserment);
+    freq = timer_clk / delta;
+    time = (quint32)1000000  / freq;
+    time_meserment = time - 2;
+}
+//-----------------------------------------------------------------------------
 void akp_check_state::set_state(const TDataPocket &data)
 {
     check_ml  (data);
@@ -392,6 +406,8 @@ void akp_check_state::set_state(const TDataPocket &data)
     encode_timer_clk           (data);
     encode_time_start_meserment(data);
     encode_time_stop_meserment (data);
+
+    calc_time_meserment();
 
     if ( (true == CRC_OK) && (0x9999 == frame_label) )
     {
@@ -446,6 +462,7 @@ void akp_check_state::start(void)
     timer_clk = 0;
     time_start_meserment = 0;
     time_stop_meserment = 0;
+    time_meserment = 0;
     CRC1_OK = false;
     CRC2_OK = false;
     CRC3_OK = false;
@@ -503,6 +520,8 @@ void akp_check_state::start(void)
     // CRC8 check
     //---------------------------------------------------------------------
     emit time_stop_meserment_update(false, time_stop_meserment);
+    //---------------------------------------------------------------------
+    emit time_meserment_update      (false, time_meserment);
     //---------------------------------------------------------------------
     emit CRC1_update(CRC1_OK);
     emit CRC2_update(CRC2_OK);
@@ -562,29 +581,39 @@ void akp_check_state::onDataUpdate(const uint blk_cnt, const TDataPocket &data)
         //---------------------------------------------------------------------
         if (CRC1_OK)
         {
-            if (frame_label != 0x9999)
-            {
-                emit frame_sync_error();
-            }
-
-            if (old_vk_number != vk_number)
+            if (old_CRC1_OK != CRC1_OK)
             {
                 emit vk_number_update(true, vk_number);
+                emit rx_type_update  (true, rx_type);
+                emit Td_update       (true, Td);
+                emit Ku_update       (true, Ku);
             }
-
-            if (old_rx_type != rx_type)
+            else
             {
-                emit rx_type_update(true, rx_type);
-            }
+                if (frame_label != 0x9999)
+                {
+                    emit frame_sync_error();
+                }
 
-            if (old_Td != Td)
-            {
-                emit Td_update(true, Td);
-            }
+                if (old_vk_number != vk_number)
+                {
+                    emit vk_number_update(true, vk_number);
+                }
 
-            if (old_Ku != Ku)
-            {
-                emit Ku_update(true, Ku);
+                if (old_rx_type != rx_type)
+                {
+                    emit rx_type_update(true, rx_type);
+                }
+
+                if (old_Td != Td)
+                {
+                    emit Td_update(true, Td);
+                }
+
+                if (old_Ku != Ku)
+                {
+                    emit Ku_update(true, Ku);
+                }
             }
         }
         else
@@ -599,39 +628,52 @@ void akp_check_state::onDataUpdate(const uint blk_cnt, const TDataPocket &data)
         //---------------------------------------------------------------------
         if (CRC2_OK)
         {
-            if (old_rx_delay != rx_delay)
+            if (old_CRC2_OK != CRC2_OK)
             {
-                emit rx_delay_update(true, rx_delay);
-            }
-
-            if (old_Fsig != Fsig)
-            {
-                emit Fsig_update(true, Fsig);
-            }
-
-            if (old_izl_type != izl_type)
-            {
-                emit izl_type_update(true, izl_type);
-            }
-
-            if (old_izl_ampl != izl_ampl)
-            {
-                emit izl_ampl_update(true, izl_ampl);
-            }
-
-            if (old_izl_periods != izl_periods)
-            {
+                emit rx_delay_update   (true, rx_delay);
+                emit Fsig_update       (true, Fsig);
+                emit izl_type_update   (true, izl_type);
+                emit izl_ampl_update   (true, izl_ampl);
                 emit izl_periods_update(true, izl_periods);
-            }
-
-            if (old_tool_type != tool_type)
-            {
-                emit tool_type_update(true, tool_type);
-            }
-
-            if (old_mode_number != mode_number)
-            {
+                emit tool_type_update  (true, tool_type);
                 emit mode_number_update(true, mode_number);
+            }
+            else
+            {
+                if (old_rx_delay != rx_delay)
+                {
+                    emit rx_delay_update(true, rx_delay);
+                }
+
+                if (old_Fsig != Fsig)
+                {
+                    emit Fsig_update(true, Fsig);
+                }
+
+                if (old_izl_type != izl_type)
+                {
+                    emit izl_type_update(true, izl_type);
+                }
+
+                if (old_izl_ampl != izl_ampl)
+                {
+                    emit izl_ampl_update(true, izl_ampl);
+                }
+
+                if (old_izl_periods != izl_periods)
+                {
+                    emit izl_periods_update(true, izl_periods);
+                }
+
+                if (old_tool_type != tool_type)
+                {
+                    emit tool_type_update(true, tool_type);
+                }
+
+                if (old_mode_number != mode_number)
+                {
+                    emit mode_number_update(true, mode_number);
+                }
             }
         }
         else
@@ -649,7 +691,7 @@ void akp_check_state::onDataUpdate(const uint blk_cnt, const TDataPocket &data)
         //---------------------------------------------------------------------
         if (CRC3_OK)
         {
-            if (old_mode_count != mode_count)
+            if ( (old_mode_count != mode_count) || (old_CRC3_OK != CRC3_OK) )
             {
                 emit mode_count_update(true, mode_count);
             }
@@ -667,7 +709,7 @@ void akp_check_state::onDataUpdate(const uint blk_cnt, const TDataPocket &data)
         //---------------------------------------------------------------------
         if (CRC5_OK)
         {
-            if (old_vk_calibration_amplitude != vk_calibration_amplitude)
+            if ( (old_vk_calibration_amplitude != vk_calibration_amplitude) || (old_CRC5_OK != CRC5_OK) )
             {
                 emit vk_calibration_amp_update(true, vk_calibration_amplitude);
             }
@@ -681,19 +723,28 @@ void akp_check_state::onDataUpdate(const uint blk_cnt, const TDataPocket &data)
         //---------------------------------------------------------------------
         if (CRC6_OK)
         {
-            if (old_vk_calibration_offset != vk_calibration_offset)
+            if (old_CRC6_OK != CRC6_OK)
             {
-                emit vk_calibration_ofs_update(true, vk_calibration_offset);
+                emit vk_calibration_ofs_update  (true, vk_calibration_offset);
+                emit tool_no_update             (true, tool_no);
+                emit soft_version_update        (true, soft_version_major, soft_version_minor);
             }
-
-            if (old_tool_no != tool_no)
+            else
             {
-                emit tool_no_update(true, tool_no);
-            }
+                if (old_vk_calibration_offset != vk_calibration_offset)
+                {
+                    emit vk_calibration_ofs_update(true, vk_calibration_offset);
+                }
 
-            if ( (old_soft_version_major != soft_version_major) || (old_soft_version_minor != soft_version_minor) )
-            {
-                emit soft_version_update(true, soft_version_major, soft_version_minor);
+                if (old_tool_no != tool_no)
+                {
+                    emit tool_no_update(true, tool_no);
+                }
+
+                if ( (old_soft_version_major != soft_version_major) || (old_soft_version_minor != soft_version_minor) )
+                {
+                    emit soft_version_update(true, soft_version_major, soft_version_minor);
+                }
             }
         }
         else
@@ -707,14 +758,22 @@ void akp_check_state::onDataUpdate(const uint blk_cnt, const TDataPocket &data)
         //---------------------------------------------------------------------
         if (CRC7_OK)
         {
-            if ( (old_timer_clk != timer_clk) || (old_CRC7_OK != CRC7_OK) )
+            if (old_CRC7_OK != CRC7_OK)
             {
-                emit timer_clk_update(true, timer_clk);
-            }
-
-            if ( (old_time_start_meserment != time_start_meserment) || (old_CRC7_OK != CRC7_OK) )
-            {
+                emit timer_clk_update           (true, timer_clk);
                 emit time_start_meserment_update(true, time_start_meserment);
+            }
+            else
+            {
+                if (old_timer_clk != timer_clk)
+                {
+                    emit timer_clk_update(true, timer_clk);
+                }
+
+                if (old_time_start_meserment != time_start_meserment)
+                {
+                    emit time_start_meserment_update(true, time_start_meserment);
+                }
             }
         }
         else
@@ -735,6 +794,18 @@ void akp_check_state::onDataUpdate(const uint blk_cnt, const TDataPocket &data)
         else
         {
             emit time_stop_meserment_update(false, time_stop_meserment);
+        }
+        //---------------------------------------------------------------------
+        if ( (CRC7_OK) && (CRC8_OK) )
+        {
+            if ( (old_time_meserment != time_meserment) || (old_CRC7_OK != CRC7_OK) || (old_CRC8_OK != CRC8_OK) )
+            {
+                emit time_meserment_update(true, time_meserment);
+            }
+        }
+        else
+        {
+            emit time_meserment_update(false, time_meserment);
         }
         //---------------------------------------------------------------------
         if (old_CRC1_OK != CRC1_OK)
