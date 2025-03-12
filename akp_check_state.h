@@ -176,6 +176,8 @@ public:
 
     bool is_CRC_OK_for_time_stop_meserment(void) {return CRC8_OK;}
 
+    bool is_CRC_OK_for_time_meserment(void)      {return (CRC7_OK && CRC8_OK);}
+
 private:
 
 signals:

@@ -408,7 +408,7 @@ void akp_check_state::set_state(const TDataPocket &data)
     encode_time_stop_meserment (data);
 
     calc_time_meserment();
-
+    //-------------------------------------------------------------------------
     if ( (true == CRC_OK) && (0x9999 == frame_label) )
     {
         good_block_cnt++;
@@ -418,6 +418,24 @@ void akp_check_state::set_state(const TDataPocket &data)
         old_bad_block_cnt = bad_block_cnt;
         bad_block_cnt++;
     }
+    //-------------------------------------------------------------------------
+    {
+        int     i;
+        for (i = 0; i < VAK_8_NUM_POINTS; i++)
+        {
+            qint16 smpl = 0x3FFF & data.data[i];
+            vk[i] = smpl | ((smpl & 0x2000) * 7);
+
+//                quint16 x;
+//                x = 0x3FFF & data.data[i];
+//                if ( 0 == (x & 0x2000) ) vk[i] = x;
+//                else vk[i] = -x;
+
+//                if ( (data.data[i] & 0x2000 ) != 0) vk[i] = data.data[i] | 0xC000;
+//                else vk[i] = data.data[i] & 0x1FFF;
+        }
+    }
+    //-------------------------------------------------------------------------
 }
 //-----------------------------------------------------------------------------
 void akp_check_state::clear_block_count(void)
@@ -848,23 +866,23 @@ void akp_check_state::onDataUpdate(const uint blk_cnt, const TDataPocket &data)
             emit CRC8_update(CRC8_OK);
         }
         //---------------------------------------------------------------------
-        {
-            //            quint16 x;
-            int     i;
-            for (i = 0; i < VAK_8_NUM_POINTS; i++)
-            {
-//                x = 0x3FFF & data.data[i];
-//                if ( 0 == (x & 0x2000) ) vk[i] = x;
-//                else vk[i] = -x;
+//        {
+//            int     i;
+//            for (i = 0; i < VAK_8_NUM_POINTS; i++)
+//            {
+////                quint16 x;
+////                x = 0x3FFF & data.data[i];
+////                if ( 0 == (x & 0x2000) ) vk[i] = x;
+////                else vk[i] = -x;
 
-//                if ( (data.data[i] & 0x2000 ) != 0) vk[i] = data.data[i] | 0xC000;
-//                else vk[i] = data.data[i] & 0x1FFF;
+////                if ( (data.data[i] & 0x2000 ) != 0) vk[i] = data.data[i] | 0xC000;
+////                else vk[i] = data.data[i] & 0x1FFF;
 
-                qint16 smpl = 0x3FFF & data.data[i];
-                vk[i] = smpl | ((smpl & 0x2000) * 7);
-            }
-            emit VK_update(get_vk_number(), vk);
-        }
+//                qint16 smpl = 0x3FFF & data.data[i];
+//                vk[i] = smpl | ((smpl & 0x2000) * 7);
+//            }
+//        }
+        emit VK_update(get_vk_number(), vk);
         //---------------------------------------------------------------------
     }
     //-------------------------------------------------------------------------
