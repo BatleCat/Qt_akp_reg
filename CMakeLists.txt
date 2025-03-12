@@ -57,6 +57,7 @@ set(SOURCES
     qt_deptcol.cpp
     qt_ml.cpp
     velocity.cpp
+    qt_akp_file.cpp
 )
 
 set(HEADERS
@@ -76,6 +77,7 @@ set(HEADERS
     qt_deptcol.h
     qt_ml.h
     velocity.h
+    qt_akp_file.h
 )
 
 set(UI mainwindow.ui
