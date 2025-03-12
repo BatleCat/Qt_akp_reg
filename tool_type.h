@@ -17,7 +17,7 @@
 #define TOOL_AKC4S_FAST_SD  	0x0B
 #define TOOL_VAK32_SHDSL        0x0C
 #define TOOL_AKP_52             0x0D
-//#define TOOL_AKP_76			0x0E
+#define TOOL_AKP_76			0x0E
 #define TOOL_UNKNOW             0x0FF
 //-------------------------------------------------------------------
 enum TTOOL_TYPE {   VAK_8           = TOOL_VAK_8,
@@ -34,7 +34,7 @@ enum TTOOL_TYPE {   VAK_8           = TOOL_VAK_8,
                     AKC4S_FAST_SD   = TOOL_AKC4S_FAST_SD,
                     VAK32_SHDSL     = TOOL_VAK32_SHDSL,
                     AKP_52          = TOOL_AKP_52,
-                  //AKP_76          = TOOL_AKP_76,
+                    AKP_76          = TOOL_AKP_76,
                     UNKNOWN};
 //-------------------------------------------------------------------
 #endif //TOOL_TYPE_H
