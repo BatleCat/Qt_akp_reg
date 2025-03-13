@@ -576,24 +576,40 @@ bool qt_akp_file::is_frame_CRC_OK_for_time_meserment(const int index)
 {
 
 }
-//-----------------------------------------------------------------------------
-void write_akp_head(const QString f_name, const QDate d, const QString fild, const QString well,
-                      const QString name, const qint32 dept, const QString tool_type, const qint16 tool_number,
-                      const qint16  wp_izl, const qint16  wp_rx_ch1, const qint16  wp_rx_ch2
-                      )
+//---------------------------------------------------------------------------
+qt_akp_file_save::qt_akp_file_save(QObject *parent) :
+    QObject(parent),
+    buf_len(1),
+    fileName(QString::fromUtf8("1.gis")),
+    fild(QString::fromUtf8("Проверочная")),
+    well(QString::fromUtf8("1")),
+    name(QString::fromUtf8("Я")),
+    tool_type(QString::fromUtf8("АКП-76")),
+    date(QDate::currentDate()),
+    time(QTime::currentTime()),
+    dept(0)
 {
-  //---Запись шапки файла -----------------------
-    QFile   file(f_name);
+}
+//-----------------------------------------------------------------------------
+qt_akp_file_save::~qt_akp_file_save()
+{
+    close_file();
+    emit closed();
+}
+//-----------------------------------------------------------------------------
+void qt_akp_file_save::write_head(void)
+{
+    //---Запись шапки файла -----------------------
+    file.setFileName(fileName);
 
     if (!file.open(QIODevice::WriteOnly))
     {
-//      throw
         qDebug() << file.errorString();
         return;
     }
     QTextStream head(&file);
     head.setCodec("windows-1251");
-//    head.setCodec("CP866");
+    //    head.setCodec("CP866");
 
     head << QString::fromUtf8("~head\r\n");
     head << QString::fromUtf8("  Формат GIS\r\n");
@@ -602,42 +618,62 @@ void write_akp_head(const QString f_name, const QDate d, const QString fild, con
     head << QString::fromUtf8("~well\r\n");
     head << QString::fromUtf8("  Площадь  %1\r\n").arg(fild);
     head << QString::fromUtf8("  Скважина №%1\r\n").arg(well);
-    head << QString::fromUtf8("  Дата     %1.%2.%3\r\n").arg(d.day()).arg(d.month()).arg(d.year());
+    head << QString::fromUtf8("  Дата     %1.%2.%3\r\n").arg(date.day()).arg(date.month()).arg(date.year());
+    head << QString::fromUtf8("  Время    %1:%2:%3.%4\r\n").arg(time.hour()).arg(time.minute()).arg(time.second()).arg(time.msec());
     head << QString::fromUtf8("  Оператор %1\r\n").arg(name);
-    head << QString::fromUtf8("  Глубина: %1 м.\r\n").arg( dept / 100.0, 0, 'f', 2);
+    head << QString::fromUtf8("  Глубина: %1 м.\r\n").arg(((float)dept) / 100.0, 0, 'f', 2);
 
     head << QString::fromUtf8("~tool\r\n");
     head << QString::fromUtf8("  Прибор %1\r\n").arg(tool_type);
-    head << QString::fromUtf8("  Номер %1\r\n").arg(tool_number);
+    head << QString::fromUtf8("  Модель 1.1\r\n");
+
+    head << QString::fromUtf8("  Прибор %1\r\n").arg(tool_type);
+//    head << QString::fromUtf8("  Номер %1\r\n").arg(tool_number);
     head << QString::fromUtf8("  Модель 1\r\n");
     head << QString::fromUtf8("  Зонды  2\r\n");
     head << QString::fromUtf8("  Точки записи\r\n");
 
-    head << QString::fromUtf8("    И1   %1\r\n").arg(wp_izl);
-
-    head << QString::fromUtf8("    П1  %1\r\n").arg(wp_rx_ch1);
-    head << QString::fromUtf8("    П2  %1\r\n").arg(wp_rx_ch2);
+    head << QString::fromUtf8("    И1   %1\r\n").arg(Shift_Point_IZL);
+    head << QString::fromUtf8("    П1   %1\r\n").arg(Shift_Point_VK1);
+    head << QString::fromUtf8("    П2   %1\r\n").arg(Shift_Point_VK2);
 
     head << QString::fromUtf8("~data\r\n");
 
     file.flush();
     file.close();
 }
-//---------------------------------------------------------------------------
-void write_akp_data(const QString f_name, const TAKP_FRAME &data)
+//-----------------------------------------------------------------------------
+void qt_akp_file_save::write_data(const TAKP_FRAME &data)
 {
-    QFile file(f_name);
     if (!file.open(QIODevice::Append))
     {
-//        throw
         qDebug() << file.errorString();
         return;
     }
+    stream.setDevice(&file);
+    stream.setVersion(QDataStream::Qt_4_0);
 
-    QDataStream stream(&file);
     stream << data;
 
     file.flush();
     file.close();
+}
+//---------------------------------------------------------------------------
+void qt_akp_file_save::close_file(void)
+{
+    file.flush();
+    file.close();
+}
+//---------------------------------------------------------------------------
+void qt_akp_file_save::start(void)
+{
+    curent_index = -1;
+}
+//---------------------------------------------------------------------------
+void qt_akp_file_save::on_data_update (const int blk_cnt, const TDataPocket &data)
+{
+    Q_UNUSED(blk_cnt);
+//    stream << data;
+    write_data(data);
 }
 //---------------------------------------------------------------------------

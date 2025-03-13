@@ -13,6 +13,8 @@
 #include <QTextStream>
 #include <QString>
 #include <QList>
+#include <QDate>
+#include <QTime>
 //-----------------------------------------------------------------------------
 #include "vak_8.h"
 #include "vak_8_2pc.h"
@@ -158,6 +160,7 @@ public:
     TTOOL_TYPE   tool_type()        const {return Tool_Type;}
     int          model()            const {return Model;}
     int          number_of_zondes() const {return Number_of_Zondes;}
+    int          shift_point_izl()  const {return Shift_Point_IZL;}
     int          shift_point_vk1()  const {return Shift_Point_VK1;}
     int          shift_point_vk2()  const {return Shift_Point_VK2;}
     //-------------------------------------------------------------------------
@@ -170,6 +173,66 @@ signals:
 public slots:
     //-------------------------------------------------------------------------
     void start(void);
+};
+//-----------------------------------------------------------------------------
+class qt_akp_file_save : public QObject
+{
+    Q_OBJECT
+public:
+    explicit qt_akp_file_save(QObject *parent = 0);
+    ~qt_akp_file_save();
+
+//    void create_file(QString fName);
+    void write_head     (void);
+    void write_data     (const TAKP_FRAME &data);    //(const TDataPocket &data);
+    void close_file     (void);
+
+    void setBufLen      (int len)           {if (len > 1) buf_len = len;}
+    void setFileName    (QString Name)      {fileName = Name;}
+    void setFildName    (QString Name)      {fild     = Name;}
+    void setWellNo      (QString WellNo)    {well     = WellNo;}
+    void setOperatorName(QString Name)      {name = Name;}
+    void setDate        (QDate newDate)     {date = newDate;}
+    void setCurrentDate (void)              {date = QDate::currentDate();}
+    void setTime        (QTime newTime)     {time = newTime;}
+    void setCurrentTime (void)              {time.currentTime();}
+    void setDept        (int newDept)       {dept = newDept;}
+
+    void setShiftPointIZL(int newValue)     {Shift_Point_IZL = newValue;}
+    void setShiftPointVK1(int newValue)     {Shift_Point_VK1 = newValue;}
+    void setShiftPointVK2(int newValue)     {Shift_Point_VK2 = newValue;}
+
+private:
+    int         buf_len;
+    QFile       file;
+    QDataStream stream;
+
+    QString     fileName;
+    QString     fild;
+    QString     well;
+    QString     name;
+    QString     tool_type;
+
+    QDate       date;
+    QTime       time;
+
+    int         dept;
+
+    int         Shift_Point_IZL;
+    int         Shift_Point_VK1;
+    int         Shift_Point_VK2;
+
+    TAKP_FRAME* akp_curent_frame;
+    int         curent_index;
+
+    QList<TAKP_FRAME*>  data_list;
+
+signals:
+    void closed(void);
+
+public slots:
+    void start(void);
+    void on_data_update (const int blk_cnt, const TDataPocket &data);
 };
 //-----------------------------------------------------------------------------
 #endif // QT_AKP_FILE_H
