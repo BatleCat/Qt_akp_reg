@@ -19,6 +19,7 @@
 #include "vak_8.h"
 #include "vak_8_2pc.h"
 #include "tool_type.h"
+#include "akp_check_state.h"
 //-----------------------------------------------------------------------------
 enum TAKP_FILE_ERROR
 {
@@ -31,21 +32,64 @@ enum TAKP_FILE_ERROR
 };
 //-----------------------------------------------------------------------------
 //#pragma pack(push, 1)
+//typedef struct
+//{
+//    qint32          dept;
+//    qint8           ml;
+//    TVAK_8_DATA     ch1;
+//    TVAK_8_DATA     ch2;
+//} TAKP_FRAME;
+//#pragma pack(pop)
+//-----------------------------------------------------------------------------
 typedef struct
 {
     qint32          dept;
     qint8           ml;
     TVAK_8_DATA     ch1;
     TVAK_8_DATA     ch2;
-} __attribute__ ((__packed__, __mode__(__byte__) )) TAKP_FRAME;
-//} TAKP_FRAME;
-//#pragma pack(pop)
+} __attribute__ ((__packed__ )) TAKP_FRAME;
+//-----------------------------------------------------------------------------
+//typedef struct
+//{
+//    qint32          dept;
+//    qint8           ml;
+
+//    quint16 frame_label;
+//    quint16 vk_number;
+//    quint16 rx_type;
+//    quint16 Td;
+//    quint16 Ku;
+//    bool    CRC1_OK;
+//    quint16 rx_delay;
+//    quint16 Fsig;
+//    quint16 izl_type;
+//    quint16 izl_ampl;
+//    quint16 izl_periods;
+//    quint16 tool_type;
+//    quint16 mode_number;
+//    bool    CRC2_OK;
+//    quint16	mode_count;
+//    bool    CRC3_OK;
+//    bool    CRC4_OK;
+//    quint16 vk_calibration_amplitude;
+//    bool    CRC5_OK;
+//    quint16 vk_calibration_offset;
+//    quint16 tool_no;
+//    quint16 soft_version_major;
+//    quint16 soft_version_minor;
+//    bool    CRC6_OK;
+//    quint32 time_meserment;
+//    bool    CRC7_OK;
+//    bool    CRC8_OK;
+
+//    TVAK8_WAVE vk;
+//} __attribute__ ((__packed__)) TAKP_FRAME;
 //-----------------------------------------------------------------------------
 QDataStream& operator <<(QDataStream &out, const TAKP_FRAME &akp_frame);
 QDataStream& operator >>(QDataStream &in,        TAKP_FRAME &akp_frame);
 Q_DECLARE_METATYPE(TAKP_FRAME)
 //-----------------------------------------------------------------------------
-class qt_akp_file : public QObject
+class qt_akp_file : public akp_check_state //QObject
 {
     Q_OBJECT
 public:
@@ -175,32 +219,38 @@ public slots:
     void start(void);
 };
 //-----------------------------------------------------------------------------
-class qt_akp_file_save : public QObject
+class qt_akp_file_save : public akp_check_state
 {
     Q_OBJECT
 public:
     explicit qt_akp_file_save(QObject *parent = 0);
     ~qt_akp_file_save();
 
-//    void create_file(QString fName);
-    void write_head     (void);
-    void write_data     (const TAKP_FRAME &data);    //(const TDataPocket &data);
-    void close_file     (void);
+    void find_validFileName (void);
+    void write_head         (void);
+    void write_data         (void);
+    void close_file         (void);
 
-    void setBufLen      (int len)           {if (len > 1) buf_len = len;}
-    void setFileName    (QString Name)      {fileName = Name;}
-    void setFildName    (QString Name)      {fild     = Name;}
-    void setWellNo      (QString WellNo)    {well     = WellNo;}
-    void setOperatorName(QString Name)      {name = Name;}
-    void setDate        (QDate newDate)     {date = newDate;}
-    void setCurrentDate (void)              {date = QDate::currentDate();}
-    void setTime        (QTime newTime)     {time = newTime;}
-    void setCurrentTime (void)              {time.currentTime();}
-    void setDept        (int newDept)       {dept = newDept;}
+    bool isFileNameValid    (void)              {return bFileNameValid;}
 
-    void setShiftPointIZL(int newValue)     {Shift_Point_IZL = newValue;}
-    void setShiftPointVK1(int newValue)     {Shift_Point_VK1 = newValue;}
-    void setShiftPointVK2(int newValue)     {Shift_Point_VK2 = newValue;}
+    void setBufLen          (int len)           {if (len > 1) buf_len = len;}
+    void setFolderName      (QString Name)      {folderName = Name;}
+    void setFileName        (QString Name)      {fileName = Name;}
+    void setFildName        (QString Name)      {fildName     = Name;}
+    void setWellNo          (QString WellNo)    {wellNo     = WellNo;}
+    void setOperatorName    (QString Name)      {name = Name;}
+    void setDate            (QDate newDate)     {date = newDate;}
+    void setCurrentDate     (void)              {date = QDate::currentDate();}
+    void setTime            (QTime newTime)     {time = newTime;}
+    void setCurrentTime     (void)              {time.currentTime();}
+    void setStartDepth      (int newDepth)      {startDepth = newDepth;}
+
+    void setShiftPointIZL   (int newValue)      {Shift_Point_IZL = newValue;}
+    void setShiftPointVK1   (int newValue)      {Shift_Point_VK1 = newValue;}
+    void setShiftPointVK2   (int newValue)      {Shift_Point_VK2 = newValue;}
+
+    void setExtendedFolderCtl   (void)          {bExtFolderCtl = true;}
+    void clearExtendedFolderCtl (void)          {bExtFolderCtl = false;}
 
 private:
     int         buf_len;
@@ -208,22 +258,27 @@ private:
     QDataStream stream;
 
     QString     fileName;
-    QString     fild;
-    QString     well;
+    QString     folderName;
+
+    QString     fildName;
+    QString     wellNo;
     QString     name;
     QString     tool_type;
 
     QDate       date;
     QTime       time;
 
-    int         dept;
+    int         startDepth;
 
     int         Shift_Point_IZL;
     int         Shift_Point_VK1;
     int         Shift_Point_VK2;
 
+    bool        bWriteEnable;
+    bool        bExtFolderCtl;
+    bool        bFileNameValid;
+
     TAKP_FRAME* akp_curent_frame;
-    int         curent_index;
 
     QList<TAKP_FRAME*>  data_list;
 

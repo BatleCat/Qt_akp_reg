@@ -3,6 +3,7 @@
 #include <QStringList>
 #include <QDate>
 #include <QFile>
+#include <QDir>
 #include <QTextStream>
 #include <QtDebug>
 //-----------------------------------------------------------------------------
@@ -23,7 +24,7 @@ QDataStream& operator >>(QDataStream &in,        TAKP_FRAME &akp_frame)
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-qt_akp_file::qt_akp_file(QObject *parent) : QObject(parent)
+qt_akp_file::qt_akp_file(QObject *parent) : akp_check_state(parent) //QObject(parent)
 {
 
 }
@@ -577,17 +578,22 @@ bool qt_akp_file::is_frame_CRC_OK_for_time_meserment(const int index)
 
 }
 //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 qt_akp_file_save::qt_akp_file_save(QObject *parent) :
-    QObject(parent),
-    buf_len(1),
-    fileName(QString::fromUtf8("1.gis")),
-    fild(QString::fromUtf8("Проверочная")),
-    well(QString::fromUtf8("1")),
-    name(QString::fromUtf8("Я")),
-    tool_type(QString::fromUtf8("АКП-76")),
-    date(QDate::currentDate()),
-    time(QTime::currentTime()),
-    dept(0)
+    akp_check_state (parent),
+    buf_len         (1),
+    fileName        (QString::fromUtf8("")),
+    folderName      ( QString::fromUtf8("''") ),
+    fildName        (QString::fromUtf8("Проверочная")),
+    wellNo          (QString::fromUtf8("1")),
+    name            (QString::fromUtf8("Я")),
+    tool_type       (QString::fromUtf8("АКП-76")),
+    date            (QDate::currentDate()),
+    time            (QTime::currentTime()),
+    startDepth      (0),
+    bWriteEnable    (false),
+    bExtFolderCtl   (true),
+    bFileNameValid  (false)
 {
 }
 //-----------------------------------------------------------------------------
@@ -597,63 +603,130 @@ qt_akp_file_save::~qt_akp_file_save()
     emit closed();
 }
 //-----------------------------------------------------------------------------
-void qt_akp_file_save::write_head(void)
+void qt_akp_file_save::find_validFileName(void)
 {
-    //---Запись шапки файла -----------------------
-    file.setFileName(fileName);
+    QString FileExt = QString::fromUtf8(".gis");
 
-    if (!file.open(QIODevice::WriteOnly))
+    fileName = folderName;
+    if (bExtFolderCtl)
     {
-        qDebug() << file.errorString();
+        fileName += QString::fromUtf8("/");
+
+        fileName += fildName;
+        fileName += QString::fromUtf8("/");
+
+        fileName += wellNo;
+        fileName += QString::fromUtf8("/");
+
+        if (date.day() < 10) fileName += QString::fromUtf8("0");
+        fileName += QString::fromUtf8("%1_").arg(date.day());
+
+        if (date.month() < 10) fileName += QString::fromUtf8("0");
+        fileName += QString::fromUtf8("%1_").arg(date.month());
+
+        fileName += QString::fromUtf8("%1").arg(date.year());
+    }
+
+    QDir dir;
+    if (!dir.mkpath(fileName))
+    {
+        //throw
+        qDebug() << QString::fromUtf8("Ошибка создания директории: %1").arg(fileName);
+
         return;
     }
-    QTextStream head(&file);
-    head.setCodec("windows-1251");
-    //    head.setCodec("CP866");
 
-    head << QString::fromUtf8("~head\r\n");
-    head << QString::fromUtf8("  Формат GIS\r\n");
-    head << QString::fromUtf8("  Версия 1.0\r\n");
+    fileName += QString::fromUtf8("/");
+    fileName += wellNo;
 
-    head << QString::fromUtf8("~well\r\n");
-    head << QString::fromUtf8("  Площадь  %1\r\n").arg(fild);
-    head << QString::fromUtf8("  Скважина №%1\r\n").arg(well);
-    head << QString::fromUtf8("  Дата     %1.%2.%3\r\n").arg(date.day()).arg(date.month()).arg(date.year());
-    head << QString::fromUtf8("  Время    %1:%2:%3.%4\r\n").arg(time.hour()).arg(time.minute()).arg(time.second()).arg(time.msec());
-    head << QString::fromUtf8("  Оператор %1\r\n").arg(name);
-    head << QString::fromUtf8("  Глубина: %1 м.\r\n").arg(((float)dept) / 100.0, 0, 'f', 2);
+    //    qDebug() << QString::fromUtf8("%1").arg(FileName);
 
-    head << QString::fromUtf8("~tool\r\n");
-    head << QString::fromUtf8("  Прибор %1\r\n").arg(tool_type);
-    head << QString::fromUtf8("  Модель 1.1\r\n");
+    char ch;
+    for (ch = 'a'; ch <= 'z'; ch++)
+    {
+        if (!QFile::exists(QString::fromUtf8("%1_%2%3").arg(fileName).arg(ch).arg(FileExt)))
+        {
+            fileName += QString::fromUtf8("_%1").arg(ch);
+            fileName += FileExt;
 
-    head << QString::fromUtf8("  Прибор %1\r\n").arg(tool_type);
-//    head << QString::fromUtf8("  Номер %1\r\n").arg(tool_number);
-    head << QString::fromUtf8("  Модель 1\r\n");
-    head << QString::fromUtf8("  Зонды  2\r\n");
-    head << QString::fromUtf8("  Точки записи\r\n");
+            bFileNameValid = true;
 
-    head << QString::fromUtf8("    И1   %1\r\n").arg(Shift_Point_IZL);
-    head << QString::fromUtf8("    П1   %1\r\n").arg(Shift_Point_VK1);
-    head << QString::fromUtf8("    П2   %1\r\n").arg(Shift_Point_VK2);
+            return;
+        }
+    }
 
-    head << QString::fromUtf8("~data\r\n");
-
-    file.flush();
-    file.close();
+    fileName = QString::fromUtf8("");
+    return;
 }
 //-----------------------------------------------------------------------------
-void qt_akp_file_save::write_data(const TAKP_FRAME &data)
+void qt_akp_file_save::write_head(void)
+{
+    if ( isFileNameValid() )
+    {
+        //---Запись шапки файла -----------------------
+        file.setFileName(fileName);
+
+        if (!file.open(QIODevice::WriteOnly))
+        {
+            qDebug() << file.errorString();
+            return;
+        }
+        QTextStream head(&file);
+        head.setCodec("windows-1251");
+        //    head.setCodec("CP866");
+
+        head << QString::fromUtf8("~head\r\n");
+        head << QString::fromUtf8("  Формат GIS\r\n");
+        head << QString::fromUtf8("  Версия 1.0\r\n");
+
+        head << QString::fromUtf8("~well\r\n");
+        head << QString::fromUtf8("  Площадь  %1\r\n").arg(fildName);
+        head << QString::fromUtf8("  Скважина №%1\r\n").arg(wellNo);
+        head << QString::fromUtf8("  Дата     %1.%2.%3\r\n").arg(date.day()).arg(date.month()).arg(date.year());
+        head << QString::fromUtf8("  Время    %1:%2:%3.%4\r\n").arg(time.hour()).arg(time.minute()).arg(time.second()).arg(time.msec());
+        head << QString::fromUtf8("  Оператор %1\r\n").arg(name);
+        head << QString::fromUtf8("  Глубина: %1 м.\r\n").arg(((float)startDepth) / 100.0, 0, 'f', 2);
+
+        head << QString::fromUtf8("~tool\r\n");
+//        head << QString::fromUtf8("  Прибор %1\r\n").arg(tool_type);
+//        head << QString::fromUtf8("  Модель 1.1\r\n");
+
+        head << QString::fromUtf8("  Прибор %1\r\n").arg(tool_type);
+//        head << QString::fromUtf8("  Номер %1\r\n").arg(tool_number);
+        head << QString::fromUtf8("  Модель 1\r\n");
+        head << QString::fromUtf8("  Зонды  2\r\n");
+        head << QString::fromUtf8("  Точки записи\r\n");
+
+        head << QString::fromUtf8("    И1   %1\r\n").arg(Shift_Point_IZL);
+        head << QString::fromUtf8("    П1   %1\r\n").arg(Shift_Point_VK1);
+        head << QString::fromUtf8("    П2   %1\r\n").arg(Shift_Point_VK2);
+
+        head << QString::fromUtf8("~data\r\n");
+
+        file.flush();
+        file.close();
+
+        bWriteEnable   = true;
+        bFileNameValid = false;
+    }
+}
+//-----------------------------------------------------------------------------
+void qt_akp_file_save::write_data(void)
 {
     if (!file.open(QIODevice::Append))
     {
         qDebug() << file.errorString();
         return;
     }
+
     stream.setDevice(&file);
     stream.setVersion(QDataStream::Qt_4_0);
 
-    stream << data;
+    while(data_list.count() > 0)
+    {
+        stream << data_list.first();
+        data_list.removeFirst();
+    }
 
     file.flush();
     file.close();
@@ -661,19 +734,74 @@ void qt_akp_file_save::write_data(const TAKP_FRAME &data)
 //---------------------------------------------------------------------------
 void qt_akp_file_save::close_file(void)
 {
-    file.flush();
-    file.close();
+    bWriteEnable   = false;
+    bFileNameValid = false;
+    write_data();
 }
 //---------------------------------------------------------------------------
 void qt_akp_file_save::start(void)
 {
-    curent_index = -1;
+    bWriteEnable     = false;
+    bFileNameValid   = false;
+    akp_curent_frame = NULL;
 }
 //---------------------------------------------------------------------------
 void qt_akp_file_save::on_data_update (const int blk_cnt, const TDataPocket &data)
 {
     Q_UNUSED(blk_cnt);
-//    stream << data;
-    write_data(data);
+
+    //-------------------------------------------------------------------------
+    if (bWriteEnable == false)
+    {
+        return;
+    }
+    //-------------------------------------------------------------------------
+    if (COMAND_AKP_DO_MESERMENT != data.id)
+    {
+        return;
+    }
+    //-------------------------------------------------------------------------
+//    check_CRC(data);
+    //-------------------------------------------------------------------------
+//    encode_frame_label(data);
+//    if ( 0x9999 == get_frame_label() )
+    {
+        //-------------------------------------------------------------------------
+        encode_vk_number(data);
+        //-------------------------------------------------------------------------
+        if (NULL == akp_curent_frame)
+        {
+            akp_curent_frame = new(TAKP_FRAME);
+            memset(akp_curent_frame, 0, sizeof(TAKP_FRAME));
+
+            akp_curent_frame->dept = data.dept ;
+            akp_curent_frame->ml   = data.ml;
+        }
+        //-------------------------------------------------------------------------
+        if (akp_curent_frame->dept != data.dept)    // новый кадр
+        {
+            data_list.append(akp_curent_frame);
+
+            akp_curent_frame = new(TAKP_FRAME);
+            memset(akp_curent_frame, 0, sizeof(TAKP_FRAME));
+
+            akp_curent_frame->dept = data.dept ;
+            akp_curent_frame->ml   = data.ml;
+        }
+        //-------------------------------------------------------------------------
+        if ( 0 == get_vk_number() )
+        {
+            memcpy( akp_curent_frame->ch1, data.data, sizeof(TVAK_8_DATA) );
+        }
+        if ( 4 == get_vk_number() )
+        {
+            memcpy( akp_curent_frame->ch2, data.data, sizeof(TVAK_8_DATA) );
+        }
+        //-------------------------------------------------------------------------
+        if (data_list.count() >= buf_len)
+        {
+            write_data();
+        }
+    }
 }
 //---------------------------------------------------------------------------
