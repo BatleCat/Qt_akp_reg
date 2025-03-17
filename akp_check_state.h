@@ -98,6 +98,7 @@ private:
     quint16 take_from_15th_bit(const quint16 frame_pos, const TVAK_8_DATA &frame);
     quint16 calc_CRC(const quint16 CRC_win_left, const TVAK_8_DATA &frame);
 
+protected:
     void    encode_frame_label         (const TDataPocket &data);
     void    encode_vk_number           (const TDataPocket &data);
     void    encode_Rx_type             (const TDataPocket &data);
@@ -153,13 +154,26 @@ public:
 
     bool is_CRC_OK(void)                         {return CRC_OK; }
 
+    bool is_CRC1_OK(void)                         {return CRC1_OK; }
+    bool is_CRC2_OK(void)                         {return CRC2_OK; }
+    bool is_CRC3_OK(void)                         {return CRC3_OK; }
+    bool is_CRC4_OK(void)                         {return CRC4_OK; }
+    bool is_CRC5_OK(void)                         {return CRC5_OK; }
+    bool is_CRC6_OK(void)                         {return CRC6_OK; }
+    bool is_CRC7_OK(void)                         {return CRC7_OK; }
+    bool is_CRC8_OK(void)                         {return CRC8_OK; }
+
     bool is_CRC_OK_for_frame_label(void)         {return CRC1_OK;}
     bool is_CRC_OK_for_vk_number(void)           {return CRC1_OK;}
     bool is_CRC_OK_for_rx_type(void)             {return CRC1_OK;}
+    bool is_CRC_OK_for_Td(void)                  {return CRC1_OK;}
     bool is_CRC_OK_for_Ku(void)                  {return CRC1_OK;}
 
     bool is_CRC_OK_for_rx_delay(void)            {return CRC2_OK;}
     bool is_CRC_OK_for_Fsig(void)                {return CRC2_OK;}
+    bool is_CRC_OK_for_izl_type(void)            {return CRC2_OK;}
+    bool is_CRC_OK_for_izl_ampl(void)            {return CRC2_OK;}
+    bool is_CRC_OK_for_izl_periods(void)         {return CRC2_OK;}
     bool is_CRC_OK_for_tool_type(void)           {return CRC2_OK;}
     bool is_CRC_OK_for_mode_number(void)         {return CRC2_OK;}
 
