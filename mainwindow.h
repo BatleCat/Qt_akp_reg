@@ -34,6 +34,7 @@
 #include "qt_deptcol.h"
 #include "qt_ml.h"
 #include "velocity.h"
+#include "qt_akp_file.h"
 //-------------------------------------------------------------------
 namespace Ui {
 class MainWindow;
@@ -92,6 +93,9 @@ private:
     QThread*            akp_thread;
     akp_check_state     check_state;
     //-------------------------------------------------------------------
+    qt_akp_file_save    akp_file;
+    QThread*            file_thread;
+    //-------------------------------------------------------------------
     CVELOCITY*          velocity;
     //-------------------------------------------------------------------
     QGraphicsScene*     scene_vk;
@@ -148,19 +152,8 @@ private:
 
     QLabel*             label_ML;
 
-//    QTimer              timer;
-//    int                 timer_id;
-//    int                 timer_interval;
-
-    int                 port;
-//    short int           p_count;
-//    short int           cmd_id;
-//    QUdpSocket          udp_socket;
-    QHostAddress        host;
-//    TVAK_8_DATA         v8_data;
-
-//    QVector<vak32_ctrl_command_class*>              mode_list;
-//    QVector<vak32_ctrl_command_class*>::iterator    mode;
+//    int                 port;
+//    QHostAddress        host;
 
     QString OperatorName;
     QString WellNo;
@@ -210,18 +203,13 @@ private:
     void    save_settings(void);
 
 private slots:
-//    void on_cmdSetDepth(void);
-//    void on_vak32CmdSend(void);
-//    void on_udpDataRx(void);
 
     void on_pushButtonSettings(void);
     void on_pushButtonStart(void);
     void on_pushButtonStop(void);
     void on_pushButtonRecord(void);
     void on_dialogSetup(void);
-//    void on_dialogToolModeCmdRestoreFolder(void);
-//    void on_dialogToolModeCmdChangeToolModes(void);
-//    void on_dialogToolModeCmdRestoreToolModes(void);
+    void on_dialogToolModeCmdRestoreFolder(void);
 
     void on_cmdIncAmpl(void);
     void on_cmdDecAmpl(void);

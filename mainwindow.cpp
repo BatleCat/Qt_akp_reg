@@ -46,7 +46,8 @@ MainWindow::MainWindow(QWidget *parent) :
     dialogWellInfo(NULL),
     akp(parent),
     check_state(parent),
-    velocity(new CVELOCITY(this)),
+    akp_file(parent),
+    velocity(new CVELOCITY(this))
 //    bflag_CRC1_Ok(false),
 //    bflag_CRC2_Ok(false),
 //    bflag_CRC3_Ok(false),
@@ -56,9 +57,9 @@ MainWindow::MainWindow(QWidget *parent) :
 //    bflag_CRC7_Ok(false),
 //    bflag_CRC8_Ok(false),
 //    timer_interval(500),
-    port(1500),
+//    port(1500),
 //    p_count(0),
-    host(QHostAddress("10.2.22.245"))
+//    host(QHostAddress("10.2.22.245"))
 //    ToolNo(0)
 {
     //-------------------------------------------------------------------------
@@ -67,9 +68,18 @@ MainWindow::MainWindow(QWidget *parent) :
     //-------------------------------------------------------------------------
     akp_thread = new QThread();
     akp.moveToThread(akp_thread);
-    connect(akp_thread, SIGNAL(started(           )), &akp,         SLOT(start(       )));
-    connect(&akp,       SIGNAL(connectionClosed(  )), akp_thread,   SLOT(quit(        )));
-    connect(akp_thread, SIGNAL(finished(          )), akp_thread,   SLOT(deleteLater( )));
+    connect(akp_thread, &QThread::started,            &akp,       &akp_class::start     );
+    connect(&akp,       &akp_class::connectionClosed, akp_thread, &QThread::quit        );
+    connect(akp_thread, &QThread::finished,           akp_thread, &QThread::deleteLater );
+//    connect(akp_thread, SIGNAL(started(           )), &akp,         SLOT(start(       )));
+//    connect(&akp,       SIGNAL(connectionClosed(  )), akp_thread,   SLOT(quit(        )));
+//    connect(akp_thread, SIGNAL(finished(          )), akp_thread,   SLOT(deleteLater( )));
+    //-------------------------------------------------------------------------
+    file_thread = new QThread();
+    akp_file.moveToThread(file_thread);
+    connect(file_thread, &QThread::started,         &akp_file,     &qt_akp_file_save::start );
+    connect(&akp_file,   &qt_akp_file_save::closed, file_thread,   &QThread::quit           );
+    connect(file_thread, &QThread::finished,        file_thread,   &QThread::deleteLater    );
     //-------------------------------------------------------------------------
     ui->setupUi(this);
     setWindowIcon(QIcon(":/images/TNG.ico"));
@@ -178,93 +188,62 @@ MainWindow::MainWindow(QWidget *parent) :
     buttonGroup->addButton(ui->radioButton_VK1,   1);
     buttonGroup->addButton(ui->radioButton_VK5,   5);
     //-------------------------------------------------------------------------
-//    p_count = 0;
-//    port = 1500;
-//    host = QHostAddress("10.2.22.245");
+    connect(&check_state,  &akp_check_state::VK_update,             this, &MainWindow::on_showNewData       );
+    connect(&check_state,  &akp_check_state::good_blk_cnt_update,   this, &MainWindow::on_showPocketCount   );
+    connect(&check_state,  &akp_check_state::bad_blk_cnt_update,    this, &MainWindow::on_showBadPocketCount);
 
-//    udp_socket.bind(port);
-//    connect(&udp_socket,    SIGNAL( readyRead(void)         ), this, SLOT( on_udpDataRx(void)           ) );
+    connect(&check_state,  &akp_check_state::izl_type_update,       this, &MainWindow::on_showIZLtype       );
+    connect(&check_state,  &akp_check_state::Fsig_update,           this, &MainWindow::on_showIZLfreq       );
+    connect(&check_state,  &akp_check_state::izl_periods_update,    this, &MainWindow::on_showIZLnum        );
 
-//    connect(this,           SIGNAL( cmdSetDepth(void)       ), this, SLOT( on_cmdSetDepth(void)         ) );
-//    connect(this,           SIGNAL( vak32CmdSend(void)      ), this, SLOT( on_vak32CmdSend(void)        ) );
+    connect(&check_state,  &akp_check_state::rx_type_update,        this, &MainWindow::on_showRXtype        );
+    connect(&check_state,  &akp_check_state::rx_delay_update,       this, &MainWindow::on_showRXdelay       );
+    connect(&check_state,  &akp_check_state::Td_update,             this, &MainWindow::on_showRXtd          );
+    connect(&check_state,  &akp_check_state::Ku_update,             this, &MainWindow::on_showRXku          );
 
-//    connect(this,           SIGNAL( setDept(qint32)          ), this, SLOT( on_setDept(qint32)          ) );
-//    connect(this,           SIGNAL( setML(bool)              ), this, SLOT( on_showML(bool)              ) ); // сигнал перенесен в check_state
-    connect(&check_state,   SIGNAL( VK_update(const quint16, const TVAK8_WAVE) ), this, SLOT( on_showNewData(const quint16, const TVAK8_WAVE) ) );
-//    connect(this,           SIGNAL( setPocketCount(qint32)   ), this, SLOT( on_showPocketCount(qint32)   ) );
-//    connect(this,           SIGNAL( setBadPocketCount(qint32)), this, SLOT( on_showBadPocketCount(qint32)) );
-    connect(&check_state,   SIGNAL( good_blk_cnt_update(const int) ),  this, SLOT( on_showPocketCount   (const int)  ) );
-    connect(&check_state,   SIGNAL( bad_blk_cnt_update (const int) ),  this, SLOT( on_showBadPocketCount(const int)  ) );
+    connect(&check_state,  &akp_check_state::tool_no_update,        this, &MainWindow::on_showToolNo        );
+    connect(&check_state,  &akp_check_state::soft_version_update,   this, &MainWindow::on_showSoftVer       );
 
-//    connect(this,           SIGNAL( showIZLtype(qint16)     ), this, SLOT( on_showIZLtype(qint16)       ) );
-    connect(&check_state,   SIGNAL( izl_type_update(const bool, const quint16) ), this, SLOT( on_showIZLtype(const bool, const quint16) ) );
-//    connect(this,           SIGNAL( showIZLfreq(qint16)     ), this, SLOT( on_showIZLfreq(qint16)       ) );
-    connect(&check_state,   SIGNAL( Fsig_update(const bool, const quint16) ), this, SLOT( on_showIZLfreq(const bool, const quint16) ) );
-//    connect(this,           SIGNAL( showIZLnum(qint16)      ), this, SLOT( on_showIZLnum(qint16)        ) );
-    connect(&check_state,   SIGNAL( izl_periods_update(const bool, const quint16) ), this, SLOT( on_showIZLnum(const bool, const quint16) ) );
+    connect(&check_state,  &akp_check_state::time_meserment_update, this, &MainWindow::on_showTimeMeserment );
 
-    connect(&check_state,   SIGNAL( rx_type_update(const bool, const quint16) ), SLOT( on_showRXtype(const bool, const quint16) ));
-//    connect(this,           SIGNAL( showRXdelay(qint16)     ), this, SLOT( on_showRXdelay(qint16)       ) );
-    connect(&check_state,   SIGNAL( rx_delay_update(const bool, const quint16) ), SLOT( on_showRXdelay(const bool, const quint16) ));
-//    connect(this,           SIGNAL( showRXtd(qint16)        ), this, SLOT( on_showRXtd(qint16)          ) );
-    connect(&check_state,   SIGNAL( Td_update(const bool, const quint16) ), SLOT( on_showRXtd(const bool, const quint16) ));
-//    connect(this,           SIGNAL( showRXku(qint16)        ), this, SLOT( on_showRXku(qint16)          ) );
-    connect(&check_state,   SIGNAL( Ku_update(const bool, const quint16) ), this, SLOT( on_showRXku(const bool, const quint16)  ) );
-
-    connect(&check_state,   SIGNAL( tool_no_update     (const bool, const quint16)                ), this, SLOT( on_showToolNo (const bool, const quint16)                ) );
-    connect(&check_state,   SIGNAL( soft_version_update(const bool, const quint16, const quint16) ), this, SLOT( on_showSoftVer(const bool, const quint16, const quint16) ) );
-
-    connect(&check_state,   SIGNAL( time_meserment_update(const bool, const quint32) ), this, SLOT( on_showTimeMeserment(const bool, const quint32) ) );
-
-                                    connect(&check_state,   SIGNAL( CRC1_update(const bool) ), this, SLOT( on_showCRC1 (const bool) ) );
-    connect(&check_state,   SIGNAL( CRC2_update(const bool) ), this, SLOT( on_showCRC2 (const bool) ) );
-    connect(&check_state,   SIGNAL( CRC3_update(const bool) ), this, SLOT( on_showCRC3 (const bool) ) );
-    connect(&check_state,   SIGNAL( CRC4_update(const bool) ), this, SLOT( on_showCRC4 (const bool) ) );
-    connect(&check_state,   SIGNAL( CRC5_update(const bool) ), this, SLOT( on_showCRC5 (const bool) ) );
-    connect(&check_state,   SIGNAL( CRC6_update(const bool) ), this, SLOT( on_showCRC6 (const bool) ) );
-    connect(&check_state,   SIGNAL( CRC7_update(const bool) ), this, SLOT( on_showCRC7 (const bool) ) );
-    connect(&check_state,   SIGNAL( CRC8_update(const bool) ), this, SLOT( on_showCRC8 (const bool) ) );
-
-//    connect(this,           SIGNAL( showSDstatus(qint16)    ), this, SLOT( on_showSDstatus(qint16)      ) );
-
-//    connect(this,           SIGNAL( showGK(qint16)          ), this, SLOT( on_showGK(qint16)            ) );
-//    connect(this,           SIGNAL( showGx(qint16)          ), this, SLOT( on_showGx(qint16)            ) );
-//    connect(this,           SIGNAL( showGy(qint16)          ), this, SLOT( on_showGy(qint16)            ) );
-//    connect(this,           SIGNAL( showGz(qint16)          ), this, SLOT( on_showGz(qint16)            ) );
-
-    connect(ui->pushButton_Start,    SIGNAL( pressed() ), this, SLOT( on_pushButtonStart()      ) );
-    connect(ui->pushButton_Stop,     SIGNAL( pressed() ), this, SLOT( on_pushButtonStop()       ) );
-    connect(ui->pushButton_Record,   SIGNAL( pressed() ), this, SLOT( on_pushButtonRecord()     ) );
-    connect(ui->pushButton_Settings, SIGNAL( pressed() ), this, SLOT( on_pushButtonSettings()   ) );
-    connect(ui->pushButton_incAmpl,  SIGNAL( pressed() ), this, SLOT( on_cmdIncAmpl()           ) );
-    connect(ui->pushButton_decAmpl,  SIGNAL( pressed() ), this, SLOT( on_cmdDecAmpl()           ) );
-    connect(ui->pushButton_upFKD,    SIGNAL( pressed() ), this, SLOT( on_cmdIncLevel()          ) );
-    connect(ui->pushButton_downFKD,  SIGNAL( pressed() ), this, SLOT( on_cmdDecLevel()          ) );
-
-    connect(buttonGroup,    SIGNAL( buttonClicked(int) ), this, SLOT( on_VKxClicked(int) )  );
+    connect(&check_state,  &akp_check_state::CRC1_update,           this, &MainWindow::on_showCRC1          );
+    connect(&check_state,  &akp_check_state::CRC2_update,           this, &MainWindow::on_showCRC2          );
+    connect(&check_state,  &akp_check_state::CRC3_update,           this, &MainWindow::on_showCRC3          );
+    connect(&check_state,  &akp_check_state::CRC4_update,           this, &MainWindow::on_showCRC4          );
+    connect(&check_state,  &akp_check_state::CRC5_update,           this, &MainWindow::on_showCRC5          );
+    connect(&check_state,  &akp_check_state::CRC6_update,           this, &MainWindow::on_showCRC6          );
+    connect(&check_state,  &akp_check_state::CRC7_update,           this, &MainWindow::on_showCRC7          );
+    connect(&check_state,  &akp_check_state::CRC8_update,           this, &MainWindow::on_showCRC8          );
+    //-------------------------------------------------------------------------
+    connect(ui->pushButton_Start,    &QPushButton::pressed,         this, &MainWindow::on_pushButtonStart   );
+    connect(ui->pushButton_Stop,     &QPushButton::pressed,         this, &MainWindow::on_pushButtonStop    );
+    connect(ui->pushButton_Record,   &QPushButton::pressed,         this, &MainWindow::on_pushButtonRecord  );
+    connect(ui->pushButton_Settings, &QPushButton::pressed,         this, &MainWindow::on_pushButtonSettings);
+    connect(ui->pushButton_incAmpl,  &QPushButton::pressed,         this, &MainWindow::on_cmdIncAmpl        );
+    connect(ui->pushButton_decAmpl,  &QPushButton::pressed,         this, &MainWindow::on_cmdDecAmpl        );
+    connect(ui->pushButton_upFKD,    &QPushButton::pressed,         this, &MainWindow::on_cmdIncLevel       );
+    connect(ui->pushButton_downFKD,  &QPushButton::pressed,         this, &MainWindow::on_cmdDecLevel       );
+    //-------------------------------------------------------------------------
+    connect(buttonGroup,    SIGNAL( buttonClicked(int) ),           this, SLOT( on_VKxClicked(int) )        );
+//    connect(buttonGroup,    &QButtonGroup::buttonClicked,           this, &MainWindow::on_VKxClicked        );
     //-------------------------------------------------------------------------
 
-    connect(this,                       SIGNAL( cmdSetDepth(const qint32) ),     &akp, SLOT( on_cmdSetDepth(const qint32) ));
-//    connect(this,                       SIGNAL( cmd_do_meserment(int) ), &akp, SLOT( on_cmdDoMeserment(int) ));
+    connect(this,                   &MainWindow::cmdSetDepth,       &akp,           &akp_class::on_cmdSetDepth          );
+    connect(this,                   &MainWindow::cmdSetDepth,       this,           &MainWindow::on_showDept            );
 
-//    connect(ui->pushButton_set_dept,    SIGNAL( pressed() ),             this, SLOT( on_pushButton_set_dept_clicked() ));
-//    connect(ui->pushButton_read_dept,   SIGNAL( pressed() ),             &akp, SLOT( on_cmdReadDepth() ));
+    connect(ui->pushButton_Start,   &QPushButton::pressed,          &akp,           &akp_class::on_cmdStartMeserment    );
 
-//    connect(this,                   SIGNAL( cmdStartMeserment() ),  &akp, SLOT( on_cmdStartMeserment() ));
-//    connect(this,                   SIGNAL( cmdStopMeserment () ),  &akp, SLOT( on_cmdStopMeserment () ));
+    connect(ui->pushButton_Stop,    &QPushButton::pressed,          &akp,           &akp_class::on_cmdStopMeserment     );
+    connect(ui->pushButton_Stop,    &QPushButton::pressed,          &check_state,   &akp_check_state::clear_block_count );
 
-//    connect(ui->pushButton_Start,   SIGNAL( pressed() ),                    &akp, SLOT( on_cmdDoSingleMeserment() ));
-    connect(ui->pushButton_Start,   SIGNAL( pressed() ),                    &akp, SLOT( on_cmdStartMeserment() ));
+    connect(this,                   &MainWindow::cmdSetDeptStep,    &akp,           &akp_class::on_setDeptStep          );
 
-    connect(ui->pushButton_Stop,    SIGNAL( pressed() ),                    &akp, SLOT( on_cmdStopMeserment () ));
-    connect(this,                   SIGNAL( cmdSetDeptStep(const qint32) ), &akp, SLOT( on_setDeptStep(const qint32) ));
 
-//    connect(ui->pushButton_stop,        SIGNAL( pressed() ),             &check_state, SLOT( clear_block_count() ));
+    connect(&akp,           &akp_class::dataUpdate,         &check_state,   &akp_check_state::onDataUpdate  );
+//    connect(&akp,           &akp_class::dataUpdate,         &akp_file,      &qt_akp_file_save::onDataUpdate );
 
-    connect(&akp,    SIGNAL(dataUpdate(const uint , const TDataPocket)), &check_state, SLOT(onDataUpdate(const uint, const TDataPocket)));
-
-    connect(&check_state,   SIGNAL( deptUpdate (const qint32) ), this,      SLOT( on_showDept     (const qint32) ) );
-    connect(&check_state,   SIGNAL( mlUpdate   (const bool)   ), this,      SLOT( on_showML       (const bool)   ) );
+    connect(&check_state,   &akp_check_state::deptUpdate,   this,           &MainWindow::on_showDept        );
+    connect(&check_state,   &akp_check_state::mlUpdate,     this,           &MainWindow::on_showML          );
 
 //    connect(&check_state,   SIGNAL( timer_clk_update           (const bool, const quint32) ), this, SLOT(on_timerClkUpdate(const bool, const quint32)          ) );
 //    connect(&check_state,   SIGNAL( time_start_meserment_update(const bool, const quint32) ), this, SLOT(on_timeStartMesermentUpdate(const bool, const quint32)) );
@@ -302,10 +281,10 @@ MainWindow::MainWindow(QWidget *parent) :
     vk1->setColorLevelBack(LevelColor);
     vk1->setCaption(QString::fromUtf8("Волновая картинка "));
 
-    connect(this, SIGNAL( changeFKDstep(int)   ), vk1,      SLOT( on_changeTimeScale(int) ) );
-    connect(this, SIGNAL( changeFKDlevel(int)  ), vk1,      SLOT( on_changeLevel(int)     ) );
-    connect(this, SIGNAL( changeVKmaxAmpl(int) ), vk1,      SLOT( on_changeMaxAmpl(int)   ) );
-    connect(vk1,  SIGNAL( update()             ), scene_vk, SLOT( update()                ) );
+    connect(this, &MainWindow::changeFKDstep,   vk1,        &Qt_VK::on_changeTimeScale  );
+    connect(this, &MainWindow::changeFKDlevel,  vk1,        &Qt_VK::on_changeLevel      );
+    connect(this, &MainWindow::changeVKmaxAmpl, vk1,        &Qt_VK::on_changeMaxAmpl    );
+    connect(vk1,  SIGNAL( update() ),           scene_vk,   SLOT( update()            ) );
 
     vk1_greed = new Qt_biGREED(rect, scene_vk);
     vk1_greed->setColorLine(GreedColor);
@@ -322,7 +301,8 @@ MainWindow::MainWindow(QWidget *parent) :
     time_line1->set_time_step(2);       // Td 2mks
     time_line1->set_x_scale(FKDstep);
 
-    connect(this, SIGNAL( changeFKDstep(int) ), time_line1, SLOT( on_changeTimeScale(int) ) );
+    connect(this, &MainWindow::changeFKDstep,   time_line1, &Qt_TIME_LINE::on_changeTimeScale );
+//    connect(this, SIGNAL( changeFKDstep(int) ), time_line1, SLOT( on_changeTimeScale(int) ) );
 
     ui->horizontalLayout_VK->addWidget(view_vk);
     //-------------------------------------------------------------------------
@@ -346,8 +326,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ctl_vk1->setColorLevelBack(FonColor);
     ctl_vk1->setCaption(QString::fromUtf8("ВК-1"));
 
-    connect(this,     SIGNAL( changeVKmaxAmpl(int) ), ctl_vk1,       SLOT( on_changeMaxAmpl(int)   ) );
-    connect(ctl_vk1,  SIGNAL( update()             ), scene_ctl_vk1, SLOT( update()                ) );
+    connect(this,     &MainWindow::changeVKmaxAmpl,     ctl_vk1,       &Qt_VK::on_changeMaxAmpl );
+    connect(ctl_vk1,  SIGNAL( update() ),               scene_ctl_vk1, SLOT( update() )         );
 
     ctl_vk1_greed = new Qt_biGREED(rect, scene_ctl_vk1);
     ctl_vk1_greed->setColorLine(GreedColor);
@@ -375,8 +355,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ctl_vk2->setColorLevelBack(FonColor);
     ctl_vk2->setCaption(QString::fromUtf8("ВК-2"));
 
-    connect(this,     SIGNAL( changeVKmaxAmpl(int) ), ctl_vk2,       SLOT( on_changeMaxAmpl(int)   ) );
-    connect(ctl_vk2,  SIGNAL( update()             ), scene_ctl_vk2, SLOT( update()                ) );
+    connect(this,     &MainWindow::changeVKmaxAmpl,     ctl_vk2,       &Qt_VK::on_changeMaxAmpl   );
+    connect(ctl_vk2,  SIGNAL( update() ),               scene_ctl_vk2, SLOT( update()           ) );
 
     ctl_vk2_greed = new Qt_biGREED(rect, scene_ctl_vk2);
     ctl_vk2_greed->setColorLine(GreedColor);
@@ -413,13 +393,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->verticalLayout_FKD->addWidget(view_fkd);
 
-    connect(&check_state,   SIGNAL( deptUpdate(const qint32)), fkd,         SLOT( on_changeDept(const qint32) ) );
-    connect(this,           SIGNAL( changeDpsX(int)         ), fkd,         SLOT( on_changeDpsX(int)          ) );
-    connect(this,           SIGNAL( changeDpsY(int)         ), fkd,         SLOT( on_changeDpsY(int)          ) );
-    connect(this,           SIGNAL( changeDeptScale(int)    ), fkd,         SLOT( on_changeDeptScale(int)     ) );
-    connect(this,           SIGNAL( changeFKDstep(int)      ), fkd,         SLOT( on_changeTimeScale(int)     ) );
-    connect(this,           SIGNAL( changeFKDlevel(int)     ), fkd,         SLOT( on_changeLevel(int)         ) );
-    connect(fkd,            SIGNAL( update()                ), scene_fkd,   SLOT( update()                    ) );
+    connect(&check_state,   &akp_check_state::deptUpdate,   fkd,         &CVAK32_FKD::on_changeDept         );
+    connect(this,           &MainWindow::changeDpsX,        fkd,         &CVAK32_FKD::on_changeDpsX         );
+    connect(this,           &MainWindow::changeDpsY,        fkd,         &CVAK32_FKD::on_changeDpsY         );
+    connect(this,           &MainWindow::changeDeptScale,   fkd,         &CVAK32_FKD::on_changeDeptScale    );
+    connect(this,           &MainWindow::changeFKDstep,     fkd,         &CVAK32_FKD::on_changeTimeScale    );
+    connect(this,           &MainWindow::changeFKDlevel,    fkd,         &CVAK32_FKD::on_changeLevel        );
+    connect(fkd,            SIGNAL( update() ),             scene_fkd,   SLOT( update() )                   );
 
     //-------------------------------------------------------------------------
     rectf.setRect(0.0, 0.0, 80.0, 150.0);
@@ -441,11 +421,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->verticalLayout_dept_col->addWidget(view_dept_col);
 
-    connect(&check_state,   SIGNAL( deptUpdate(const qint32)     ), deptCol,         SLOT( on_changeDept(const qint32)     ) );
-    connect(this,           SIGNAL( changeDpsY(int)              ), deptCol,         SLOT( on_changeDpsY(int)              ) );
-    connect(this,           SIGNAL( changeDeptScale(int)         ), deptCol,         SLOT( on_changeDeptScale(int)         ) );
-    connect(deptCol,        SIGNAL( update()                     ), scene_dept_col,  SLOT( update()                        ) );
-    connect(deptCol,        SIGNAL( changeBaseLinesShift(qint16) ), fkd,             SLOT( on_changeBaseLinesShift(qint16) ) );
+    connect(&check_state,   &akp_check_state::deptUpdate,       deptCol,         &Qt_DEPTCOL::on_changeDept             );
+    connect(this,           &MainWindow::changeDpsY,            deptCol,         &Qt_DEPTCOL::on_changeDpsY             );
+    connect(this,           &MainWindow::changeDeptScale,       deptCol,         &Qt_DEPTCOL::on_changeDeptScale        );
+    connect(this,           &MainWindow::cmdSetDepth,           deptCol,         &Qt_DEPTCOL::on_changeDept             );
+    connect(deptCol,        SIGNAL( update() ),                 scene_dept_col,  SLOT( update()                       ) );
+    connect(deptCol,        &Qt_DEPTCOL::changeBaseLinesShift,  fkd,             &CVAK32_FKD::on_changeBaseLinesShift   );
 
     //-------------------------------------------------------------------------
     rectf.setRect(0.0, 0.0, 10.0, 150.0);
@@ -467,12 +448,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->verticalLayout_ML->addWidget(view_ml_col);
 
-    connect(&check_state,   SIGNAL( deptUpdate(const qint32)), mlCol,        SLOT( on_changeDept(const qint32) ) );
-    connect(this,           SIGNAL( changeDpsY(int)         ), mlCol,        SLOT( on_changeDpsY(int)          ) );
-    connect(this,           SIGNAL( changeDeptScale(int)    ), mlCol,        SLOT( on_changeDeptScale(int)     ) );
-    connect(mlCol,          SIGNAL( update()                ), scene_ml_col, SLOT( update()                    ) );
+    connect(&check_state,   &akp_check_state::deptUpdate,       mlCol,        &Qt_ML::on_changeDept         );
+    connect(this,           &MainWindow::changeDpsY,            mlCol,        &Qt_ML::on_changeDpsY         );
+    connect(this,           &MainWindow::changeDeptScale,       mlCol,        &Qt_ML::on_changeDeptScale    );
+    connect(mlCol,          SIGNAL( update() ),                 scene_ml_col, SLOT( update()              ) );
     //-------------------------------------------------------------------------
     akp_thread->start();
+    file_thread->start();
     check_state.start();
     //-------------------------------------------------------------------------
 }
@@ -514,6 +496,10 @@ MainWindow::~MainWindow()
     while ( akp_thread->isRunning() );
     delete akp_thread;
     //-------------------------------------------------------------------------
+    file_thread->exit();
+    while ( file_thread->isRunning() );
+    delete file_thread;
+    //-------------------------------------------------------------------------
     delete ui;
     //-------------------------------------------------------------------------
 }
@@ -523,7 +509,7 @@ void MainWindow::on_pushButtonSettings(void)
     if (!dialogWellInfo)
     {
         dialogWellInfo = new Dialog_well_info(this);
-        connect(dialogWellInfo, SIGNAL(cmd_Setup()), this, SLOT(on_dialogSetup()));
+        connect(dialogWellInfo, &Dialog_well_info::cmd_Setup, this, &MainWindow::on_dialogSetup);
     }
 
     dialogWellInfo->setOperatorName(OperatorName);
@@ -547,7 +533,7 @@ void MainWindow::on_pushButtonSettings(void)
         emit cmdSetDepth(Depth);
     }
 
-    disconnect(dialogWellInfo, SIGNAL(cmd_Setup()), this, SLOT(on_dialogSetup()));
+    disconnect(dialogWellInfo, &Dialog_well_info::cmd_Setup, this, &MainWindow::on_dialogSetup);
     delete dialogWellInfo;
     dialogWellInfo = NULL;
 
@@ -564,9 +550,6 @@ void MainWindow::on_pushButtonSettings(void)
     mlCol->delPoints();
 
     ui->pushButton_Start->setDisabled(false);
-
-    delete dialogWellInfo;
-    dialogWellInfo = NULL;
 }
 //-------------------------------------------------------------------
 void MainWindow::on_dialogSetup(void)
@@ -574,7 +557,7 @@ void MainWindow::on_dialogSetup(void)
     if (!dialogSetup)
     {
         dialogSetup = new Dialog_setup(this);
-        connect(dialogSetup, SIGNAL(cmd_RestoreFolder()    ), this, SLOT(on_dialogToolModeCmdRestoreFolder()    ) );
+        connect(dialogSetup, &Dialog_setup::cmd_RestoreFolder, this, &MainWindow::on_dialogToolModeCmdRestoreFolder );
     }
 
     dialogSetup->setMMColor(MMColor);
@@ -657,66 +640,16 @@ void MainWindow::on_dialogSetup(void)
         bExtFolderCtl = dialogSetup->get_ExtCtl();
     }
 
-    disconnect(dialogSetup, SIGNAL(cmd_RestoreFolder()    ), this, SLOT(on_dialogToolModeCmdRestoreFolder()    ) );
-//    disconnect(dialogSetup, SIGNAL(cmd_ChangeToolModes()  ), this, SLOT(on_dialogToolModeCmdChangeToolModes()  ) );
-//    disconnect(dialogSetup, SIGNAL(cmd_RestoreToolModes() ), this, SLOT(on_dialogToolModeCmdRestoreToolModes() ) );
+    disconnect(dialogSetup, &Dialog_setup::cmd_RestoreFolder, this, &MainWindow::on_dialogToolModeCmdRestoreFolder );
 
     delete dialogSetup;
     dialogSetup = NULL;
 }
 //-------------------------------------------------------------------
-//void MainWindow::on_dialogToolModeCmdRestoreFolder(void)
-//{
-//    dialogSetup->setFolder(FolderName);
-//}
-//-------------------------------------------------------------------
-//void MainWindow::on_dialogToolModeCmdChangeToolModes(void)
-//{
-//    if (!dialogToolMode)
-//    {
-//        dialogToolMode = new Dialog_Tool_Mode(this);
-//    }
-
-//    mode = mode_list.begin();
-//    for (; mode != mode_list.end(); ++mode)
-//    {
-//        vak32_ctrl_command_class* cmd = *mode;
-
-//        dialogToolMode->set_izl_type(cmd->get_izl_type());
-//        dialogToolMode->set_Fsig(cmd->get_Fsig());
-//        dialogToolMode->set_ampl_sig(cmd->get_ampl_sig());
-//        dialogToolMode->set_period_number(cmd->get_period_number());
-
-//        dialogToolMode->set_rx_type(cmd->get_rx_type());
-//        dialogToolMode->set_Td(cmd->get_Td());
-//        dialogToolMode->set_rx_delay(cmd->get_rx_delay());
-//        dialogToolMode->set_KU_window_start(cmd->get_KU_window_start());
-//        dialogToolMode->set_KU_window_width(cmd->get_KU_window_width());
-
-//        if (dialogToolMode->exec() == QDialog::Accepted)
-//        {
-//            cmd->on_set_izl_type(dialogToolMode->get_izl_type());
-//            cmd->on_set_Fsig(dialogToolMode->get_Fsig());
-//            cmd->on_set_ampl_sig(dialogToolMode->get_ampl_sig());
-//            cmd->on_set_period_number(dialogToolMode->get_period_number());
-
-//            cmd->on_set_rx_type(dialogToolMode->get_rx_type());
-//            cmd->on_set_Td(dialogToolMode->get_Td());
-//            cmd->on_set_rx_delay(dialogToolMode->get_rx_delay());
-//            cmd->on_set_KU_window_start(dialogToolMode->get_KU_window_start());
-//            cmd->on_set_KU_window_width(dialogToolMode->get_KU_window_width());
-
-//            dialogSetup->setToolMode(cmd);
-//        }
-//    }
-
-//    delete dialogToolMode;
-//    dialogToolMode = NULL;
-//}
-//-------------------------------------------------------------------
-//void MainWindow::on_dialogToolModeCmdRestoreToolModes(void)
-//{
-//}
+void MainWindow::on_dialogToolModeCmdRestoreFolder(void)
+{
+    dialogSetup->setFolder(FolderName);
+}
 //-------------------------------------------------------------------
 void MainWindow::on_cmdIncAmpl(void)
 {
@@ -901,14 +834,18 @@ void MainWindow::on_pushButtonStop(void)
 
     bWriteEnable = false;
 
+    disconnect(&akp,    &akp_class::dataUpdate,     &akp_file,      &qt_akp_file_save::onDataUpdate );
+//    disconnect(&akp,    SIGNAL(dataUpdate(const uint , const TDataPocket)), &akp_file, SLOT(onDataUpdate(const uint, const TDataPocket)));
+    akp_file.close_file();
+
+    curentDepthStep = 0;
+    emit cmdSetDeptStep(curentDepthStep);           //???
+
 //    emit cmdStopMeserment();
 }
-//-------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void MainWindow::on_pushButtonRecord(void)
 {
-    QString FileExt = QString::fromUtf8(".4sd");
-    QDate   date = QDate::currentDate();
-
     ui->pushButton_Record->setDisabled(true);
 
 //    blk_count = 0;
@@ -919,241 +856,45 @@ void MainWindow::on_pushButtonRecord(void)
     check_state.clear_block_count();    //???
 
     curentDepthStep = -DepthStep;
-    akp.on_setDeptStep(DepthStep);       //???
+//    akp.on_setDeptStep(DepthStep);      //???
+    emit cmdSetDeptStep(curentDepthStep);           //???
 
-    FileName = FolderName;
+//    startDepth = Depth;
+    startDepth = check_state.get_dept();
+    //-------------------------------------------------------------------------
+    akp_file.setBufLen(10);
+    akp_file.setFolderName(FolderName);
+    akp_file.setFildName(FildName);
+    akp_file.setWellNo          (WellNo);
+    akp_file.setOperatorName    (OperatorName);
+    akp_file.setCurrentDate     ();
+    akp_file.setCurrentTime     ();
+//    akp_file.setStartDepth      ( check_state.get_dept() );
+    akp_file.setStartDepth      ( startDepth );
+
+    akp_file.setShiftPointIZL   (0);
+    akp_file.setShiftPointVK1   (100);
+    akp_file.setShiftPointVK2   (150);
+
     if (bExtFolderCtl)
-    {
-        FileName += QString::fromUtf8("/");
-        FileName += FildName;
-        FileName += QString::fromUtf8("/");
-        FileName += WellNo;
-        FileName += QString::fromUtf8("/");
-        if (date.day() < 10) FileName += QString::fromUtf8("0");
-        FileName += QString::fromUtf8("%1_").arg(date.day());
-        if (date.month() < 10) FileName += QString::fromUtf8("0");
-        FileName += QString::fromUtf8("%1_").arg(date.month());
-        FileName += QString::fromUtf8("%1").arg(date.year());
-    }
-    QDir dir;
-    if (!dir.mkpath(FileName))
-    {
-        //throw
-        qDebug() << QString::fromUtf8("Ошибка создания директории: %1").arg(FileName);
-        return;
-    }
+        akp_file.setExtendedFolderCtl();
+    else
+        akp_file.clearExtendedFolderCtl();
 
-    FileName += QString::fromUtf8("/");
-    FileName += WellNo;
+    akp_file.find_validFileName ();
+    akp_file.write_head();
 
-    qDebug() << QString::fromUtf8("%1").arg(FileName);
-
-    char ch;
-    for (ch = 'a'; ch <= 'z'; ch++)
-    {
-        if (!QFile::exists(QString::fromUtf8("%1_%2%3").arg(FileName).arg(ch).arg(FileExt))) break;
-    }
-    FileName += QString::fromUtf8("_%1").arg(ch);
-    FileName += FileExt;
-
-    qDebug() << QString::fromUtf8("%1").arg(FileName);
-/*
-    write_vak32_head(FileName, QDate::currentDate(), FildName, WellNo,
-                          OperatorName, Depth, QString::fromUtf8("ВАК-32"), ToolNo,
-                            393, 393, 393, 393,
-                            403, 403, 403, 403,
-                            413, 413, 413, 413,
-                            423, 423, 423, 423,
-                            433, 433, 433, 433,
-                            443, 443, 443, 443,
-                            453, 453, 453, 453,
-                            463, 463, 463, 463
-                          );
-*/
+    connect(&akp,   &akp_class::dataUpdate,     &akp_file,  &qt_akp_file_save::onDataUpdate );
+//    connect(&akp,    SIGNAL(dataUpdate(const uint , const TDataPocket)), &akp_file, SLOT(onDataUpdate(const uint, const TDataPocket)));
+    //-------------------------------------------------------------------------
     bWriteEnable = true;
 
-    startDepth = Depth;
 }
-//-------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 //#pragma pack(1)
 //void MainWindow::on_cmdSetDepth(void)
 //{
 //    akp.on_cmdSetDepth(Depth);
-//}
-//#pragma pack()
-//-------------------------------------------------------------------
-//#pragma pack(1)
-//void MainWindow::on_vak32CmdSend(void)
-//{
-//    TCTRLPOCKET                 ctl_pocket;
-//    unsigned char               ctl_cmd[21];
-//    vak32_ctrl_command_class*   vak32_ctl_cmd;
-//    u_short                     cmd = (u_short)COMAND_VAK32_DO_MESERMENT;
-
-//    timer.stop();
-//    timer.setInterval(timer_interval);
-
-//    memset((char*)&ctl_pocket, 0, sizeof(TCTRLPOCKET));
-//    ctl_pocket.id = htons(cmd);
-//    p_count++;
-//    ctl_pocket.n_pocket = htons(p_count);
-//    ctl_pocket.dept = htonl(curentDepthStep);
-
-//    if (mode == mode_list.end()) mode = mode_list.begin();
-//    vak32_ctl_cmd = *mode;
-//    mode++;
-
-//    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//    if (vak32_ctl_cmd->get_mode_number() == (unsigned int)modeNum4fkd)
-//    {
-//        vak32_ctl_cmd->on_set_vk_number(0x1F & vkNum4fkd);
-//    }
-//    else
-//    {
-//        vkNum += 8;
-//        if (vkNum == 39) vkNum = 0;
-//        if (vkNum >  31) vkNum -= 31;
-//        vak32_ctl_cmd->on_set_vk_number(0x1F & vkNum);
-//    }
-//    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-//    vak32_ctl_cmd->write_command(ctl_cmd);
-//    int i;
-//    for (i = 0; i < 21; i++)
-//        ctl_pocket.rezerv[i] = htons(ctl_cmd[i]);
-
-//    udp_socket.writeDatagram((char*)&ctl_pocket, sizeof(TCTRLPOCKET), host, port);
-//}
-//#pragma pack()
-//-------------------------------------------------------------------
-//#pragma pack(1)
-//void MainWindow::on_udpDataRx(void)
-//{
-//    int                         i;
-//    unsigned char               x_data[sizeof(TDATAPOCKET)];
-//    TCTRLPOCKET*                pctrl_pocket = (TCTRLPOCKET*)&x_data;
-//    TDATAPOCKET*                pdata_pocket = (TDATAPOCKET*)&x_data;
-//    QHostAddress                sender;
-//    quint16                     senderPort;
-//    vak32_ctrl_command_class    rx_cmd;
-////    unsigned char               rx_cmd_data[21];
-//    TVAK32_4SD                  data_4sd;
-//    quint16                     rx_data_CRC16;
-
-//    do
-//    {
-//        memset(x_data, 0, sizeof(TDATAPOCKET));
-//        udp_socket.readDatagram((char*)x_data, sizeof(TDATAPOCKET), &sender, &senderPort);
-//    } while (udp_socket.hasPendingDatagrams());
-
-//    for(i = 0; i < VAK_8_NUM_POINTS; i++) v8_data[i] = ntohs(pdata_pocket->data[i]);
-
-//    rx_data_CRC16 = calc_rx_data_CRC16();
-//    if (rx_data_CRC16 == 0)
-//    {
-//        bflag_data_CRC = false;
-//        label_data_CRC_check->setText(QString::fromUtf8("CRC данных: Ок"));
-//        ToolNo = v8_data[474];
-//    }
-//    else
-//    {
-//        bflag_data_CRC = true;
-//        label_data_CRC_check->setText(QString::fromUtf8("CRC данных: Ошибка!"));
-//    }
-
-////    Depth = ntohl(pctrl_pocket->dept);
-////    velocity->add_dept_point(Depth);
-////    emit showDept(Depth);
-
-//    for(i = 0; i < 21; i++)
-////        rx_cmd_data[i] = (unsigned char)v8_data[490 + i];
-//        data_4sd.cmd_data[i] = (unsigned char)v8_data[490 + i];
-////    rx_cmd.read_command(rx_cmd_data);
-//    rx_cmd.read_command(data_4sd.cmd_data);
-
-//    if (rx_cmd.calc_CRC16() == 0)
-//    {
-//        bflag_CMD_CRC = false;
-//        label_CMD_CRC_check->setText(QString::fromUtf8("CRC команды: Ок"));
-//    }
-//    else
-//    {
-//        bflag_CMD_CRC = true;
-//        label_CMD_CRC_check->setText(QString::fromUtf8("CRC команды: Ошибка!"));
-//    }
-
-//    if (bWriteEnable)
-//    {
-//        data_4sd.vak32_rx_data_CRC16 = v8_data[511];
-//        data_4sd.vak32_calc_data_CRC16 = rx_data_CRC16;
-//        data_4sd.SD_error_flag = v8_data[485];
-//        data_4sd.SD_file_char = v8_data[472];
-//        data_4sd.blk_count = blk_count;
-//        data_4sd.bad_blk = bad_blk;
-//        data_4sd.log_velocity = velocity->get_velocity();
-////        rx_cmd.write_command(data_4sd.cmd_data);
-//        write_vak32_4SD_data(FileName, data_4sd);
-//    }
-
-//    try
-//    {
-////        emit showIZLtype(rx_cmd.get_izl_type());
-////        emit showIZLfreq(rx_cmd.get_Fsig());
-////        emit showIZLnum(rx_cmd.get_period_number());
-
-////        emit showRXtd(rx_cmd.get_Td());
-////        emit showRXdelay(rx_cmd.get_rx_delay());
-
-//        modeNum = rx_cmd.get_mode_number();
-//        vkNumRx = rx_cmd.get_vk_number();
-////        switch(vkNumRx)
-////        {
-////            case 0:
-////                emit showRXku(v8_data[486]);
-////                break;
-////            case 1:
-////                emit showRXku(v8_data[487]);
-////                break;
-////            case 2:
-////                emit showRXku(v8_data[488]);
-////                break;
-////            case 3:
-////                emit showRXku(v8_data[489]);
-////                break;
-////            case 4:
-////                emit showRXku(v8_data[486]);
-////                break;
-////            case 5:
-////                emit showRXku(v8_data[487]);
-////                break;
-////            case 6:
-////                emit showRXku(v8_data[488]);
-////                break;
-////            case 7:
-////                emit showRXku(v8_data[489]);
-////                break;
-////            default:
-////                emit showRXku(-1);
-////                break;
-////        }
-
-//        emit showNewData();
-
-//    }
-//    catch (vak32_ctrl_cmd_error_class err)
-//    {
-//        qDebug() << err.get_error_msg();
-//    }
-
-//    if (bflag_CMD_CRC | bflag_data_CRC) bad_blk++;
-//    else blk_count++;
-
-////    emit setPocketCount(blk_count);
-////    emit setBadPocketCount(bad_blk);
-
-//    cmd_id = 0;
-
-//    timer.singleShot(timer_interval, this, SLOT(on_vak32CmdSend()));
 //}
 //#pragma pack()
 //-------------------------------------------------------------------
@@ -1214,10 +955,6 @@ void MainWindow::on_showML(const bool ml)
 //-------------------------------------------------------------------
 void MainWindow::on_showNewData(const quint16 vk_no, const TVAK8_WAVE &vk)
 {
-//    vk1->setCaption(QString::fromUtf8("ВК-%1  ").arg(vk_no + 1));
-//    vk1->AddData(vk);
-//    qDebug() << vk_no;
-
     if (vk_no == vkNum4fkd)
     {
 //        vk1->setCaption(QString::fromUtf8("ВК-%1  ").arg(vkNum4fkd + 1));
@@ -1239,14 +976,9 @@ void MainWindow::on_showNewData(const quint16 vk_no, const TVAK8_WAVE &vk)
 //-------------------------------------------------------------------
 void MainWindow::on_showIZLtype(const bool crc, const quint16 value)
 {
-//    Q_UNUSED(crc);
-//    Q_UNUSED(value);
-
     QColor  color = get_color_on_CRC(crc);
     ui->label_IZLtype->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
 
-
-//    ui->label_IZLtype->setText("Монополь");
     switch (value)
     {
         case 0: //IZL_MONOPOL:
@@ -1540,9 +1272,9 @@ void MainWindow::load_settings(void)
     Depth           = app_settings->value(QString::fromUtf8("/Depth"),         0                           ).toInt();
     startDepth      = Depth;
     lastDepth       = Depth;
-    DepthStep       = app_settings->value(QString::fromUtf8("/DepthStep"),     2                           ).toInt();
+    DepthStep       = app_settings->value(QString::fromUtf8("/DepthStep"),     10                           ).toInt();
     curentDepthStep = 0;
-    FolderName      = app_settings->value(QString::fromUtf8("/FolderName"),    QString::fromUtf8("c:")     ).toString();
+    FolderName      = app_settings->value(QString::fromUtf8("/FolderName"),    QString::fromUtf8("D:\\Скважины")     ).toString();
     bExtFolderCtl   = app_settings->value(QString::fromUtf8("/ExtFolderCtl"),  true                        ).toBool();
     FileName        = QString::fromUtf8("%1/%2a.4sd").arg(FolderName).arg(WellNo);
     bWriteEnable    = false;
@@ -1565,7 +1297,7 @@ void MainWindow::load_settings(void)
     color = QColor(Qt::gray);
     FKDColor.setRgba(app_settings->value(QString::fromUtf8("/FKDColor"),       color.rgba()                ).toInt());
 
-    FKDstep         = app_settings->value(QString::fromUtf8("/FKDstep"),       1                           ).toInt();
+    FKDstep         = app_settings->value(QString::fromUtf8("/FKDstep"),       2                           ).toInt();
 
     color = QColor(Qt::blue);
     VKColor.setRgba(app_settings->value(QString::fromUtf8("/VKColor"),         color.rgba()                ).toInt());
@@ -1573,7 +1305,7 @@ void MainWindow::load_settings(void)
     VKlineSize      = app_settings->value(QString::fromUtf8("/VKlineSize"),    1                           ).toInt();
     DepthScale      = app_settings->value(QString::fromUtf8("/DepthScale"),    100                         ).toInt();
     dpsX            = app_settings->value(QString::fromUtf8("/dpsX"),          26                          ).toInt();
-    dpsY            = app_settings->value(QString::fromUtf8("/dpsY"),          36                          ).toInt();
+    dpsY            = app_settings->value(QString::fromUtf8("/dpsY"),          26                          ).toInt();
 
 //    vkNum           = 0;
 //    vkNumRx         = 0;
