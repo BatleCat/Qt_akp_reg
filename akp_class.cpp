@@ -33,7 +33,9 @@ void akp_class::start()
 
     udp_socket->bind(port);
 
-    connect(udp_socket, SIGNAL(readyRead() ), this, SLOT(onUdpDataRx() ) );
+//    connect(udp_socket, SIGNAL(readyRead() ), this, SLOT(onUdpDataRx() ) );
+    connect(udp_socket, &QUdpSocket::readyRead, this, &akp_class::onUdpDataRx );
+
 }
 //-----------------------------------------------------------------------------
 //#pragma pack(1)
@@ -51,8 +53,8 @@ void akp_class::on_setDeptStep(const qint32 step_cm)
  {
     dept_step_cm = step_cm;
 
-    if (dept_step_cm == 0) timer_interval = 500;
-    else timer_interval = 125;   // не меньше 104 мс !
+    if (dept_step_cm == 0) timer_interval = 450;
+    else timer_interval = 75;   // 75 ms + 50 ms = 125 ms this time must be greater than 104 ms
 }
 //#pragma pack()
 //-----------------------------------------------------------------------------
@@ -82,7 +84,6 @@ void akp_class::on_cmdReadDepth(void)
         quint16 cmd = (quint16)COMAND_READ_DEPT;
         ctl_pocket.id = htons(cmd);
     }
-//    ctl_pocket.dept = htonl(0);
 
     send_cmd(ctl_pocket);
 }
@@ -101,10 +102,6 @@ void akp_class::onDoMeserment(void)
     ctl_pocket.dept = htonl(dept_step_cm);
 
     send_cmd(ctl_pocket);
-
-    if (continuous_meserment) timer.singleShot(timer_interval, this, SLOT(onDoMeserment()));
-
-//    qDebug() << ctl_pocket.data[0];
 }
 //#pragma pack()
 //-----------------------------------------------------------------------------
@@ -134,7 +131,6 @@ void akp_class::on_cmdStopMeserment(void)
 //#pragma pack(1)
 void akp_class::onUdpDataRx(void)
 {
-
     while (udp_socket->hasPendingDatagrams())
     {
 /*
@@ -144,7 +140,6 @@ void akp_class::onUdpDataRx(void)
         data_list << datagram;
 */
         TDataPocket* pdata = new(TDataPocket);
-//        qDebug() << QString::fromUtf8("AKP class : ") << pdata;
 
         udp_socket->readDatagram((char*) pdata, sizeof(TDataPocket), &senderAdr, &senderPort);
 
@@ -152,6 +147,14 @@ void akp_class::onUdpDataRx(void)
         pdata->dept       = ntohl(pdata->dept);
         pdata->ml         = ntohs(pdata->ml);
         pdata->block_mask = ntohs(pdata->block_mask);
+
+        if (    ( 1 == pdata->block_mask)
+             && ( continuous_meserment  )
+             && ( (quint16)COMAND_AKP_DO_MESERMENT == pdata->id )
+           )
+        {
+            timer.singleShot(timer_interval, this, &akp_class::onDoMeserment);
+        }
 
         for (uint i = 0; i < 4; i++)
             pdata->work_mode[i] = ntohs(pdata->work_mode[i]);
@@ -165,7 +168,6 @@ void akp_class::onUdpDataRx(void)
 
         delete pdata;
     }
-
 }
 //#pragma pack()
 //-----------------------------------------------------------------------------
