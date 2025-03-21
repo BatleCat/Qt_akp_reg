@@ -89,15 +89,16 @@ QDataStream& operator <<(QDataStream &out, const TAKP_FRAME &akp_frame);
 QDataStream& operator >>(QDataStream &in,        TAKP_FRAME &akp_frame);
 Q_DECLARE_METATYPE(TAKP_FRAME)
 //-----------------------------------------------------------------------------
-class qt_akp_file : public akp_check_state //QObject
+//-----------------------------------------------------------------------------
+class qt_akp_file_read : public QObject
 {
     Q_OBJECT
 public:
-    explicit qt_akp_file(QObject *parent = nullptr);
-    ~qt_akp_file();
+    explicit qt_akp_file_read(QObject *parent = nullptr);
+    ~qt_akp_file_read();
 
 private:
-    int          Count;
+//    int          Count;
     QString      File_Type;
     QString      Ver;
     QString      Well_Number;
@@ -112,9 +113,12 @@ private:
     int          Shift_Point_VK1;
     int          Shift_Point_VK2;
 
-    TDataPocket  data_pocket;
-    TAKP_FRAME*  akp_curent_frame;
-    int          curent_index;
+//    TDataPocket  data_pocket;
+    akp_check_state ch1;
+    akp_check_state ch2;
+    TAKP_FRAME*     akp_curent_frame;
+    int             curent_index;
+    bool            bItemLoaded;
 
     QList<TAKP_FRAME*>  data_list;
 
@@ -122,6 +126,11 @@ private:
     void   load_well_sec(      QTextStream  &head);
     void   load_tool_sec(      QTextStream  &head);
     void   load_data    (const QString      &file_name);
+
+protected:
+    bool is_index_valid (const int index);
+    void select_item    (const int index);
+    void load_item      (const int index);
 
 public:
     //-------------------------------------------------------------------------
@@ -132,68 +141,78 @@ public:
     void   read_ch1     (const int index, TVAK8_WAVE &wave); //TVAK_8_DATA
     void   read_ch2     (const int index, TVAK8_WAVE &wave); //TVAK_8_DATA
     //-------------------------------------------------------------------------
-    qint32 read_dept(const int index);
+    qint32 read_dept    (const int index);
     bool   read_ml      (const int index);
     //-------------------------------------------------------------------------
-    quint16 read_frame_label                     (const int index);
-    quint16 read_vk_number                       (const int index);
+    quint16 read_ch1_frame_label                        (const int index);
+    quint16 read_ch2_frame_label                        (const int index);
+    quint16 read_ch1_vk_number                          (const int index);
+    quint16 read_ch2_vk_number                          (const int index);
 
-    quint16 read_izl_type                        (const int index);
-    quint16 read_izl_freq                        (const int index);
-    quint16 read_izl_periods                     (const int index);
-    quint16 read_izl_ampl                        (const int index);
+    quint16 read_izl_type                               (const int index);
+    quint16 read_izl_freq                               (const int index);
+    quint16 read_izl_periods                            (const int index);
+    quint16 read_izl_ampl                               (const int index);
 
-    quint16 read_rx_type                         (const int index);
-    quint16 read_rx_Td                           (const int index);
-    quint16 read_rx_Ku                           (const int index);
-    quint16 read_rx_delay                        (const int index);
+    quint16 read_rx_type                                (const int index);
+    quint16 read_rx_Td                                  (const int index);
+    quint16 read_rx_Ku                                  (const int index);
+    quint16 read_rx_delay                               (const int index);
 
-    quint16 read_tool_type                       (const int index);
-    quint16 read_tool_no                         (const int index);
-    quint16 read_soft_version_major              (const int index);
-    quint16 read_soft_version_minor              (const int index);
+    quint16 read_tool_type                              (const int index);
+    quint16 read_tool_no                                (const int index);
+    quint16 read_soft_version_major                     (const int index);
+    quint16 read_soft_version_minor                     (const int index);
 
-    quint16 read_mode_number                     (const int index);
-    quint16	read_mode_count                      (const int index);
+    quint16 read_mode_number                            (const int index);
+    quint16	read_mode_count                             (const int index);
 
-    quint16 read_vk_calibration_amplitude        (const int index);
-    quint16 read_vk_calibration_offset           (const int index);
+    quint16 read_vk_calibration_amplitude               (const int index);
+    quint16 read_vk_calibration_offset                  (const int index);
 
-    quint32 read_timer_clk                       (const int index);
-    quint32 read_time_start_meserment            (const int index);
-    quint32 read_time_stop_meserment             (const int index);
-    quint32 read_time_meserment                  (const int index);
+    quint32 read_timer_clk                              (const int index);
+    quint32 read_time_start_meserment                   (const int index);
+    quint32 read_time_stop_meserment                    (const int index);
+    quint32 read_time_meserment                         (const int index);
 
-    bool is_frame_CRC_OK                         (const int index);
-    bool is_frame_CRC_OK_for_ch1                 (const int index);
-    bool is_frame_CRC_OK_for_ch2                 (const int index);
+    bool is_frame_CRC_OK                                (const int index);
+    bool is_frame_CRC_OK_for_ch1                        (const int index);
+    bool is_frame_CRC_OK_for_ch2                        (const int index);
 
-    bool is_frame_CRC_OK_for_frame_label         (const int index);
-    bool is_frame_CRC_OK_for_vk_number           (const int index);
-    bool is_frame_CRC_OK_for_rx_type             (const int index);
-    bool is_frame_CRC_OK_for_Ku                  (const int index);
+    bool is_frame_CRC_OK_for_ch1_frame_label            (const int index);
+    bool is_frame_CRC_OK_for_ch2_frame_label            (const int index);
+    bool is_frame_CRC_OK_for_ch1_vk_number              (const int index);
+    bool is_frame_CRC_OK_for_ch2_vk_number              (const int index);
 
-    bool is_frame_CRC_OK_for_rx_delay            (const int index);
-    bool is_frame_CRC_OK_for_Fsig                (const int index);
-    bool is_frame_CRC_OK_for_tool_type           (const int index);
-    bool is_frame_CRC_OK_for_mode_number         (const int index);
+    bool is_frame_CRC_OK_for_izl_type                   (const int index);
+    bool is_frame_CRC_OK_for_izl_freq                   (const int index);
+    bool is_frame_CRC_OK_for_izl_periods                (const int index);
+    bool is_frame_CRC_OK_for_izl_ampl                   (const int index);
 
-    bool is_frame_CRC_OK_for_mode_count          (const int index);
+    bool is_frame_CRC_OK_for_rx_type                    (const int index);
+    bool is_frame_CRC_OK_for_rx_Td                      (const int index);
+    bool is_frame_CRC_OK_for_rx_Ku                      (const int index);
+    bool is_frame_CRC_OK_for_rx_delay                   (const int index);
 
-    bool is_frame_CRC_OK_for_vk_calibration_amp  (const int index);
+    bool is_frame_CRC_OK_for_tool_type                  (const int index);
+    bool is_frame_CRC_OK_for_tool_no                    (const int index);
+    bool is_frame_CRC_OK_for_soft_version               (const int index);
 
-    bool is_frame_CRC_OK_for_vk_calibration_ofs  (const int index);
-    bool is_frame_CRC_OK_for_tool_no             (const int index);
-    bool is_frame_CRC_OK_for_soft_version        (const int index);
+    bool is_frame_CRC_OK_for_mode_number                (const int index);
+    bool is_frame_CRC_OK_for_mode_count                 (const int index);
 
-    bool is_frame_CRC_OK_for_timer_clk           (const int index);
-    bool is_frame_CRC_OK_for_time_start_meserment(const int index);
+    bool is_frame_CRC_OK_for_vk_calibration_amplitude   (const int index);
+    bool is_frame_CRC_OK_for_vk_calibration_offset      (const int index);
 
-    bool is_frame_CRC_OK_for_time_stop_meserment (const int index);
+    bool is_frame_CRC_OK_for_timer_clk                  (const int index);
+    bool is_frame_CRC_OK_for_time_start_meserment       (const int index);
 
-    bool is_frame_CRC_OK_for_time_meserment      (const int index);
+    bool is_frame_CRC_OK_for_time_stop_meserment        (const int index);
+
+    bool is_frame_CRC_OK_for_time_meserment             (const int index);
+
     //-------------------------------------------------------------------------
-    int          count()            const {return Count;}
+    int          count()            const {return data_list.count();}
     QString      file_type()        const {return File_Type;}
     QString      ver()              const {return Ver;}
     QString      well_number()      const {return Well_Number;}
@@ -219,7 +238,8 @@ public slots:
     void start(void);
 };
 //-----------------------------------------------------------------------------
-class qt_akp_file_save : public akp_check_state
+//-----------------------------------------------------------------------------
+class qt_akp_file_save : public QObject //akp_check_state
 {
     Q_OBJECT
 public:
@@ -235,7 +255,7 @@ public:
 
     void setBufLen          (int len)           {if (len > 1) buf_len = len;}
     void setFolderName      (QString Name)      {folderName = Name;}
-    void setFileName        (QString Name)      {fileName = Name;}
+//    void setFileName        (QString Name)      {fileName = Name;}
     void setFildName        (QString Name)      {fildName     = Name;}
     void setWellNo          (QString WellNo)    {wellNo     = WellNo;}
     void setOperatorName    (QString Name)      {name = Name;}
@@ -287,7 +307,7 @@ signals:
 
 public slots:
     void start(void);
-    void on_data_update (const int blk_cnt, const TDataPocket &data);
+    void onDataUpdate (const int blk_cnt, const TDataPocket &data);
 };
 //-----------------------------------------------------------------------------
 #endif // QT_AKP_FILE_H
