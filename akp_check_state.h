@@ -96,24 +96,28 @@ private:
 
     quint16 take_from_14th_bit(const quint16 frame_pos, const TVAK_8_DATA &frame);
     quint16 take_from_15th_bit(const quint16 frame_pos, const TVAK_8_DATA &frame);
+
     quint16 calc_CRC(const quint16 CRC_win_left, const TVAK_8_DATA &frame);
 
 protected:
-    void    encode_frame_label         (const TDataPocket &data);
-    void    encode_vk_number           (const TDataPocket &data);
-    void    encode_Rx_type             (const TDataPocket &data);
-    void    encode_freq_value          (const TDataPocket &data);
-    void    encode_delay_value         (const TDataPocket &data);
-    void    encode_Ku_value            (const TDataPocket &data);
-    void    encode_tool_type           (const TDataPocket &data);
-    void    encode_mode_number         (const TDataPocket &data);
-    void    encode_calibration_vk      (const TDataPocket &data);
-    void    encode_tool_no             (const TDataPocket &data);
-    void    encode_soft_version        (const TDataPocket &data);
-    void    encode_timer_clk           (const TDataPocket &data);
-    void    encode_time_start_meserment(const TDataPocket &data);
-    void    encode_time_stop_meserment (const TDataPocket &data);
-    void    check_CRC                  (const TDataPocket &data);
+    void    encode_frame_label         (const TVAK_8_DATA &data);
+    void    encode_vk_number           (const TVAK_8_DATA &data);
+    void    encode_Rx_type             (const TVAK_8_DATA &data);
+    void    encode_freq_value          (const TVAK_8_DATA &data);
+    void    encode_delay_value         (const TVAK_8_DATA &data);
+    void    encode_Ku_value            (const TVAK_8_DATA &data);
+    void    encode_tool_type           (const TVAK_8_DATA &data);
+    void    encode_mode_number         (const TVAK_8_DATA &data);
+    void    encode_calibration_vk      (const TVAK_8_DATA &data);
+    void    encode_tool_no             (const TVAK_8_DATA &data);
+    void    encode_soft_version        (const TVAK_8_DATA &data);
+    void    encode_timer_clk           (const TVAK_8_DATA &data);
+    void    encode_time_start_meserment(const TVAK_8_DATA &data);
+    void    encode_time_stop_meserment (const TVAK_8_DATA &data);
+
+    void    encode_wave                (const TVAK_8_DATA &data);
+
+    void    check_CRC                  (const TVAK_8_DATA &data);
     void    check_ml                   (const TDataPocket &data);
     void    check_dept                 (const TDataPocket &data);
 
@@ -122,46 +126,48 @@ protected:
 public:
     void    set_state(const TDataPocket &data);
 
-    bool    get_ml_state(void)  {return ml;     }
-    qint32  get_dept(void)      {return dept_cm;}
+    bool    get_ml_state(void)                   {return ml;     }
+    qint32  get_dept(void)                       {return dept_cm;}
 
-    int     get_bad_block_count(void)           {return bad_block_cnt;  }
-    int     get_good_block_count(void)          {return good_block_cnt; }
+    int     get_bad_block_count(void)            {return bad_block_cnt;  }
+    int     get_good_block_count(void)           {return good_block_cnt; }
     void    clear_block_count(void);
 
-    quint16 get_frame_label(void)               {return frame_label;}
-    quint16 get_vk_number(void)                 {return vk_number;  }
-    quint16 get_rx_type(void)                   {return rx_type;    }
-    quint16 get_Td(void)                        {return Td;         }
-    quint16 get_Fsig(void)                      {return Fsig;       }
-    quint16 get_izl_type(void)                  {return izl_type;   }
-    quint16 get_izl_ampl(void)                  {return izl_ampl;   }
-    quint16 get_izl_periods(void)               {return izl_periods;}
-    quint16 get_rx_delay(void)                  {return rx_delay;   }
-    quint16 get_Ku(void)                        {return Ku;         }
-    quint16 get_tool_type(void)                 {return tool_type;  }
-    quint16 get_mode_number(void)               {return mode_number;}
-    quint16	get_mode_count(void)                {return mode_count; }
-    quint16 get_vk_calibration_amplitude(void)  {return vk_calibration_amplitude;}
-    quint16 get_vk_calibration_offset(void)     {return vk_calibration_offset;   }
-    quint16 get_tool_no(void)                   {return tool_no;            }
-    quint16 get_soft_version_major(void)        {return soft_version_major; }
-    quint16 get_soft_version_minor(void)        {return soft_version_minor; }
-    quint32 get_timer_clk(void)                 {return timer_clk;          }
-    quint32 get_time_start_meserment(void)      {return time_start_meserment; }
-    quint32 get_time_stop_meserment(void)       {return time_stop_meserment;  }
-    quint32 get_time_meserment(void)            {return time_meserment;       }
+    quint16 get_frame_label(void)                {return frame_label;}
+    quint16 get_vk_number(void)                  {return vk_number;  }
+    quint16 get_rx_type(void)                    {return rx_type;    }
+    quint16 get_Td(void)                         {return Td;         }
+    quint16 get_Fsig(void)                       {return Fsig;       }
+    quint16 get_izl_type(void)                   {return izl_type;   }
+    quint16 get_izl_ampl(void)                   {return izl_ampl;   }
+    quint16 get_izl_periods(void)                {return izl_periods;}
+    quint16 get_rx_delay(void)                   {return rx_delay;   }
+    quint16 get_Ku(void)                         {return Ku;         }
+    quint16 get_tool_type(void)                  {return tool_type;  }
+    quint16 get_mode_number(void)                {return mode_number;}
+    quint16	get_mode_count(void)                 {return mode_count; }
+    quint16 get_vk_calibration_amplitude(void)   {return vk_calibration_amplitude;}
+    quint16 get_vk_calibration_offset(void)      {return vk_calibration_offset;   }
+    quint16 get_tool_no(void)                    {return tool_no;            }
+    quint16 get_soft_version_major(void)         {return soft_version_major; }
+    quint16 get_soft_version_minor(void)         {return soft_version_minor; }
+    quint32 get_timer_clk(void)                  {return timer_clk;          }
+    quint32 get_time_start_meserment(void)       {return time_start_meserment; }
+    quint32 get_time_stop_meserment(void)        {return time_stop_meserment;  }
+    quint32 get_time_meserment(void)             {return time_meserment;       }
+
+    void    get_wave(TVAK8_WAVE &wave);
 
     bool is_CRC_OK(void)                         {return CRC_OK; }
 
-    bool is_CRC1_OK(void)                         {return CRC1_OK; }
-    bool is_CRC2_OK(void)                         {return CRC2_OK; }
-    bool is_CRC3_OK(void)                         {return CRC3_OK; }
-    bool is_CRC4_OK(void)                         {return CRC4_OK; }
-    bool is_CRC5_OK(void)                         {return CRC5_OK; }
-    bool is_CRC6_OK(void)                         {return CRC6_OK; }
-    bool is_CRC7_OK(void)                         {return CRC7_OK; }
-    bool is_CRC8_OK(void)                         {return CRC8_OK; }
+    bool is_CRC1_OK(void)                        {return CRC1_OK; }
+    bool is_CRC2_OK(void)                        {return CRC2_OK; }
+    bool is_CRC3_OK(void)                        {return CRC3_OK; }
+    bool is_CRC4_OK(void)                        {return CRC4_OK; }
+    bool is_CRC5_OK(void)                        {return CRC5_OK; }
+    bool is_CRC6_OK(void)                        {return CRC6_OK; }
+    bool is_CRC7_OK(void)                        {return CRC7_OK; }
+    bool is_CRC8_OK(void)                        {return CRC8_OK; }
 
     bool is_CRC_OK_for_frame_label(void)         {return CRC1_OK;}
     bool is_CRC_OK_for_vk_number(void)           {return CRC1_OK;}
