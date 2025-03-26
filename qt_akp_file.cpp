@@ -302,13 +302,14 @@ void qt_akp_file_read::clear(void)
 {
     curent_index    = -1;
     bItemLoaded     = false;
-    akp_curent_frame = NULL;
 
     while (!data_list.isEmpty())
     {
-        delete data_list.takeFirst();
-        data_list.removeFirst();
+        akp_curent_frame = data_list.takeFirst();
+        delete akp_curent_frame;
+//        data_list.removeFirst();
     }
+    akp_curent_frame = NULL;
 }
 //-----------------------------------------------------------------------------
 void qt_akp_file_read::start(void)
@@ -670,6 +671,30 @@ bool qt_akp_file_read::is_frame_CRC_OK_for_ch2_vk_number(const int index)
 {
     load_item(index);
     return ch2.is_CRC_OK_for_vk_number();
+}
+//-----------------------------------------------------------------------------
+bool qt_akp_file_read::is_frame_CRC_OK_for_izl_type(const int index)
+{
+    load_item(index);
+    return ( ch1.is_CRC_OK_for_izl_type() || ch2.is_CRC_OK_for_izl_type() );
+}
+//-----------------------------------------------------------------------------
+bool qt_akp_file_read::is_frame_CRC_OK_for_izl_freq(const int index)
+{
+    load_item(index);
+    return ( ch1.is_CRC_OK_for_Fsig() || ch2.is_CRC_OK_for_Fsig() );
+}
+//-----------------------------------------------------------------------------
+bool qt_akp_file_read::is_frame_CRC_OK_for_izl_periods(const int index)
+{
+    load_item(index);
+    return ( ch1.is_CRC_OK_for_izl_periods() || ch2.is_CRC_OK_for_izl_periods() );
+}
+//-----------------------------------------------------------------------------
+bool qt_akp_file_read::is_frame_CRC_OK_for_izl_ampl(const int index)
+{
+    load_item(index);
+    return ( ch1.is_CRC_OK_for_izl_ampl() || ch2.is_CRC_OK_for_izl_ampl() );
 }
 //-----------------------------------------------------------------------------
 bool qt_akp_file_read::is_frame_CRC_OK_for_rx_type(const int index)
