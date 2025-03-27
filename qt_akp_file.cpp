@@ -924,6 +924,12 @@ void qt_akp_file_save::write_head(void)
 //-----------------------------------------------------------------------------
 void qt_akp_file_save::write_data(void)
 {
+    if (bWriteEnable == false)
+    {
+        qDebug() << QString::fromUtf8("Запись в файл запрещена!");
+        return;
+    }
+    //-------------------------------------------------------------------------
     if (!file.open(QIODevice::Append))
     {
         qDebug() << file.errorString();
@@ -948,9 +954,10 @@ void qt_akp_file_save::write_data(void)
 //---------------------------------------------------------------------------
 void qt_akp_file_save::close_file(void)
 {
+    if (bWriteEnable == true) write_data();
+
     bWriteEnable   = false;
     bFileNameValid = false;
-    write_data();
 }
 //---------------------------------------------------------------------------
 void qt_akp_file_save::start(void)
