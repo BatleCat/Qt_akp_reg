@@ -123,53 +123,53 @@ MainWindow::MainWindow(QWidget *parent) :
     statusBar()->addWidget(label_BadBlk);
     label_BadBlk->setText(QString::fromUtf8("Плохие блоки: 0"));
 
-    label_CRC1_check = new QLabel(QString::fromUtf8("CRC1: ОШИБКА!!!"));
-    label_CRC1_check->setAlignment(Qt::AlignLeft);
-    label_CRC1_check->setMinimumSize(label_CRC1_check->sizeHint());
-    statusBar()->addWidget(label_CRC1_check);
-    label_CRC1_check->setText(QString::fromUtf8(""));
+//    label_CRC1_check = new QLabel(QString::fromUtf8("CRC1: ОШИБКА!!!"));
+//    label_CRC1_check->setAlignment(Qt::AlignLeft);
+//    label_CRC1_check->setMinimumSize(label_CRC1_check->sizeHint());
+//    statusBar()->addWidget(label_CRC1_check);
+//    label_CRC1_check->setText(QString::fromUtf8(""));
 
-    label_CRC2_check = new QLabel(QString::fromUtf8("CRC2: ОШИБКА!!!"));
-    label_CRC2_check->setAlignment(Qt::AlignLeft);
-    label_CRC2_check->setMinimumSize(label_CRC2_check->sizeHint());
-    statusBar()->addWidget(label_CRC2_check);
-    label_CRC2_check->setText(QString::fromUtf8(""));
+//    label_CRC2_check = new QLabel(QString::fromUtf8("CRC2: ОШИБКА!!!"));
+//    label_CRC2_check->setAlignment(Qt::AlignLeft);
+//    label_CRC2_check->setMinimumSize(label_CRC2_check->sizeHint());
+//    statusBar()->addWidget(label_CRC2_check);
+//    label_CRC2_check->setText(QString::fromUtf8(""));
 
-    label_CRC3_check = new QLabel(QString::fromUtf8("CRC3: ОШИБКА!!!"));
-    label_CRC3_check->setAlignment(Qt::AlignLeft);
-    label_CRC3_check->setMinimumSize(label_CRC3_check->sizeHint());
-    statusBar()->addWidget(label_CRC3_check);
-    label_CRC3_check->setText(QString::fromUtf8(""));
+//    label_CRC3_check = new QLabel(QString::fromUtf8("CRC3: ОШИБКА!!!"));
+//    label_CRC3_check->setAlignment(Qt::AlignLeft);
+//    label_CRC3_check->setMinimumSize(label_CRC3_check->sizeHint());
+//    statusBar()->addWidget(label_CRC3_check);
+//    label_CRC3_check->setText(QString::fromUtf8(""));
 
-    label_CRC4_check = new QLabel(QString::fromUtf8("CRC4: ОШИБКА!!!"));
-    label_CRC4_check->setAlignment(Qt::AlignLeft);
-    label_CRC4_check->setMinimumSize(label_CRC4_check->sizeHint());
-    statusBar()->addWidget(label_CRC4_check);
-    label_CRC4_check->setText(QString::fromUtf8(""));
+//    label_CRC4_check = new QLabel(QString::fromUtf8("CRC4: ОШИБКА!!!"));
+//    label_CRC4_check->setAlignment(Qt::AlignLeft);
+//    label_CRC4_check->setMinimumSize(label_CRC4_check->sizeHint());
+//    statusBar()->addWidget(label_CRC4_check);
+//    label_CRC4_check->setText(QString::fromUtf8(""));
 
-    label_CRC5_check = new QLabel(QString::fromUtf8("CRC5: ОШИБКА!!!"));
-    label_CRC5_check->setAlignment(Qt::AlignLeft);
-    label_CRC5_check->setMinimumSize(label_CRC5_check->sizeHint());
-    statusBar()->addWidget(label_CRC5_check);
-    label_CRC5_check->setText(QString::fromUtf8(""));
+//    label_CRC5_check = new QLabel(QString::fromUtf8("CRC5: ОШИБКА!!!"));
+//    label_CRC5_check->setAlignment(Qt::AlignLeft);
+//    label_CRC5_check->setMinimumSize(label_CRC5_check->sizeHint());
+//    statusBar()->addWidget(label_CRC5_check);
+//    label_CRC5_check->setText(QString::fromUtf8(""));
 
-    label_CRC6_check = new QLabel(QString::fromUtf8("CRC6: ОШИБКА!!!"));
-    label_CRC6_check->setAlignment(Qt::AlignLeft);
-    label_CRC6_check->setMinimumSize(label_CRC6_check->sizeHint());
-    statusBar()->addWidget(label_CRC6_check);
-    label_CRC6_check->setText(QString::fromUtf8(""));
+//    label_CRC6_check = new QLabel(QString::fromUtf8("CRC6: ОШИБКА!!!"));
+//    label_CRC6_check->setAlignment(Qt::AlignLeft);
+//    label_CRC6_check->setMinimumSize(label_CRC6_check->sizeHint());
+//    statusBar()->addWidget(label_CRC6_check);
+//    label_CRC6_check->setText(QString::fromUtf8(""));
 
-    label_CRC7_check = new QLabel(QString::fromUtf8("CRC7: ОШИБКА!!!"));
-    label_CRC7_check->setAlignment(Qt::AlignLeft);
-    label_CRC7_check->setMinimumSize(label_CRC7_check->sizeHint());
-    statusBar()->addWidget(label_CRC7_check);
-    label_CRC7_check->setText(QString::fromUtf8(""));
+//    label_CRC7_check = new QLabel(QString::fromUtf8("CRC7: ОШИБКА!!!"));
+//    label_CRC7_check->setAlignment(Qt::AlignLeft);
+//    label_CRC7_check->setMinimumSize(label_CRC7_check->sizeHint());
+//    statusBar()->addWidget(label_CRC7_check);
+//    label_CRC7_check->setText(QString::fromUtf8(""));
 
-    label_CRC8_check = new QLabel(QString::fromUtf8("CRC8: ОШИБКА!!!"));
-    label_CRC8_check->setAlignment(Qt::AlignLeft);
-    label_CRC8_check->setMinimumSize(label_CRC8_check->sizeHint());
-    statusBar()->addWidget(label_CRC8_check);
-    label_CRC8_check->setText(QString::fromUtf8(""));
+//    label_CRC8_check = new QLabel(QString::fromUtf8("CRC8: ОШИБКА!!!"));
+//    label_CRC8_check->setAlignment(Qt::AlignLeft);
+//    label_CRC8_check->setMinimumSize(label_CRC8_check->sizeHint());
+//    statusBar()->addWidget(label_CRC8_check);
+//    label_CRC8_check->setText(QString::fromUtf8(""));
 
     label_ML = new QLabel(QString::fromUtf8("MM"));
     label_ML->setAlignment(Qt::AlignCenter);
@@ -206,14 +206,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(&check_state,  &akp_check_state::time_meserment_update, this, &MainWindow::on_showTimeMeserment );
 
-    connect(&check_state,  &akp_check_state::CRC1_update,           this, &MainWindow::on_showCRC1          );
-    connect(&check_state,  &akp_check_state::CRC2_update,           this, &MainWindow::on_showCRC2          );
-    connect(&check_state,  &akp_check_state::CRC3_update,           this, &MainWindow::on_showCRC3          );
-    connect(&check_state,  &akp_check_state::CRC4_update,           this, &MainWindow::on_showCRC4          );
-    connect(&check_state,  &akp_check_state::CRC5_update,           this, &MainWindow::on_showCRC5          );
-    connect(&check_state,  &akp_check_state::CRC6_update,           this, &MainWindow::on_showCRC6          );
-    connect(&check_state,  &akp_check_state::CRC7_update,           this, &MainWindow::on_showCRC7          );
-    connect(&check_state,  &akp_check_state::CRC8_update,           this, &MainWindow::on_showCRC8          );
+//    connect(&check_state,  &akp_check_state::CRC1_update,           this, &MainWindow::on_showCRC_VK1          );
+//    connect(&check_state,  &akp_check_state::CRC2_update,           this, &MainWindow::on_showCRC_VK2          );
+//    connect(&check_state,  &akp_check_state::CRC3_update,           this, &MainWindow::on_showCRC3          );
+//    connect(&check_state,  &akp_check_state::CRC4_update,           this, &MainWindow::on_showCRC4          );
+//    connect(&check_state,  &akp_check_state::CRC5_update,           this, &MainWindow::on_showCRC5          );
+//    connect(&check_state,  &akp_check_state::CRC6_update,           this, &MainWindow::on_showCRC6          );
+//    connect(&check_state,  &akp_check_state::CRC7_update,           this, &MainWindow::on_showCRC7          );
+//    connect(&check_state,  &akp_check_state::CRC8_update,           this, &MainWindow::on_showCRC8          );
     //-------------------------------------------------------------------------
     connect(ui->pushButton_Start,    &QPushButton::pressed,         this, &MainWindow::on_pushButtonStart   );
     connect(ui->pushButton_Stop,     &QPushButton::pressed,         this, &MainWindow::on_pushButtonStop    );
@@ -279,7 +279,7 @@ MainWindow::MainWindow(QWidget *parent) :
     vk1->setMaxAmpl(max_ampl);
     vk1->setXScale(FKDstep);
     vk1->setColorLevelBack(LevelColor);
-    vk1->setCaption(QString::fromUtf8("Волновая картинка "));
+    vk1->setCaption(QString::fromUtf8("ВК-1 "));
 
     connect(this, &MainWindow::changeFKDstep,   vk1,        &Qt_VK::on_changeTimeScale  );
     connect(this, &MainWindow::changeFKDlevel,  vk1,        &Qt_VK::on_changeLevel      );
@@ -305,6 +305,8 @@ MainWindow::MainWindow(QWidget *parent) :
 //    connect(this, SIGNAL( changeFKDstep(int) ), time_line1, SLOT( on_changeTimeScale(int) ) );
 
     ui->horizontalLayout_VK->addWidget(view_vk);
+    //-------------------------------------------------------------------------
+    ui->groupBox_3->setTitle(QString::fromUtf8("Амплитуда (%1 / div)").arg(vk1->maxAmpl() / vk1_greed->get_num_y_line()));
     //-------------------------------------------------------------------------
     rectf.setRect(0.0, 0.0, 100.0, 100.0);
     rect.setRect(0, 0, VAK_8_NUM_POINTS, 100);
@@ -1162,99 +1164,114 @@ void MainWindow::on_VKxClicked(int id)
         vk1->setCaption(QString::fromUtf8("ВК-2"));
 }
 //-------------------------------------------------------------------
-void MainWindow::on_showCRC1 (const bool crc)
-{
-    QColor  color = get_color_on_CRC(crc);
-    label_CRC1_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
+//void MainWindow::on_showCRC_VK1 (const bool crc)
+//{
+//    QColor  color = get_color_on_CRC(crc);
+//    vk1->setColorText(color);
+//    ctl_vk1->setColorText(color);
+////    label_CRC1_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
 
-    if (crc)
-        label_CRC1_check->setText(QString::fromUtf8("CRC1: Ok"));
-    else
-        label_CRC1_check->setText(QString::fromUtf8("CRC1: ОШИБКА!!!"));
-}
+//    if (crc)
+//    {
+//        vk1->setCaption("ВК-1 (CRC: Ok)");
+//        ctl_vk1->setCaption("ВК-1 (CRC: Ok)");
+////        label_CRC1_check->setText(QString::fromUtf8("CRC1: Ok"));
+//    }
+//    else
+//        vk1->setCaption("ВК-1 (CRC1: ОШИБКА!!!)");
+////        label_CRC1_check->setText(QString::fromUtf8("CRC1: ОШИБКА!!!"));
+//}
 //-------------------------------------------------------------------
-void MainWindow::on_showCRC2 (const bool crc)
-{
-    QColor  color = get_color_on_CRC(crc);
-    label_CRC2_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
+//void MainWindow::on_showCRC_VK2 (const bool crc)
+//{
+//    QColor  color = get_color_on_CRC(crc);
+//    ctl_vk2->setColorText(color);
+////    label_CRC2_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
 
-    if (crc)
-        label_CRC2_check->setText(QString::fromUtf8("CRC2: Ok"));
-    else
-        label_CRC2_check->setText(QString::fromUtf8("CRC2: ОШИБКА!!!"));
-}
+//    if (crc)
+//    {
+//        ctl_vk2->setCaption("ВК-1 (CRC: Ok)");
+////        label_CRC2_check->setText(QString::fromUtf8("CRC2: Ok"));
+//    }
+//    else
+//    {
+//        ctl_vk2->setCaption("ВК-1 (CRC1: ОШИБКА!!!)");
+//        //        label_CRC2_check->setText(QString::fromUtf8("CRC2: ОШИБКА!!!"));
+//    }
+//}
 //-------------------------------------------------------------------
-void MainWindow::on_showCRC3 (const bool crc)
-{
-    QColor  color = get_color_on_CRC(crc);
-    label_CRC3_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
+//void MainWindow::on_showCRC3 (const bool crc)
+//{
+//    QColor  color = get_color_on_CRC(crc);
+//    label_CRC3_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
 
-    if (crc)
-        label_CRC3_check->setText(QString::fromUtf8("CRC3: Ok"));
-    else
-        label_CRC3_check->setText(QString::fromUtf8("CRC3: ОШИБКА!!!"));
-}
+//    if (crc)
+//        label_CRC3_check->setText(QString::fromUtf8("CRC3: Ok"));
+//    else
+//        label_CRC3_check->setText(QString::fromUtf8("CRC3: ОШИБКА!!!"));
+//}
 //-------------------------------------------------------------------
-void MainWindow::on_showCRC4 (const bool crc)
-{
-    QColor  color = get_color_on_CRC(crc);
-    label_CRC4_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
+//void MainWindow::on_showCRC4 (const bool crc)
+//{
+//    QColor  color = get_color_on_CRC(crc);
+//    label_CRC4_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
 
-    if (crc)
-        label_CRC4_check->setText(QString::fromUtf8("CRC4: Ok"));
-    else
-        label_CRC4_check->setText(QString::fromUtf8("CRC4: ОШИБКА!!!"));
-}
+//    if (crc)
+//        label_CRC4_check->setText(QString::fromUtf8("CRC4: Ok"));
+//    else
+//        label_CRC4_check->setText(QString::fromUtf8("CRC4: ОШИБКА!!!"));
+//}
 //-------------------------------------------------------------------
-void MainWindow::on_showCRC5 (const bool crc)
-{
-    QColor  color = get_color_on_CRC(crc);
-    label_CRC5_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
+//void MainWindow::on_showCRC5 (const bool crc)
+//{
+//    QColor  color = get_color_on_CRC(crc);
+//    label_CRC5_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
 
-    if (crc)
-        label_CRC5_check->setText(QString::fromUtf8("CRC5: Ok"));
-    else
-        label_CRC5_check->setText(QString::fromUtf8("CRC5: ОШИБКА!!!"));
-}
+//    if (crc)
+//        label_CRC5_check->setText(QString::fromUtf8("CRC5: Ok"));
+//    else
+//        label_CRC5_check->setText(QString::fromUtf8("CRC5: ОШИБКА!!!"));
+//}
 //-------------------------------------------------------------------
-void MainWindow::on_showCRC6 (const bool crc)
-{
-    QColor  color = get_color_on_CRC(crc);
-    label_CRC6_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
+//void MainWindow::on_showCRC6 (const bool crc)
+//{
+//    QColor  color = get_color_on_CRC(crc);
+//    label_CRC6_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
 
-    if (crc)
-        label_CRC6_check->setText(QString::fromUtf8("CRC6: Ok"));
-    else
-        label_CRC6_check->setText(QString::fromUtf8("CRC6: ОШИБКА!!!"));
-}
+//    if (crc)
+//        label_CRC6_check->setText(QString::fromUtf8("CRC6: Ok"));
+//    else
+//        label_CRC6_check->setText(QString::fromUtf8("CRC6: ОШИБКА!!!"));
+//}
 //-------------------------------------------------------------------
-void MainWindow::on_showCRC7 (const bool crc)
-{
-    QColor  color = get_color_on_CRC(crc);
-    label_CRC7_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
+//void MainWindow::on_showCRC7 (const bool crc)
+//{
+//    QColor  color = get_color_on_CRC(crc);
+//    label_CRC7_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
 
-    if (crc)
-        label_CRC7_check->setText(QString::fromUtf8("CRC7: Ok"));
-    else
-        label_CRC7_check->setText(QString::fromUtf8("CRC7: ОШИБКА!!!"));
-}
+//    if (crc)
+//        label_CRC7_check->setText(QString::fromUtf8("CRC7: Ok"));
+//    else
+//        label_CRC7_check->setText(QString::fromUtf8("CRC7: ОШИБКА!!!"));
+//}
 //-------------------------------------------------------------------
-void MainWindow::on_showCRC8 (const bool crc)
-{
-    QColor  color = get_color_on_CRC(crc);
-    label_CRC8_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
+//void MainWindow::on_showCRC8 (const bool crc)
+//{
+//    QColor  color = get_color_on_CRC(crc);
+//    label_CRC8_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
 
-    if (crc)
-        label_CRC8_check->setText(QString::fromUtf8("CRC8: Ok"));
-    else
-        label_CRC8_check->setText(QString::fromUtf8("CRC8: ОШИБКА!!!"));
-}
+//    if (crc)
+//        label_CRC8_check->setText(QString::fromUtf8("CRC8: Ok"));
+//    else
+//        label_CRC8_check->setText(QString::fromUtf8("CRC8: ОШИБКА!!!"));
+//}
 //-------------------------------------------------------------------
 QColor MainWindow::get_color_on_CRC(const bool crc)
 {
     if (crc)
     {
-        return QColor(Qt::black);
+        return TextColor;
+//        return QColor(Qt::black);
     }
     else
     {
@@ -1340,7 +1357,6 @@ void MainWindow::load_settings(void)
 //-----------------------------------------------------------------------------
 void MainWindow::save_settings(void)
 {
-/*
     app_settings->beginGroup(QString::fromUtf8("/Settings"));
 
     app_settings->setValue(QString::fromUtf8("/OperatorName"), OperatorName         );
@@ -1372,26 +1388,25 @@ void MainWindow::save_settings(void)
     app_settings->setValue(QString::fromUtf8("/MaxAmpl"),      max_ampl             );
     app_settings->setValue(QString::fromUtf8("/FkdLevel"),     fkd_level            );
 
-    app_settings->setValue(QString::fromUtf8("/ModeCount"),    mode_list.size()     );
+//    app_settings->setValue(QString::fromUtf8("/ModeCount"),    mode_list.size()     );
 
-    int i = 0;
-    mode = mode_list.begin();
-    vak32_ctrl_command_class* modeX;
+//    int i = 0;
+//    mode = mode_list.begin();
+//    vak32_ctrl_command_class* modeX;
 
-    app_settings->beginGroup(QString::fromUtf8("Mode_%1").arg(i+1));
-        modeX = *mode;
-        app_settings->setValue(QString::fromUtf8("/IzlType"),        modeX->get_izl_type()       );
-        app_settings->setValue(QString::fromUtf8("/IzlFreq"),        modeX->get_Fsig()           );
-        app_settings->setValue(QString::fromUtf8("/PeriodNum"),      modeX->get_period_number()  );
-        app_settings->setValue(QString::fromUtf8("/Td"),             modeX->get_Td()             );
-        app_settings->setValue(QString::fromUtf8("/Delay"),          modeX->get_rx_delay()       );
-        app_settings->setValue(QString::fromUtf8("/KU_win_start"),   modeX->get_KU_window_start());
-        app_settings->setValue(QString::fromUtf8("/KU_win_width"),   modeX->get_KU_window_width());
+//    app_settings->beginGroup(QString::fromUtf8("Mode_%1").arg(i+1));
+//        modeX = *mode;
+//        app_settings->setValue(QString::fromUtf8("/IzlType"),        modeX->get_izl_type()       );
+//        app_settings->setValue(QString::fromUtf8("/IzlFreq"),        modeX->get_Fsig()           );
+//        app_settings->setValue(QString::fromUtf8("/PeriodNum"),      modeX->get_period_number()  );
+//        app_settings->setValue(QString::fromUtf8("/Td"),             modeX->get_Td()             );
+//        app_settings->setValue(QString::fromUtf8("/Delay"),          modeX->get_rx_delay()       );
+//        app_settings->setValue(QString::fromUtf8("/KU_win_start"),   modeX->get_KU_window_start());
+//        app_settings->setValue(QString::fromUtf8("/KU_win_width"),   modeX->get_KU_window_width());
+//    app_settings->endGroup();
+
+
     app_settings->endGroup();
-
-
-    app_settings->endGroup();
-*/
 }
 //-----------------------------------------------------------------------------
 /*

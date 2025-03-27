@@ -133,21 +133,21 @@ private:
     QLabel*             label_Distance;
     QLabel*             label_Velocity;
 
-    QLabel*             label_CRC1_check;
+//    QLabel*             label_CRC1_check;
 //    bool                bflag_CRC1_Ok;
-    QLabel*             label_CRC2_check;
+//    QLabel*             label_CRC2_check;
 //    bool                bflag_CRC2_Ok;
-    QLabel*             label_CRC3_check;
+//    QLabel*             label_CRC3_check;
 //    bool                bflag_CRC3_Ok;
-    QLabel*             label_CRC4_check;
+//    QLabel*             label_CRC4_check;
 //    bool                bflag_CRC4_Ok;
-    QLabel*             label_CRC5_check;
+//    QLabel*             label_CRC5_check;
 //    bool                bflag_CRC5_Ok;
-    QLabel*             label_CRC6_check;
+//    QLabel*             label_CRC6_check;
 //    bool                bflag_CRC6_Ok;
-    QLabel*             label_CRC7_check;
+//    QLabel*             label_CRC7_check;
 //    bool                bflag_CRC7_Ok;
-    QLabel*             label_CRC8_check;
+//    QLabel*             label_CRC8_check;
 //    bool                bflag_CRC8_Ok;
 
     QLabel*             label_ML;
@@ -239,14 +239,14 @@ private slots:
 
     void on_VKxClicked(int id);
 
-    void on_showCRC1 (const bool crc);
-    void on_showCRC2 (const bool crc);
-    void on_showCRC3 (const bool crc);
-    void on_showCRC4 (const bool crc);
-    void on_showCRC5 (const bool crc);
-    void on_showCRC6 (const bool crc);
-    void on_showCRC7 (const bool crc);
-    void on_showCRC8 (const bool crc);
+//    void on_showCRC_VK1 (const bool crc);
+//    void on_showCRC_VK2 (const bool crc);
+//    void on_showCRC3 (const bool crc);
+//    void on_showCRC4 (const bool crc);
+//    void on_showCRC5 (const bool crc);
+//    void on_showCRC6 (const bool crc);
+//    void on_showCRC7 (const bool crc);
+//    void on_showCRC8 (const bool crc);
 
 };
 //-------------------------------------------------------------------
