@@ -180,32 +180,33 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="dialog_well_info.ui" line="248"/>
-        <source>2 см</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="dialog_well_info.ui" line="253"/>
-        <source>5 см</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="dialog_well_info.ui" line="258"/>
+        <location filename="dialog_well_info.ui" line="241"/>
+        <location filename="dialog_well_info.ui" line="264"/>
         <source>10 см</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="dialog_well_info.ui" line="301"/>
+        <location filename="dialog_well_info.ui" line="254"/>
+        <source>2 см</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_well_info.ui" line="259"/>
+        <source>5 см</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dialog_well_info.ui" line="307"/>
         <source>Папка для записи</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="dialog_well_info.ui" line="357"/>
+        <location filename="dialog_well_info.ui" line="363"/>
         <source>Настройка...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="dialog_well_info.ui" line="370"/>
+        <location filename="dialog_well_info.ui" line="376"/>
         <source>Ok</source>
         <translation type="unfinished"></translation>
     </message>

@@ -1,4 +1,4 @@
-//-------------------------------------------------------------------
+﻿//-------------------------------------------------------------------
 #include "dialog_well_info.h"
 #include "ui_dialog_well_info.h"
 //-------------------------------------------------------------------
@@ -52,7 +52,7 @@ void Dialog_well_info::setDeptStep(int dept_step)
         ui->comboBox->setCurrentIndex(2);
         break;
     default:
-        ui->comboBox->setCurrentIndex(0);
+        ui->comboBox->setCurrentIndex(2);
         break;
     }
 }
@@ -99,11 +99,11 @@ int Dialog_well_info::getDept(void)
 //-------------------------------------------------------------------
 int Dialog_well_info::getDeptStep(void)
 {
-    if ( ui->comboBox->currentIndex() == 0 ) return 2;
-    if ( ui->comboBox->currentIndex() == 1 ) return 5;
-    if ( ui->comboBox->currentIndex() == 2 ) return 10;
+//    if ( ui->comboBox->currentIndex() == 0 ) return 2;
+//    if ( ui->comboBox->currentIndex() == 1 ) return 5;
+//    if ( ui->comboBox->currentIndex() == 2 ) return 10;
 
-    return 2;
+    return 10;
 }
 //-------------------------------------------------------------------
 QString Dialog_well_info::getFolderName(void)
