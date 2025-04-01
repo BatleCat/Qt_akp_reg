@@ -25,7 +25,6 @@
 //-------------------------------------------------------------------
 #include "vak_8.h"
 #include "vak_8_2pc.h"
-//#include "qt_vak_8u_vk.h"
 //-------------------------------------------------------------------
 #include "qt_vk.h"
 #include "qt_bigreed.h"
@@ -50,25 +49,10 @@ public:
 //    bool eventFilter(QObject *target, QEvent *event);
 
 signals:
-//    void cmdStartMeserment(void);
-//    void cmdStopMeserment(void);
-
     void cmdSetDepth(const qint32 dept_cm);
     void cmdSetDeptStep(const qint32 dept_step_cm);
-//    void vak32CmdSend(void);
-//    void setPocketCount(qint32 count);
-//    void setBadPocketCount(qint32 count);
     void showDept(const qint32 dept);
-//    void setML(bool ml);
     void showNewData(void);
-
-//    void showIZLtype(qint16 value);
-//    void showIZLfreq(qint16 value);
-//    void showIZLnum(qint16 value);
-
-//    void showRXdelay(qint16 value);
-//    void showRXtd(qint16 value);
-//    void showRXku(qint16 value);
 
     void changeFKDstep(int newStep);
     void changeDpsX(int newDpsX);
@@ -86,8 +70,6 @@ private:
     Dialog_setup*       dialogSetup;
     Dialog_well_info*   dialogWellInfo;
 
-    QButtonGroup*       buttonGroup;
-
     //-------------------------------------------------------------------
     akp_class           akp;
     QThread*            akp_thread;
@@ -98,25 +80,25 @@ private:
     //-------------------------------------------------------------------
     CVELOCITY*          velocity;
     //-------------------------------------------------------------------
-    QGraphicsScene*     scene_vk;
-    QGraphicsView*      view_vk;
+    QGraphicsScene*     scene_vk1;
+    QGraphicsView*      view_vk1;
     Qt_VK*              vk1;
     Qt_biGREED*         vk1_greed;
-    Qt_TIME_LINE*       time_line1;
+    Qt_TIME_LINE*       time_line_vk1;
     //-------------------------------------------------------------------
-    QGraphicsScene*     scene_ctl_vk1;
-    QGraphicsView*      view_ctl_vk1;
-    Qt_VK*              ctl_vk1;
-    Qt_biGREED*         ctl_vk1_greed;
-
-    QGraphicsScene*     scene_ctl_vk2;
-    QGraphicsView*      view_ctl_vk2;
-    Qt_VK*              ctl_vk2;
-    Qt_biGREED*         ctl_vk2_greed;
+    QGraphicsScene*     scene_vk2;
+    QGraphicsView*      view_vk2;
+    Qt_VK*              vk2;
+    Qt_biGREED*         vk2_greed;
+    Qt_TIME_LINE*       time_line_vk2;
     //-------------------------------------------------------------------
-    QGraphicsScene*     scene_fkd;
-    QGraphicsView*      view_fkd;
-    CVAK32_FKD*         fkd;
+    QGraphicsScene*     scene_fkd_vk1;
+    QGraphicsView*      view_fkd_vk1;
+    CVAK32_FKD*         fkd_vk1;
+    //-------------------------------------------------------------------
+    QGraphicsScene*     scene_fkd_vk2;
+    QGraphicsView*      view_fkd_vk2;
+    CVAK32_FKD*         fkd_vk2;
     //-------------------------------------------------------------------
     QGraphicsScene*     scene_dept_col;
     QGraphicsView*      view_dept_col;
@@ -133,27 +115,7 @@ private:
     QLabel*             label_Distance;
     QLabel*             label_Velocity;
 
-//    QLabel*             label_CRC1_check;
-//    bool                bflag_CRC1_Ok;
-//    QLabel*             label_CRC2_check;
-//    bool                bflag_CRC2_Ok;
-//    QLabel*             label_CRC3_check;
-//    bool                bflag_CRC3_Ok;
-//    QLabel*             label_CRC4_check;
-//    bool                bflag_CRC4_Ok;
-//    QLabel*             label_CRC5_check;
-//    bool                bflag_CRC5_Ok;
-//    QLabel*             label_CRC6_check;
-//    bool                bflag_CRC6_Ok;
-//    QLabel*             label_CRC7_check;
-//    bool                bflag_CRC7_Ok;
-//    QLabel*             label_CRC8_check;
-//    bool                bflag_CRC8_Ok;
-
     QLabel*             label_ML;
-
-//    int                 port;
-//    QHostAddress        host;
 
     QString OperatorName;
     QString WellNo;
@@ -182,18 +144,8 @@ private:
     int     dpsX;
     int     dpsY;
 
-//    int     vkNum;
-//    int     vkNumRx;
-    int     vkNum4fkd;
-//    int     modeNum;
-//    int     modeNum4fkd;
-
     int     max_ampl;
     int     fkd_level;
-//    int     num_y_line_on_grid;
-//    int     step_x_line_on_grid;
-
-//    int     ToolNo;
 
     qint32  blk_count;
     qint32  bad_blk;
@@ -236,17 +188,6 @@ private slots:
     void on_showSoftVer (const bool crc, const quint16 soft_version_major, const quint16 soft_version_minor);
 
     void on_showTimeMeserment(const bool crc, const quint32 time_meserment);
-
-    void on_VKxClicked(int id);
-
-//    void on_showCRC_VK1 (const bool crc);
-//    void on_showCRC_VK2 (const bool crc);
-//    void on_showCRC3 (const bool crc);
-//    void on_showCRC4 (const bool crc);
-//    void on_showCRC5 (const bool crc);
-//    void on_showCRC6 (const bool crc);
-//    void on_showCRC7 (const bool crc);
-//    void on_showCRC8 (const bool crc);
 
 };
 //-------------------------------------------------------------------

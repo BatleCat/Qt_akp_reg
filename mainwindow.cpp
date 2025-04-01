@@ -3,9 +3,7 @@
 #include <QColor>
 #include <QDialog>
 #include <QVector>
-#include <QtNetwork/QUdpSocket>
-//#include <QTimer>
-//#include <QTimerEvent>
+//#include <QtNetwork/QUdpSocket>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QGraphicsItem>
@@ -27,12 +25,8 @@
 //-----------------------------------------------------------------------------
 #include "dialog_setup.h"
 #include "dialog_well_info.h"
-//#include "dialog_tool_mode.h"
-//#include "vak32_ctl_cmd.h"
 #include "vak_8.h"
 #include "vak_8_2pc.h"
-//#include "qt_vak_8u_vk.h"
-//#include "qt_vak_32_file.h"
 #include "qt_vak_32_fkd.h"
 #include "qt_deptcol.h"
 #include "qt_ml.h"
@@ -48,19 +42,6 @@ MainWindow::MainWindow(QWidget *parent) :
     check_state(parent),
     akp_file(parent),
     velocity(new CVELOCITY(this))
-//    bflag_CRC1_Ok(false),
-//    bflag_CRC2_Ok(false),
-//    bflag_CRC3_Ok(false),
-//    bflag_CRC4_Ok(false),
-//    bflag_CRC5_Ok(false),
-//    bflag_CRC6_Ok(false),
-//    bflag_CRC7_Ok(false),
-//    bflag_CRC8_Ok(false),
-//    timer_interval(500),
-//    port(1500),
-//    p_count(0),
-//    host(QHostAddress("10.2.22.245"))
-//    ToolNo(0)
 {
     //-------------------------------------------------------------------------
     qRegisterMetaType<TDataPocket>("TDataPocket");
@@ -71,9 +52,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(akp_thread, &QThread::started,            &akp,       &akp_class::start     );
     connect(&akp,       &akp_class::connectionClosed, akp_thread, &QThread::quit        );
     connect(akp_thread, &QThread::finished,           akp_thread, &QThread::deleteLater );
-//    connect(akp_thread, SIGNAL(started(           )), &akp,         SLOT(start(       )));
-//    connect(&akp,       SIGNAL(connectionClosed(  )), akp_thread,   SLOT(quit(        )));
-//    connect(akp_thread, SIGNAL(finished(          )), akp_thread,   SLOT(deleteLater( )));
     //-------------------------------------------------------------------------
     file_thread = new QThread();
     akp_file.moveToThread(file_thread);
@@ -99,13 +77,13 @@ MainWindow::MainWindow(QWidget *parent) :
     statusBar()->addWidget(label_Depth);
     label_Depth->setText(QString::fromUtf8("Глубина: %1 м").arg( Depth / 100.0, 0, 'f', 2));
 
-    label_Distance = new QLabel(QString::fromUtf8("Пройдено: 9999.99 м"));
+    label_Distance = new QLabel(QString::fromUtf8("Пройдено: 99999.99 м"));
     label_Distance->setAlignment(Qt::AlignLeft);
     label_Distance->setMinimumSize(label_Distance->sizeHint());
     statusBar()->addWidget(label_Distance);
     label_Distance->setText(QString::fromUtf8("Пройдено: 0.00 м"));
 
-    label_Velocity = new QLabel(QString::fromUtf8("Скорость: 9999 м/ч"));
+    label_Velocity = new QLabel(QString::fromUtf8("Скорость: 9999999 м/ч"));
     label_Velocity->setAlignment(Qt::AlignLeft);
     label_Velocity->setMinimumSize(label_Velocity->sizeHint());
     statusBar()->addWidget(label_Velocity);
@@ -123,54 +101,6 @@ MainWindow::MainWindow(QWidget *parent) :
     statusBar()->addWidget(label_BadBlk);
     label_BadBlk->setText(QString::fromUtf8("Плохие блоки: 0"));
 
-//    label_CRC1_check = new QLabel(QString::fromUtf8("CRC1: ОШИБКА!!!"));
-//    label_CRC1_check->setAlignment(Qt::AlignLeft);
-//    label_CRC1_check->setMinimumSize(label_CRC1_check->sizeHint());
-//    statusBar()->addWidget(label_CRC1_check);
-//    label_CRC1_check->setText(QString::fromUtf8(""));
-
-//    label_CRC2_check = new QLabel(QString::fromUtf8("CRC2: ОШИБКА!!!"));
-//    label_CRC2_check->setAlignment(Qt::AlignLeft);
-//    label_CRC2_check->setMinimumSize(label_CRC2_check->sizeHint());
-//    statusBar()->addWidget(label_CRC2_check);
-//    label_CRC2_check->setText(QString::fromUtf8(""));
-
-//    label_CRC3_check = new QLabel(QString::fromUtf8("CRC3: ОШИБКА!!!"));
-//    label_CRC3_check->setAlignment(Qt::AlignLeft);
-//    label_CRC3_check->setMinimumSize(label_CRC3_check->sizeHint());
-//    statusBar()->addWidget(label_CRC3_check);
-//    label_CRC3_check->setText(QString::fromUtf8(""));
-
-//    label_CRC4_check = new QLabel(QString::fromUtf8("CRC4: ОШИБКА!!!"));
-//    label_CRC4_check->setAlignment(Qt::AlignLeft);
-//    label_CRC4_check->setMinimumSize(label_CRC4_check->sizeHint());
-//    statusBar()->addWidget(label_CRC4_check);
-//    label_CRC4_check->setText(QString::fromUtf8(""));
-
-//    label_CRC5_check = new QLabel(QString::fromUtf8("CRC5: ОШИБКА!!!"));
-//    label_CRC5_check->setAlignment(Qt::AlignLeft);
-//    label_CRC5_check->setMinimumSize(label_CRC5_check->sizeHint());
-//    statusBar()->addWidget(label_CRC5_check);
-//    label_CRC5_check->setText(QString::fromUtf8(""));
-
-//    label_CRC6_check = new QLabel(QString::fromUtf8("CRC6: ОШИБКА!!!"));
-//    label_CRC6_check->setAlignment(Qt::AlignLeft);
-//    label_CRC6_check->setMinimumSize(label_CRC6_check->sizeHint());
-//    statusBar()->addWidget(label_CRC6_check);
-//    label_CRC6_check->setText(QString::fromUtf8(""));
-
-//    label_CRC7_check = new QLabel(QString::fromUtf8("CRC7: ОШИБКА!!!"));
-//    label_CRC7_check->setAlignment(Qt::AlignLeft);
-//    label_CRC7_check->setMinimumSize(label_CRC7_check->sizeHint());
-//    statusBar()->addWidget(label_CRC7_check);
-//    label_CRC7_check->setText(QString::fromUtf8(""));
-
-//    label_CRC8_check = new QLabel(QString::fromUtf8("CRC8: ОШИБКА!!!"));
-//    label_CRC8_check->setAlignment(Qt::AlignLeft);
-//    label_CRC8_check->setMinimumSize(label_CRC8_check->sizeHint());
-//    statusBar()->addWidget(label_CRC8_check);
-//    label_CRC8_check->setText(QString::fromUtf8(""));
-
     label_ML = new QLabel(QString::fromUtf8("MM"));
     label_ML->setAlignment(Qt::AlignCenter);
 
@@ -184,10 +114,13 @@ MainWindow::MainWindow(QWidget *parent) :
     label_ML->setStyleSheet(QString::fromUtf8("background-color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
     statusBar()->addPermanentWidget(label_ML);
     //-------------------------------------------------------------------------
-    buttonGroup = new QButtonGroup(this);
-    buttonGroup->addButton(ui->radioButton_VK1,   1);
-    buttonGroup->addButton(ui->radioButton_VK5,   5);
     //-------------------------------------------------------------------------
+    connect(&akp,           &akp_class::dataUpdate,         &check_state,   &akp_check_state::onDataUpdate  );
+//    connect(&akp,           &akp_class::dataUpdate,         &akp_file,      &qt_akp_file_save::onDataUpdate );
+
+    connect(&check_state,  &akp_check_state::deptUpdate,            this, &MainWindow::on_showDept          );
+    connect(&check_state,  &akp_check_state::mlUpdate,              this, &MainWindow::on_showML            );
+
     connect(&check_state,  &akp_check_state::VK_update,             this, &MainWindow::on_showNewData       );
     connect(&check_state,  &akp_check_state::good_blk_cnt_update,   this, &MainWindow::on_showPocketCount   );
     connect(&check_state,  &akp_check_state::bad_blk_cnt_update,    this, &MainWindow::on_showBadPocketCount);
@@ -205,15 +138,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&check_state,  &akp_check_state::soft_version_update,   this, &MainWindow::on_showSoftVer       );
 
     connect(&check_state,  &akp_check_state::time_meserment_update, this, &MainWindow::on_showTimeMeserment );
-
-//    connect(&check_state,  &akp_check_state::CRC1_update,           this, &MainWindow::on_showCRC_VK1          );
-//    connect(&check_state,  &akp_check_state::CRC2_update,           this, &MainWindow::on_showCRC_VK2          );
-//    connect(&check_state,  &akp_check_state::CRC3_update,           this, &MainWindow::on_showCRC3          );
-//    connect(&check_state,  &akp_check_state::CRC4_update,           this, &MainWindow::on_showCRC4          );
-//    connect(&check_state,  &akp_check_state::CRC5_update,           this, &MainWindow::on_showCRC5          );
-//    connect(&check_state,  &akp_check_state::CRC6_update,           this, &MainWindow::on_showCRC6          );
-//    connect(&check_state,  &akp_check_state::CRC7_update,           this, &MainWindow::on_showCRC7          );
-//    connect(&check_state,  &akp_check_state::CRC8_update,           this, &MainWindow::on_showCRC8          );
     //-------------------------------------------------------------------------
     connect(ui->pushButton_Start,    &QPushButton::pressed,         this, &MainWindow::on_pushButtonStart   );
     connect(ui->pushButton_Stop,     &QPushButton::pressed,         this, &MainWindow::on_pushButtonStop    );
@@ -224,10 +148,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pushButton_upFKD,    &QPushButton::pressed,         this, &MainWindow::on_cmdIncLevel       );
     connect(ui->pushButton_downFKD,  &QPushButton::pressed,         this, &MainWindow::on_cmdDecLevel       );
     //-------------------------------------------------------------------------
-    connect(buttonGroup,    SIGNAL( buttonClicked(int) ),           this, SLOT( on_VKxClicked(int) )        );
-//    connect(buttonGroup,    &QButtonGroup::buttonClicked,           this, &MainWindow::on_VKxClicked        );
     //-------------------------------------------------------------------------
-
     connect(this,                   &MainWindow::cmdSetDepth,       &akp,           &akp_class::on_cmdSetDepth          );
     connect(this,                   &MainWindow::cmdSetDepth,       this,           &MainWindow::on_showDept            );
 
@@ -237,42 +158,21 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pushButton_Stop,    &QPushButton::pressed,          &check_state,   &akp_check_state::clear_block_count );
 
     connect(this,                   &MainWindow::cmdSetDeptStep,    &akp,           &akp_class::on_setDeptStep          );
-
-
-    connect(&akp,           &akp_class::dataUpdate,         &check_state,   &akp_check_state::onDataUpdate  );
-//    connect(&akp,           &akp_class::dataUpdate,         &akp_file,      &qt_akp_file_save::onDataUpdate );
-
-    connect(&check_state,   &akp_check_state::deptUpdate,   this,           &MainWindow::on_showDept        );
-    connect(&check_state,   &akp_check_state::mlUpdate,     this,           &MainWindow::on_showML          );
-
-//    connect(&check_state,   SIGNAL( timer_clk_update           (const bool, const quint32) ), this, SLOT(on_timerClkUpdate(const bool, const quint32)          ) );
-//    connect(&check_state,   SIGNAL( time_start_meserment_update(const bool, const quint32) ), this, SLOT(on_timeStartMesermentUpdate(const bool, const quint32)) );
-//    connect(&check_state,   SIGNAL( time_stop_meserment_update (const bool, const quint32) ), this, SLOT(on_timeStopMesermentUpdate (const bool, const quint32)) );
-
-//    connect(&check_state,   SIGNAL( CRC1_update(const bool) ), this, SLOT(on_CRC1update(const bool)) );
-//    connect(&check_state,   SIGNAL( CRC2_update(const bool) ), this, SLOT(on_CRC2update(const bool)) );
-//    connect(&check_state,   SIGNAL( CRC3_update(const bool) ), this, SLOT(on_CRC3update(const bool)) );
-//    connect(&check_state,   SIGNAL( CRC4_update(const bool) ), this, SLOT(on_CRC4update(const bool)) );
-//    connect(&check_state,   SIGNAL( CRC5_update(const bool) ), this, SLOT(on_CRC5update(const bool)) );
-//    connect(&check_state,   SIGNAL( CRC6_update(const bool) ), this, SLOT(on_CRC6update(const bool)) );
-//    connect(&check_state,   SIGNAL( CRC7_update(const bool) ), this, SLOT(on_CRC7update(const bool)) );
-//    connect(&check_state,   SIGNAL( CRC8_update(const bool) ), this, SLOT(on_CRC8update(const bool)) );
-
     //-------------------------------------------------------------------------
     QRect  rect;
     QRectF rectf;
     rectf.setRect(0.0, 0.0, 100.0, 100.0);
 
-    scene_vk = new QGraphicsScene(rectf);
+    scene_vk1 = new QGraphicsScene(rectf);
 
-    view_vk = new QGraphicsView(scene_vk);
-    view_vk->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    view_vk->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view_vk->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_vk1 = new QGraphicsView(scene_vk1);
+    view_vk1->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    view_vk1->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_vk1->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     rect.setRect(0, 0, VAK_8_NUM_POINTS * FKDstep, 380);
 
-    vk1 = new Qt_VK(rect, scene_vk);
+    vk1 = new Qt_VK(rect, scene_vk1);
     vk1->setColorLine(VKColor);
     vk1->setColorBack(FonColor);
     vk1->setColorText(TextColor);
@@ -284,127 +184,141 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, &MainWindow::changeFKDstep,   vk1,        &Qt_VK::on_changeTimeScale  );
     connect(this, &MainWindow::changeFKDlevel,  vk1,        &Qt_VK::on_changeLevel      );
     connect(this, &MainWindow::changeVKmaxAmpl, vk1,        &Qt_VK::on_changeMaxAmpl    );
-    connect(vk1,  SIGNAL( update() ),           scene_vk,   SLOT( update()            ) );
+    connect(vk1,  SIGNAL( update() ),           scene_vk1,  SLOT( update()            ) );
 
-    vk1_greed = new Qt_biGREED(rect, scene_vk);
+    vk1_greed = new Qt_biGREED(rect, scene_vk1);
     vk1_greed->setColorLine(GreedColor);
     vk1_greed->setColorBack(Qt::transparent);
     vk1_greed->setLineWidth(1);
     vk1_greed->set_step_x_line(128);
     vk1_greed->set_num_y_line(4);
 
-    time_line1 = new Qt_TIME_LINE(rect, scene_vk);
-    time_line1->setColorText(TextColor);
-    time_line1->setColorBack(Qt::transparent);
-    time_line1->set_step_x_line(128);
-    time_line1->set_time_zero(0);
-    time_line1->set_time_step(2);       // Td 2mks
-    time_line1->set_x_scale(FKDstep);
+    time_line_vk1 = new Qt_TIME_LINE(rect, scene_vk1);
+    time_line_vk1->setColorText(TextColor);
+    time_line_vk1->setColorBack(Qt::transparent);
+    time_line_vk1->set_step_x_line(128);
+    time_line_vk1->set_time_zero(0);
+    time_line_vk1->set_time_step(2);       // Td 2mks
+    time_line_vk1->set_x_scale(FKDstep);
 
-    connect(this, &MainWindow::changeFKDstep,   time_line1, &Qt_TIME_LINE::on_changeTimeScale );
-//    connect(this, SIGNAL( changeFKDstep(int) ), time_line1, SLOT( on_changeTimeScale(int) ) );
+    connect(this, &MainWindow::changeFKDstep,   time_line_vk1, &Qt_TIME_LINE::on_changeTimeScale );
 
-    ui->horizontalLayout_VK->addWidget(view_vk);
+    ui->horizontalLayout_VK1->addWidget(view_vk1);
     //-------------------------------------------------------------------------
-    ui->groupBox_3->setTitle(QString::fromUtf8("Амплитуда (%1 / div)").arg(vk1->maxAmpl() / vk1_greed->get_num_y_line()));
+    ui->groupBox_Ampl_Ctrl->setTitle(QString::fromUtf8("Амплитуда (%1 / div)").arg(vk1->maxAmpl() / vk1_greed->get_num_y_line()));
     //-------------------------------------------------------------------------
     rectf.setRect(0.0, 0.0, 100.0, 100.0);
-    rect.setRect(0, 0, VAK_8_NUM_POINTS, 100);
 
-    scene_ctl_vk1 = new QGraphicsScene(rectf);
+    scene_vk2 = new QGraphicsScene(rectf);
 
-    view_ctl_vk1 = new QGraphicsView(scene_ctl_vk1);
-    view_ctl_vk1->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    view_ctl_vk1->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view_ctl_vk1->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view_ctl_vk1->scale(1.0, 1.0);
+    view_vk2 = new QGraphicsView(scene_vk2);
+    view_vk2->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    view_vk2->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_vk2->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    ctl_vk1 = new Qt_VK(rect, scene_ctl_vk1);
-    ctl_vk1->setColorLine(VKColor);
-    ctl_vk1->setColorBack(FonColor);
-    ctl_vk1->setColorText(TextColor);
-    ctl_vk1->setMaxAmpl(max_ampl);
-    ctl_vk1->setXScale(1);
-    ctl_vk1->setColorLevelBack(FonColor);
-    ctl_vk1->setCaption(QString::fromUtf8("ВК-1"));
+    rect.setRect(0, 0, VAK_8_NUM_POINTS * FKDstep, 380);
 
-    connect(this,     &MainWindow::changeVKmaxAmpl,     ctl_vk1,       &Qt_VK::on_changeMaxAmpl );
-    connect(ctl_vk1,  SIGNAL( update() ),               scene_ctl_vk1, SLOT( update() )         );
+    vk2 = new Qt_VK(rect, scene_vk2);
+    vk2->setColorLine(VKColor);
+    vk2->setColorBack(FonColor);
+    vk2->setColorText(TextColor);
+    vk2->setMaxAmpl(max_ampl);
+    vk2->setXScale(FKDstep);
+    vk2->setColorLevelBack(LevelColor);
+    vk2->setCaption(QString::fromUtf8("ВК-2 "));
 
-    ctl_vk1_greed = new Qt_biGREED(rect, scene_ctl_vk1);
-    ctl_vk1_greed->setColorLine(GreedColor);
-    ctl_vk1_greed->setColorBack(Qt::transparent);
-    ctl_vk1_greed->setLineWidth(1);
-    ctl_vk1_greed->set_step_x_line(128);
-    ctl_vk1_greed->set_num_y_line(4);
+    connect(this, &MainWindow::changeFKDstep,   vk2,        &Qt_VK::on_changeTimeScale  );
+    connect(this, &MainWindow::changeFKDlevel,  vk2,        &Qt_VK::on_changeLevel      );
+    connect(this, &MainWindow::changeVKmaxAmpl, vk2,        &Qt_VK::on_changeMaxAmpl    );
+    connect(vk2,  SIGNAL( update() ),           scene_vk2,  SLOT( update()            ) );
 
-    ui->verticalLayout_Ctl1VK->addWidget(view_ctl_vk1);
-    //-------------------------------------------------------------------------
-    scene_ctl_vk2 = new QGraphicsScene(rectf);
+    vk2_greed = new Qt_biGREED(rect, scene_vk2);
+    vk2_greed->setColorLine(GreedColor);
+    vk2_greed->setColorBack(Qt::transparent);
+    vk2_greed->setLineWidth(1);
+    vk2_greed->set_step_x_line(128);
+    vk2_greed->set_num_y_line(4);
 
-    view_ctl_vk2 = new QGraphicsView(scene_ctl_vk2);
-    view_ctl_vk2->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    view_ctl_vk2->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view_ctl_vk2->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view_ctl_vk2->scale(1.0, 1.0);
+    time_line_vk2 = new Qt_TIME_LINE(rect, scene_vk2);
+    time_line_vk2->setColorText(TextColor);
+    time_line_vk2->setColorBack(Qt::transparent);
+    time_line_vk2->set_step_x_line(128);
+    time_line_vk2->set_time_zero(0);
+    time_line_vk2->set_time_step(2);       // Td 2mks
+    time_line_vk2->set_x_scale(FKDstep);
 
-    ctl_vk2 = new Qt_VK(rect, scene_ctl_vk2);
-    ctl_vk2->setColorLine(VKColor);
-    ctl_vk2->setColorBack(FonColor);
-    ctl_vk2->setColorText(TextColor);
-    ctl_vk2->setMaxAmpl(max_ampl);
-    ctl_vk2->setXScale(1);
-    ctl_vk2->setColorLevelBack(FonColor);
-    ctl_vk2->setCaption(QString::fromUtf8("ВК-2"));
+    connect(this, &MainWindow::changeFKDstep,   time_line_vk2, &Qt_TIME_LINE::on_changeTimeScale );
 
-    connect(this,     &MainWindow::changeVKmaxAmpl,     ctl_vk2,       &Qt_VK::on_changeMaxAmpl   );
-    connect(ctl_vk2,  SIGNAL( update() ),               scene_ctl_vk2, SLOT( update()           ) );
-
-    ctl_vk2_greed = new Qt_biGREED(rect, scene_ctl_vk2);
-    ctl_vk2_greed->setColorLine(GreedColor);
-    ctl_vk2_greed->setColorBack(Qt::transparent);
-    ctl_vk2_greed->setLineWidth(1);
-    ctl_vk2_greed->set_step_x_line(128);
-    ctl_vk2_greed->set_num_y_line(4);
-
-    ui->verticalLayout_Ctl2VK->addWidget(view_ctl_vk2);
+    ui->horizontalLayout_VK2->addWidget(view_vk2);
     //-------------------------------------------------------------------------
 
 //    ui->widgetAllVK->installEventFilter(this);
 
     rectf.setRect(0.0, 0.0, 100.0, 100.0);
-    scene_fkd = new QGraphicsScene(rectf);
+    scene_fkd_vk1 = new QGraphicsScene(rectf);
 
-    view_fkd = new QGraphicsView(scene_fkd);
-    view_fkd->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    view_fkd->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view_fkd->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view_fkd->scale(1.0, 1.0);
+    view_fkd_vk1 = new QGraphicsView(scene_fkd_vk1);
+    view_fkd_vk1->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    view_fkd_vk1->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_fkd_vk1->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_fkd_vk1->scale(1.0, 1.0);
 
     rect.setRect(0, 0, VAK_8_NUM_POINTS, 200);
-    fkd = new CVAK32_FKD(rect, scene_fkd);
-    fkd->setColorBack(FonColor);
-    fkd->setColorGreed(GreedColor);
-    fkd->setColorLine(FKDColor);
-    fkd->on_changeGreedStepX(128);
-    fkd->on_changeDpsX(dpsX);
-    fkd->on_changeDpsY(dpsY);
-    fkd->on_changeDeptScale(DepthScale);
-    fkd->on_setDirectionUp();
-    fkd->on_changeTimeScale(FKDstep);
+    fkd_vk1 = new CVAK32_FKD(rect, scene_fkd_vk1);
+    fkd_vk1->setColorBack(FonColor);
+    fkd_vk1->setColorGreed(GreedColor);
+    fkd_vk1->setColorLine(FKDColor);
+    fkd_vk1->on_changeGreedStepX(128);
+    fkd_vk1->on_changeDpsX(dpsX);
+    fkd_vk1->on_changeDpsY(dpsY);
+    fkd_vk1->on_changeDeptScale(DepthScale);
+    fkd_vk1->on_setDirectionUp();
+    fkd_vk1->on_changeTimeScale(FKDstep);
 
-    ui->verticalLayout_FKD->addWidget(view_fkd);
+    ui->verticalLayout_VK1_FKD->addWidget(view_fkd_vk1);
 
-    connect(&check_state,   &akp_check_state::deptUpdate,   fkd,         &CVAK32_FKD::on_changeDept         );
-    connect(this,           &MainWindow::changeDpsX,        fkd,         &CVAK32_FKD::on_changeDpsX         );
-    connect(this,           &MainWindow::changeDpsY,        fkd,         &CVAK32_FKD::on_changeDpsY         );
-    connect(this,           &MainWindow::changeDeptScale,   fkd,         &CVAK32_FKD::on_changeDeptScale    );
-    connect(this,           &MainWindow::changeFKDstep,     fkd,         &CVAK32_FKD::on_changeTimeScale    );
-    connect(this,           &MainWindow::changeFKDlevel,    fkd,         &CVAK32_FKD::on_changeLevel        );
-    connect(fkd,            SIGNAL( update() ),             scene_fkd,   SLOT( update() )                   );
+    connect(&check_state,   &akp_check_state::deptUpdate,   fkd_vk1,         &CVAK32_FKD::on_changeDept         );
+    connect(this,           &MainWindow::changeDpsX,        fkd_vk1,         &CVAK32_FKD::on_changeDpsX         );
+    connect(this,           &MainWindow::changeDpsY,        fkd_vk1,         &CVAK32_FKD::on_changeDpsY         );
+    connect(this,           &MainWindow::changeDeptScale,   fkd_vk1,         &CVAK32_FKD::on_changeDeptScale    );
+    connect(this,           &MainWindow::changeFKDstep,     fkd_vk1,         &CVAK32_FKD::on_changeTimeScale    );
+    connect(this,           &MainWindow::changeFKDlevel,    fkd_vk1,         &CVAK32_FKD::on_changeLevel        );
+    connect(fkd_vk1,        SIGNAL( update() ),             scene_fkd_vk1,   SLOT( update() )                   );
 
     //-------------------------------------------------------------------------
-    rectf.setRect(0.0, 0.0, 80.0, 150.0);
+    rectf.setRect(0.0, 0.0, 100.0, 100.0);
+    scene_fkd_vk2 = new QGraphicsScene(rectf);
+
+    view_fkd_vk2 = new QGraphicsView(scene_fkd_vk2);
+    view_fkd_vk2->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    view_fkd_vk2->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_fkd_vk2->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view_fkd_vk2->scale(1.0, 1.0);
+
+    rect.setRect(0, 0, VAK_8_NUM_POINTS, 200);
+    fkd_vk2 = new CVAK32_FKD(rect, scene_fkd_vk2);
+    fkd_vk2->setColorBack(FonColor);
+    fkd_vk2->setColorGreed(GreedColor);
+    fkd_vk2->setColorLine(FKDColor);
+    fkd_vk2->on_changeGreedStepX(128);
+    fkd_vk2->on_changeDpsX(dpsX);
+    fkd_vk2->on_changeDpsY(dpsY);
+    fkd_vk2->on_changeDeptScale(DepthScale);
+    fkd_vk2->on_setDirectionUp();
+    fkd_vk2->on_changeTimeScale(FKDstep);
+
+    ui->verticalLayout_VK2_FKD->addWidget(view_fkd_vk2);
+
+    connect(&check_state,   &akp_check_state::deptUpdate,   fkd_vk2,         &CVAK32_FKD::on_changeDept         );
+    connect(this,           &MainWindow::changeDpsX,        fkd_vk2,         &CVAK32_FKD::on_changeDpsX         );
+    connect(this,           &MainWindow::changeDpsY,        fkd_vk2,         &CVAK32_FKD::on_changeDpsY         );
+    connect(this,           &MainWindow::changeDeptScale,   fkd_vk2,         &CVAK32_FKD::on_changeDeptScale    );
+    connect(this,           &MainWindow::changeFKDstep,     fkd_vk2,         &CVAK32_FKD::on_changeTimeScale    );
+    connect(this,           &MainWindow::changeFKDlevel,    fkd_vk2,         &CVAK32_FKD::on_changeLevel        );
+    connect(fkd_vk2,        SIGNAL( update() ),             scene_fkd_vk2,   SLOT( update() )                   );
+
+    //-------------------------------------------------------------------------
+    rectf.setRect(0.0, 0.0, 80.0, 100.0);
     scene_dept_col = new QGraphicsScene(rectf);
 
     view_dept_col = new QGraphicsView(scene_dept_col);
@@ -412,7 +326,7 @@ MainWindow::MainWindow(QWidget *parent) :
     view_dept_col->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view_dept_col->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    rect.setRect(0, 0, 80, 150);
+    rect.setRect(0, 0, 80, 100);
     deptCol = new Qt_DEPTCOL(rect, scene_dept_col);
     deptCol->setColorBack(FonColor);
     deptCol->setColorLine(GreedColor);
@@ -428,10 +342,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this,           &MainWindow::changeDeptScale,       deptCol,         &Qt_DEPTCOL::on_changeDeptScale        );
     connect(this,           &MainWindow::cmdSetDepth,           deptCol,         &Qt_DEPTCOL::on_changeDept             );
     connect(deptCol,        SIGNAL( update() ),                 scene_dept_col,  SLOT( update()                       ) );
-    connect(deptCol,        &Qt_DEPTCOL::changeBaseLinesShift,  fkd,             &CVAK32_FKD::on_changeBaseLinesShift   );
+    connect(deptCol,        &Qt_DEPTCOL::changeBaseLinesShift,  fkd_vk1,         &CVAK32_FKD::on_changeBaseLinesShift   );
+    connect(deptCol,        &Qt_DEPTCOL::changeBaseLinesShift,  fkd_vk2,         &CVAK32_FKD::on_changeBaseLinesShift   );
 
     //-------------------------------------------------------------------------
-    rectf.setRect(0.0, 0.0, 10.0, 150.0);
+    rectf.setRect(0.0, 0.0, 10.0, 100.0);
     scene_ml_col = new QGraphicsScene(rectf);
 
     view_ml_col = new QGraphicsView(scene_ml_col);
@@ -439,7 +354,7 @@ MainWindow::MainWindow(QWidget *parent) :
     view_ml_col->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view_ml_col->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    rect.setRect(0, 0, 5, 150);
+    rect.setRect(0, 0, 5, 100);
     mlCol = new Qt_ML(rect, scene_ml_col);
     mlCol->setColorBack(FonColor);
     mlCol->setColorML(MMColor);
@@ -474,25 +389,25 @@ MainWindow::~MainWindow()
     delete view_dept_col;
     delete scene_dept_col;
 
-    delete fkd;
-    delete view_fkd;
-    delete scene_fkd;
+    delete fkd_vk2;
+    delete view_fkd_vk2;
+    delete scene_fkd_vk2;
 
-    delete ctl_vk2;
-    delete ctl_vk2_greed;
-    delete view_ctl_vk2;
-    delete scene_ctl_vk2;
+    delete time_line_vk2;
+    delete vk2_greed;
+    delete vk2;
+    delete view_vk2;
+    delete scene_vk2;
 
-    delete ctl_vk1;
-    delete ctl_vk1_greed;
-    delete view_ctl_vk1;
-    delete scene_ctl_vk1;
+    delete fkd_vk1;
+    delete view_fkd_vk1;
+    delete scene_fkd_vk1;
 
-    delete time_line1;
+    delete time_line_vk1;
     delete vk1_greed;
     delete vk1;
-    delete view_vk;
-    delete scene_vk;
+    delete view_vk1;
+    delete scene_vk1;
     //-------------------------------------------------------------------------
     akp_thread->exit();
     while ( akp_thread->isRunning() );
@@ -539,16 +454,12 @@ void MainWindow::on_pushButtonSettings(void)
     delete dialogWellInfo;
     dialogWellInfo = NULL;
 
-//    blk_count = 0;
-//    bad_blk = 0;
-//    emit setPocketCount(blk_count);
-//    emit setBadPocketCount(bad_blk);
-
     check_state.clear_block_count();    //???
 
     curentDepthStep = 0;
 
-    fkd->clearData();
+    fkd_vk1->clearData();
+    fkd_vk2->clearData();
     mlCol->delPoints();
 
     ui->pushButton_Start->setDisabled(false);
@@ -598,47 +509,45 @@ void MainWindow::on_dialogSetup(void)
         emit changeDpsY(dpsY);
         emit changeDeptScale(DepthScale);
         emit changeFKDstep(FKDstep);
-
+        //---------------------------------------------------------------------
         vk1->setColorBack(FonColor);
         vk1->setColorLevelBack(LevelColor);
         vk1->setColorLevelLine(LevelColor);
         vk1->setColorLine(VKColor);
         vk1->setColorText(TextColor);
 
-        time_line1->setColorText(TextColor);
+        time_line_vk1->setColorText(TextColor);
 
         vk1_greed->setColorLine(GreedColor);
+        //---------------------------------------------------------------------
+        vk2->setColorBack(FonColor);
+        vk2->setColorLevelBack(LevelColor);
+        vk2->setColorLevelLine(LevelColor);
+        vk2->setColorLine(VKColor);
+        vk2->setColorText(TextColor);
 
+        time_line_vk2->setColorText(TextColor);
+
+        vk2_greed->setColorLine(GreedColor);
+        //---------------------------------------------------------------------
         deptCol->setColorBack(FonColor);
         deptCol->setColorLine(GreedColor);
         deptCol->setColorText(TextColor);
-
+        //---------------------------------------------------------------------
         mlCol->setColorBack(FonColor);
         mlCol->setColorML(MMColor);
-
-        fkd->setColorBack(FonColor);
-        fkd->setColorGreed(GreedColor);
-        fkd->setColorLine(FKDColor);
-
-        ctl_vk1->setColorBack(FonColor);
-        ctl_vk1->setColorLevelBack(FonColor);
-        ctl_vk1->setColorLevelLine(FonColor);
-        ctl_vk1->setColorLine(VKColor);
-        ctl_vk1->setColorText(TextColor);
-
-        ctl_vk1_greed->setColorLine(GreedColor);
-
-        ctl_vk2->setColorBack(FonColor);
-        ctl_vk2->setColorLevelBack(FonColor);
-        ctl_vk2->setColorLevelLine(FonColor);
-        ctl_vk2->setColorLine(VKColor);
-        ctl_vk2->setColorText(TextColor);
-
-        ctl_vk2_greed->setColorLine(GreedColor);
-
+        //---------------------------------------------------------------------
+        fkd_vk1->setColorBack(FonColor);
+        fkd_vk1->setColorGreed(GreedColor);
+        fkd_vk1->setColorLine(FKDColor);
+        //---------------------------------------------------------------------
+        fkd_vk2->setColorBack(FonColor);
+        fkd_vk2->setColorGreed(GreedColor);
+        fkd_vk2->setColorLine(FKDColor);
+        //---------------------------------------------------------------------
         FolderName  = dialogSetup->getFolder();
         dialogWellInfo->setFolderName(FolderName);
-
+        //---------------------------------------------------------------------
         bExtFolderCtl = dialogSetup->get_ExtCtl();
     }
 
@@ -719,7 +628,7 @@ void MainWindow::on_cmdIncAmpl(void)
     max_ampl = new_max;
     emit changeVKmaxAmpl(max_ampl);
 
-    ui->groupBox_3->setTitle(QString::fromUtf8("Амплитуда (%1 / div)").arg(new_step));
+    ui->groupBox_Ampl_Ctrl->setTitle(QString::fromUtf8("Амплитуда (%1 / div)").arg(new_step));
 }
 //-------------------------------------------------------------------
 void MainWindow::on_cmdDecAmpl(void)
@@ -787,7 +696,7 @@ void MainWindow::on_cmdDecAmpl(void)
     max_ampl = new_max;
     emit changeVKmaxAmpl(max_ampl);
 
-    ui->groupBox_3->setTitle(QString::fromUtf8("Амплитуда (%1 / div)").arg(new_step));
+    ui->groupBox_Ampl_Ctrl->setTitle(QString::fromUtf8("Амплитуда (%1 / div)").arg(new_step));
 }
 //-------------------------------------------------------------------
 void MainWindow::on_cmdIncLevel(void)
@@ -819,7 +728,12 @@ void MainWindow::on_pushButtonStart(void)
     ui->pushButton_Settings->setDisabled(true);
 
     emit cmdSetDeptStep(0);       //???
-//    emit cmdStartMeserment();
+
+    startDepth = lastDepth;
+
+    fkd_vk1->clearData();
+    fkd_vk2->clearData();
+
 }
 //-------------------------------------------------------------------
 void MainWindow::on_pushButtonStop(void)
@@ -837,41 +751,32 @@ void MainWindow::on_pushButtonStop(void)
     bWriteEnable = false;
 
     disconnect(&akp,    &akp_class::dataUpdate,     &akp_file,      &qt_akp_file_save::onDataUpdate );
-//    disconnect(&akp,    SIGNAL(dataUpdate(const uint , const TDataPocket)), &akp_file, SLOT(onDataUpdate(const uint, const TDataPocket)));
     akp_file.close_file();
 
     curentDepthStep = 0;
     emit cmdSetDeptStep(curentDepthStep);           //???
 
-//    emit cmdStopMeserment();
+    startDepth = check_state.get_dept();
 }
 //-----------------------------------------------------------------------------
 void MainWindow::on_pushButtonRecord(void)
 {
     ui->pushButton_Record->setDisabled(true);
 
-//    blk_count = 0;
-//    bad_blk = 0;
-//    emit setPocketCount(blk_count);
-//    emit setBadPocketCount(bad_blk);
-
     check_state.clear_block_count();    //???
 
     curentDepthStep = -DepthStep;
-//    akp.on_setDeptStep(DepthStep);      //???
     emit cmdSetDeptStep(curentDepthStep);           //???
 
-//    startDepth = Depth;
     startDepth = check_state.get_dept();
     //-------------------------------------------------------------------------
-    akp_file.setBufLen(10);
+    akp_file.setBufLen(20);
     akp_file.setFolderName(FolderName);
     akp_file.setFildName(FildName);
     akp_file.setWellNo          (WellNo);
     akp_file.setOperatorName    (OperatorName);
     akp_file.setCurrentDate     ();
     akp_file.setCurrentTime     ();
-//    akp_file.setStartDepth      ( check_state.get_dept() );
     akp_file.setStartDepth      ( startDepth );
 
     akp_file.setShiftPointIZL   (0);
@@ -887,19 +792,13 @@ void MainWindow::on_pushButtonRecord(void)
     akp_file.write_head();
 
     connect(&akp,   &akp_class::dataUpdate,     &akp_file,  &qt_akp_file_save::onDataUpdate );
-//    connect(&akp,    SIGNAL(dataUpdate(const uint , const TDataPocket)), &akp_file, SLOT(onDataUpdate(const uint, const TDataPocket)));
     //-------------------------------------------------------------------------
     bWriteEnable = true;
 
+    fkd_vk1->clearData();
+    fkd_vk2->clearData();
 }
 //-----------------------------------------------------------------------------
-//#pragma pack(1)
-//void MainWindow::on_cmdSetDepth(void)
-//{
-//    akp.on_cmdSetDepth(Depth);
-//}
-//#pragma pack()
-//-------------------------------------------------------------------
 void MainWindow::on_showPocketCount(const int count)
 {
     label_GoodBlk->setText(QString::fromUtf8("Хорошие блоки: %1").arg(count));
@@ -948,7 +847,7 @@ void MainWindow::on_showML(const bool ml)
     if (ml)
     {
         color = MMColor;
-        mlCol->setML(Depth);    //==========>>??????
+        mlCol->setML(lastDepth);    //==========>>??????
     }
     else    color = palette().background().color();
 
@@ -957,22 +856,25 @@ void MainWindow::on_showML(const bool ml)
 //-------------------------------------------------------------------
 void MainWindow::on_showNewData(const quint16 vk_no, const TVAK8_WAVE &vk)
 {
-    if (vk_no == vkNum4fkd)
-    {
-//        vk1->setCaption(QString::fromUtf8("ВК-%1  ").arg(vkNum4fkd + 1));
-        vk1->AddData(vk);
-
-        fkd->addData(lastDepth, vk);
-    }
     if (vk_no == 0)
     {
-//        ctl_vk1->setCaption(QString::fromUtf8("ВК-1"));
-        ctl_vk1->AddData(vk);
+//        qDebug() << QString::fromUtf8("ВК-1 AddData");
+        vk1->AddData(vk);
+        fkd_vk1->delete_no_use_points();
+//        qDebug() << QString::fromUtf8("ВК-1 FKD addData");
+//        fkd_vk1->addData(lastDepth, vk);
+        fkd_vk1->addData(check_state.get_dept(), vk);
+//        qDebug() << QString::fromUtf8("ВК-1 complited");
     }
     else if(vk_no == 4)
     {
-//        ctl_vk2->setCaption(QString::fromUtf8("ВК-2"));
-        ctl_vk2->AddData(vk);
+//        qDebug() << QString::fromUtf8("ВК-2 AddData");
+        vk2->AddData(vk);
+        fkd_vk2->delete_no_use_points();
+//        qDebug() << QString::fromUtf8("ВК-2 FKD addData");
+//        fkd_vk2->addData(lastDepth, vk);
+        fkd_vk2->addData(check_state.get_dept(), vk);
+//        qDebug() << QString::fromUtf8("ВК-2 complited");
     }
 }
 //-------------------------------------------------------------------
@@ -986,27 +888,6 @@ void MainWindow::on_showIZLtype(const bool crc, const quint16 value)
         case 0: //IZL_MONOPOL:
             ui->label_IZLtype->setText("Монополь");
             break;
-//        case IZL_DIPOL_1:
-//            ui->label_IZLtype->setText("Диполь-1");
-//            break;
-//        case IZL_DIPOL_2:
-//            ui->label_IZLtype->setText("Диполь-2");
-//            break;
-//        case IZL_QUADROPOL:
-//            ui->label_IZLtype->setText("Квадруполь");
-//            break;
-//        case IZL_SFERA_1:
-//            ui->label_IZLtype->setText("Сфера-1");
-//            break;
-//        case IZL_SFERA_2:
-//            ui->label_IZLtype->setText("Сфера-2");
-//            break;
-//        case IZL_SFERA_3:
-//            ui->label_IZLtype->setText("Сфера-3");
-//            break;
-//        case IZL_SFERA_4:
-//            ui->label_IZLtype->setText("Сфера-4");
-//            break;
         default:
             ui->label_IZLtype->setText("НЕИЗВЕСТНО");
             break;
@@ -1074,7 +955,7 @@ void MainWindow::on_showRXtype  (const bool crc, const quint16 value)
 void MainWindow::on_showRXdelay(const bool crc, const quint16 value)
 {
     qint16 delay = 2 * value;
-    time_line1->set_time_zero(delay / time_line1->get_time_step());
+    time_line_vk1->set_time_zero(delay / time_line_vk1->get_time_step());
 
     QColor  color = get_color_on_CRC(crc);
     ui->label_RXdelay->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
@@ -1087,36 +968,8 @@ void MainWindow::on_showRXtd(const bool crc, const quint16 value)
     Q_UNUSED(value);
 
     Td = 2;
-    time_line1->set_time_step(Td);
+    time_line_vk1->set_time_step(Td);
     ui->label_RXtd->setText(QString::fromUtf8("Тд = %1 мкс").arg(Td));
-
-//    switch (value)
-//    {
-//    case TD_4_MKS:
-//        Td = 4;
-//        time_line1->set_time_step(Td);
-//        ui->label_RXtd->setText(QString::fromUtf8("Тд = %1 мкс").arg(Td));
-//        break;
-//    case TD_8_MKS:
-//        Td = 8;
-//        time_line1->set_time_step(Td);
-//        ui->label_RXtd->setText(QString::fromUtf8("Тд = %1 мкс").arg(Td));
-//        break;
-//    case TD_16_MKS:
-//        Td = 16;
-//        time_line1->set_time_step(Td);
-//        ui->label_RXtd->setText(QString::fromUtf8("Тд = %1 мкс").arg(Td));
-//        break;
-//    case TD_32_MKS:
-//        Td = 32;
-//        time_line1->set_time_step(Td);
-//        ui->label_RXtd->setText(QString::fromUtf8("Тд = %1 мкс").arg(Td));
-//        break;
-//    default:
-//        ui->label_RXtd->setText(QString::fromUtf8("Тд - НЕИЗВЕСТНО"));
-//        //time_line1->set_time_step(?);
-//        break;
-//    }
 }
 //-------------------------------------------------------------------
 void MainWindow::on_showRXku(const bool crc, const quint16 value)
@@ -1153,118 +1006,6 @@ void MainWindow::on_showTimeMeserment(const bool crc, const quint32 time_meserme
 
     ui->label_TimeOfMeserment->setText(QString::fromUtf8("Интервал = %1 мкс").arg(time_meserment));
 }
-//-------------------------------------------------------------------
-void MainWindow::on_VKxClicked(int id)
-{
-    vkNum4fkd = id - 1;
-
-    if (vkNum4fkd == 0)
-        vk1->setCaption(QString::fromUtf8("ВК-1"));
-    else
-        vk1->setCaption(QString::fromUtf8("ВК-2"));
-}
-//-------------------------------------------------------------------
-//void MainWindow::on_showCRC_VK1 (const bool crc)
-//{
-//    QColor  color = get_color_on_CRC(crc);
-//    vk1->setColorText(color);
-//    ctl_vk1->setColorText(color);
-////    label_CRC1_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
-
-//    if (crc)
-//    {
-//        vk1->setCaption("ВК-1 (CRC: Ok)");
-//        ctl_vk1->setCaption("ВК-1 (CRC: Ok)");
-////        label_CRC1_check->setText(QString::fromUtf8("CRC1: Ok"));
-//    }
-//    else
-//        vk1->setCaption("ВК-1 (CRC1: ОШИБКА!!!)");
-////        label_CRC1_check->setText(QString::fromUtf8("CRC1: ОШИБКА!!!"));
-//}
-//-------------------------------------------------------------------
-//void MainWindow::on_showCRC_VK2 (const bool crc)
-//{
-//    QColor  color = get_color_on_CRC(crc);
-//    ctl_vk2->setColorText(color);
-////    label_CRC2_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
-
-//    if (crc)
-//    {
-//        ctl_vk2->setCaption("ВК-1 (CRC: Ok)");
-////        label_CRC2_check->setText(QString::fromUtf8("CRC2: Ok"));
-//    }
-//    else
-//    {
-//        ctl_vk2->setCaption("ВК-1 (CRC1: ОШИБКА!!!)");
-//        //        label_CRC2_check->setText(QString::fromUtf8("CRC2: ОШИБКА!!!"));
-//    }
-//}
-//-------------------------------------------------------------------
-//void MainWindow::on_showCRC3 (const bool crc)
-//{
-//    QColor  color = get_color_on_CRC(crc);
-//    label_CRC3_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
-
-//    if (crc)
-//        label_CRC3_check->setText(QString::fromUtf8("CRC3: Ok"));
-//    else
-//        label_CRC3_check->setText(QString::fromUtf8("CRC3: ОШИБКА!!!"));
-//}
-//-------------------------------------------------------------------
-//void MainWindow::on_showCRC4 (const bool crc)
-//{
-//    QColor  color = get_color_on_CRC(crc);
-//    label_CRC4_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
-
-//    if (crc)
-//        label_CRC4_check->setText(QString::fromUtf8("CRC4: Ok"));
-//    else
-//        label_CRC4_check->setText(QString::fromUtf8("CRC4: ОШИБКА!!!"));
-//}
-//-------------------------------------------------------------------
-//void MainWindow::on_showCRC5 (const bool crc)
-//{
-//    QColor  color = get_color_on_CRC(crc);
-//    label_CRC5_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
-
-//    if (crc)
-//        label_CRC5_check->setText(QString::fromUtf8("CRC5: Ok"));
-//    else
-//        label_CRC5_check->setText(QString::fromUtf8("CRC5: ОШИБКА!!!"));
-//}
-//-------------------------------------------------------------------
-//void MainWindow::on_showCRC6 (const bool crc)
-//{
-//    QColor  color = get_color_on_CRC(crc);
-//    label_CRC6_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
-
-//    if (crc)
-//        label_CRC6_check->setText(QString::fromUtf8("CRC6: Ok"));
-//    else
-//        label_CRC6_check->setText(QString::fromUtf8("CRC6: ОШИБКА!!!"));
-//}
-//-------------------------------------------------------------------
-//void MainWindow::on_showCRC7 (const bool crc)
-//{
-//    QColor  color = get_color_on_CRC(crc);
-//    label_CRC7_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
-
-//    if (crc)
-//        label_CRC7_check->setText(QString::fromUtf8("CRC7: Ok"));
-//    else
-//        label_CRC7_check->setText(QString::fromUtf8("CRC7: ОШИБКА!!!"));
-//}
-//-------------------------------------------------------------------
-//void MainWindow::on_showCRC8 (const bool crc)
-//{
-//    QColor  color = get_color_on_CRC(crc);
-//    label_CRC8_check->setStyleSheet(QString::fromUtf8("color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
-
-//    if (crc)
-//        label_CRC8_check->setText(QString::fromUtf8("CRC8: Ok"));
-//    else
-//        label_CRC8_check->setText(QString::fromUtf8("CRC8: ОШИБКА!!!"));
-//}
 //-------------------------------------------------------------------
 QColor MainWindow::get_color_on_CRC(const bool crc)
 {
@@ -1324,33 +1065,8 @@ void MainWindow::load_settings(void)
     dpsX            = app_settings->value(QString::fromUtf8("/dpsX"),          26                          ).toInt();
     dpsY            = app_settings->value(QString::fromUtf8("/dpsY"),          26                          ).toInt();
 
-//    vkNum           = 0;
-//    vkNumRx         = 0;
-    vkNum4fkd       = 0;
-//    modeNum         = 0;
-//    modeNum4fkd     = 0;
-
     max_ampl        = app_settings->value(QString::fromUtf8("/MaxAmpl"),       8000                        ).toInt();
     fkd_level       = app_settings->value(QString::fromUtf8("/FkdLevel"),      0                           ).toInt();
-
-//    int izl_type;
-//    int freq;
-//    int period_num;
-//    int Td;
-//    int delay;
-//    int KU_win_start;
-//    int KU_win_width;
-//    int i = 0;
-//    app_settings->beginGroup(QString::fromUtf8("Mode_%1").arg(i+1));
-//        izl_type        = app_settings->value(QString::fromUtf8("/IzlType"),        IZL_MONOPOL ).toInt();
-//        freq            = app_settings->value(QString::fromUtf8("/IzlFreq"),        20          ).toInt();
-//        period_num      = app_settings->value(QString::fromUtf8("/PeriodNum"),      2           ).toInt();
-//        Td              = app_settings->value(QString::fromUtf8("/Td"),             TD_2_MKS    ).toInt();
-//        delay           = app_settings->value(QString::fromUtf8("/Delay"),          0           ).toInt();
-//        KU_win_start    = app_settings->value(QString::fromUtf8("/KU_win_start"),   60          ).toInt();
-//        KU_win_width    = app_settings->value(QString::fromUtf8("/KU_win_width"),   290         ).toInt();
-
-//    app_settings->endGroup();
 
     app_settings->endGroup();
 }
@@ -1387,24 +1103,6 @@ void MainWindow::save_settings(void)
 
     app_settings->setValue(QString::fromUtf8("/MaxAmpl"),      max_ampl             );
     app_settings->setValue(QString::fromUtf8("/FkdLevel"),     fkd_level            );
-
-//    app_settings->setValue(QString::fromUtf8("/ModeCount"),    mode_list.size()     );
-
-//    int i = 0;
-//    mode = mode_list.begin();
-//    vak32_ctrl_command_class* modeX;
-
-//    app_settings->beginGroup(QString::fromUtf8("Mode_%1").arg(i+1));
-//        modeX = *mode;
-//        app_settings->setValue(QString::fromUtf8("/IzlType"),        modeX->get_izl_type()       );
-//        app_settings->setValue(QString::fromUtf8("/IzlFreq"),        modeX->get_Fsig()           );
-//        app_settings->setValue(QString::fromUtf8("/PeriodNum"),      modeX->get_period_number()  );
-//        app_settings->setValue(QString::fromUtf8("/Td"),             modeX->get_Td()             );
-//        app_settings->setValue(QString::fromUtf8("/Delay"),          modeX->get_rx_delay()       );
-//        app_settings->setValue(QString::fromUtf8("/KU_win_start"),   modeX->get_KU_window_start());
-//        app_settings->setValue(QString::fromUtf8("/KU_win_width"),   modeX->get_KU_window_width());
-//    app_settings->endGroup();
-
 
     app_settings->endGroup();
 }
