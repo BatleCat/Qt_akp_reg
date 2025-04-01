@@ -197,7 +197,6 @@ void qt_akp_file_read::load_tool_sec(QTextStream &head)
         str = head.readLine();
         if (str.isEmpty()) throw AKP_FILE_error;
 
-//        QStringList list = str.split(QRegExp("\\s+"), QString::SkipEmptyParts);
         QStringList list = str.split(" ", QString::SkipEmptyParts);
 
         if (list.count() > 1)
@@ -272,19 +271,16 @@ void qt_akp_file_read::load_data(const QString &file_name)
         s = head.readLine();
     } while (s != QString::fromUtf8("~data"));
 
-//    qDebug() << f_data.pos() << " " << head.pos();
     pos = head.pos();
     head.flush();
 
     f_data.seek(pos);
     data.setDevice(&f_data);
-//    Count = 0;
     while (!f_data.atEnd())
     {
         pData = new TAKP_FRAME;
         data >> (*pData);
         data_list.append(pData);
-//        Count++;
     }
     f_data.close();
 
@@ -307,15 +303,12 @@ void qt_akp_file_read::clear(void)
     {
         akp_curent_frame = data_list.takeFirst();
         delete akp_curent_frame;
-//        data_list.removeFirst();
     }
     akp_curent_frame = NULL;
 }
 //-----------------------------------------------------------------------------
 void qt_akp_file_read::start(void)
 {
-//    Count           = 0;
-
     File_Type       = QString::fromUtf8("N/A");
     Ver             = QString::fromUtf8("N/A");
     Well_Number     = QString::fromUtf8("N/A");
@@ -434,7 +427,6 @@ quint16 qt_akp_file_read::read_ch2_vk_number(const int index)
 quint16 qt_akp_file_read::read_izl_type(const int index)
 {
     load_item(index);
-//    if ( ( ch1.get_izl_type() != ch2.get_izl_type() ) && ch2.is_CRC_OK_for_izl_type() )
     if ( ch2.is_CRC_OK_for_izl_type() )
     {
         return ch2.get_izl_type();
@@ -789,7 +781,6 @@ bool qt_akp_file_read::is_frame_CRC_OK_for_time_meserment(const int index)
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 qt_akp_file_save::qt_akp_file_save(QObject *parent) :
-//    akp_check_state (parent),
     QObject(parent),
     buf_len         (1),
     fileName        (QString::fromUtf8("")),
@@ -849,8 +840,6 @@ void qt_akp_file_save::find_validFileName(void)
     fileName += QString::fromUtf8("/");
     fileName += wellNo;
 
-    //    qDebug() << QString::fromUtf8("%1").arg(FileName);
-
     char ch;
     for (ch = 'a'; ch <= 'z'; ch++)
     {
@@ -894,16 +883,12 @@ void qt_akp_file_save::write_head(void)
         head << QString::fromUtf8("  Скважина №%1\r\n").arg(wellNo);
         head << QString::fromUtf8("  Дата     %1.%2.%3\r\n").arg(date.day(), 2, 10, QChar('0')).arg(date.month(), 2, 10, QChar('0')).arg(date.year(), 4, 10, QChar('0'));
         head << QString::fromUtf8("  Время    %1:%2:%3\r\n").arg(time.hour()).arg(time.minute(), 2, 10, QChar('0')).arg(time.second(), 2, 10, QChar('0'));
-//        head << QString::fromUtf8("  Время    %1:%2:%3.%4\r\n").arg(time.hour()).arg(time.minute()).arg(time.second()).arg(time.msec());
         head << QString::fromUtf8("  Оператор %1\r\n").arg(name);
         head << QString::fromUtf8("  Глубина: %1 м.\r\n").arg(((float)startDepth) / 100.0, 0, 'f', 2);
 
         head << QString::fromUtf8("~tool\r\n");
-//        head << QString::fromUtf8("  Прибор %1\r\n").arg(tool_type);
-//        head << QString::fromUtf8("  Модель 1.1\r\n");
 
         head << QString::fromUtf8("  Прибор %1\r\n").arg(tool_type);
-//        head << QString::fromUtf8("  Номер %1\r\n").arg(tool_number);
         head << QString::fromUtf8("  Модель 1\r\n");
         head << QString::fromUtf8("  Зонды  2\r\n");
         head << QString::fromUtf8("  Точки записи\r\n");
@@ -1023,7 +1008,9 @@ void qt_akp_file_save::onDataUpdate (const int blk_cnt, const TDataPocket &data)
         //-------------------------------------------------------------------------
         if (data_list.count() >= buf_len)
         {
+//            qDebug() << QString::fromUtf8("Старт записи");
             write_data();
+//            qDebug() << QString::fromUtf8("Стоп записи");
         }
     }
 }

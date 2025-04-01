@@ -49,42 +49,6 @@ typedef struct
     TVAK_8_DATA     ch2;
 } __attribute__ ((__packed__ )) TAKP_FRAME;
 //-----------------------------------------------------------------------------
-//typedef struct
-//{
-//    qint32          dept;
-//    qint8           ml;
-
-//    quint16 frame_label;
-//    quint16 vk_number;
-//    quint16 rx_type;
-//    quint16 Td;
-//    quint16 Ku;
-//    bool    CRC1_OK;
-//    quint16 rx_delay;
-//    quint16 Fsig;
-//    quint16 izl_type;
-//    quint16 izl_ampl;
-//    quint16 izl_periods;
-//    quint16 tool_type;
-//    quint16 mode_number;
-//    bool    CRC2_OK;
-//    quint16	mode_count;
-//    bool    CRC3_OK;
-//    bool    CRC4_OK;
-//    quint16 vk_calibration_amplitude;
-//    bool    CRC5_OK;
-//    quint16 vk_calibration_offset;
-//    quint16 tool_no;
-//    quint16 soft_version_major;
-//    quint16 soft_version_minor;
-//    bool    CRC6_OK;
-//    quint32 time_meserment;
-//    bool    CRC7_OK;
-//    bool    CRC8_OK;
-
-//    TVAK8_WAVE vk;
-//} __attribute__ ((__packed__)) TAKP_FRAME;
-//-----------------------------------------------------------------------------
 QDataStream& operator <<(QDataStream &out, const TAKP_FRAME &akp_frame);
 QDataStream& operator >>(QDataStream &in,        TAKP_FRAME &akp_frame);
 Q_DECLARE_METATYPE(TAKP_FRAME)
@@ -98,7 +62,6 @@ public:
     ~qt_akp_file_read();
 
 private:
-//    int          Count;
     QString      File_Type;
     QString      Ver;
     QString      Well_Number;
@@ -113,7 +76,6 @@ private:
     int          Shift_Point_VK1;
     int          Shift_Point_VK2;
 
-//    TDataPocket  data_pocket;
     akp_check_state ch1;
     akp_check_state ch2;
     TAKP_FRAME*     akp_curent_frame;
