@@ -10,6 +10,7 @@
 #include <QStyleOptionGraphicsItem>
 #include <QBrush>
 #include <QPen>
+#include <QtDebug>
 //-----------------------------------------------------------------------------
 #include "qt_vak_32_fkd.h"
 #include "qt_deptcol.h"
@@ -224,16 +225,34 @@ void CVAK32_FKD::delete_no_use_points(void)
         qint32 bot = bot_dept + m_height;
         qint32 top = top_dept - m_height;
 
-        pvk_point = (TVK_POINT*)list->first();
-
-        while ((pvk_point->dept > bot) ||
-               (pvk_point->dept < top))
+        int i;
+        i = 0;
+        while ( i < list->count() )
         {
-          list->removeFirst();
-          delete pvk_point;
-          if (list->isEmpty()) break;
-          pvk_point = (TVK_POINT*)list->first();
+            pvk_point = (TVK_POINT*)list->at(i);
+            if ( (pvk_point->dept > bot) ||
+                 (pvk_point->dept < top) )
+            {
+//                qDebug() << pvk_point->dept << top << bot;
+                list->removeAt(i);
+//                qDebug() << QString::fromUtf8("Удален элемент списка №%1").arg(i);
+                delete pvk_point;
+//                qDebug() << QString::fromUtf8("Удален элемент из памяти");
+            }
+            else i++;
         }
+//        qDebug() << QString::fromUtf8("Очистка завершена. Проверено %1 элементов").arg(i);
+
+//        pvk_point = (TVK_POINT*)list->first();
+//
+//        while ((pvk_point->dept > bot) ||
+//               (pvk_point->dept < top))
+//        {
+//          list->removeFirst();
+//          delete pvk_point;
+//          if (list->isEmpty()) break;
+//          pvk_point = (TVK_POINT*)list->first();
+//        }
     }
 }
 //-----------------------------------------------------------------------------
