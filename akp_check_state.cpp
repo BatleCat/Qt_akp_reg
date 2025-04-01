@@ -151,7 +151,6 @@ quint16 akp_check_state::calc_CRC(const quint16 CRC_win_left, const TVAK_8_DATA 
 void akp_check_state::encode_frame_label(const TVAK_8_DATA &data)
 {
     frame_label = take_from_14th_bit(frame_pos_frame_label, data);
-//    qDebug() << QString("%1").arg(frame_label, 4, 16, QChar('0')).toUpper();
 }
 //-----------------------------------------------------------------------------
 void akp_check_state::encode_vk_number(const TVAK_8_DATA &data)
@@ -395,11 +394,19 @@ void akp_check_state::calc_time_meserment(void)
     quint32 freq;
     quint32 time;
 
+    time = 0;
+
     old_time_meserment = time_meserment;
 
     delta = (time_start_meserment - time_stop_meserment);
-    freq = timer_clk / delta;
-    time = (quint32)1000000  / freq;
+    if (delta > 0)
+    {
+        freq = timer_clk / delta;
+        if (freq > 0)
+        {
+            time = (quint32)1000000  / freq;
+        }
+    }
     time_meserment = time - 2;
 }
 //-----------------------------------------------------------------------------
@@ -445,8 +452,6 @@ void akp_check_state::clear_block_count(void)
 {
     bad_block_cnt  = 0;
     good_block_cnt = 0;
-
-    //old_bad_block_cnt = 0;
 }
 //-----------------------------------------------------------------------------
 void akp_check_state::get_wave(TVAK8_WAVE &wave)
@@ -567,8 +572,6 @@ void akp_check_state::onDataUpdate(const uint blk_cnt, const TDataPocket &data)
 {
     Q_UNUSED(blk_cnt);
 
-//    qDebug() << QString::fromUtf8("AKP check state : ") << &data;
-
     //-------------------------------------------------------------------------
     // Проверка идентефикатора ответа data.id
     //-------------------------------------------------------------------------
@@ -599,8 +602,10 @@ void akp_check_state::onDataUpdate(const uint blk_cnt, const TDataPocket &data)
         if (ml   != old_ml  )       emit mlUpdate(ml);
         if (dept_cm != old_dept_cm) emit deptUpdate(dept_cm);
 
-        if (bad_block_cnt == old_bad_block_cnt) emit good_blk_cnt_update(good_block_cnt);
-        else emit bad_blk_cnt_update(bad_block_cnt);
+        emit good_blk_cnt_update(good_block_cnt);
+        emit bad_blk_cnt_update(bad_block_cnt);
+//        if (bad_block_cnt == old_bad_block_cnt) emit good_blk_cnt_update(good_block_cnt);
+//        else emit bad_blk_cnt_update(bad_block_cnt);
 
         //---------------------------------------------------------------------
         // CRC1 check
