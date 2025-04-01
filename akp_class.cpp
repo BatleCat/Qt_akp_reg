@@ -33,9 +33,7 @@ void akp_class::start()
 
     udp_socket->bind(port);
 
-//    connect(udp_socket, SIGNAL(readyRead() ), this, SLOT(onUdpDataRx() ) );
     connect(udp_socket, &QUdpSocket::readyRead, this, &akp_class::onUdpDataRx );
-
 }
 //-----------------------------------------------------------------------------
 //#pragma pack(1)

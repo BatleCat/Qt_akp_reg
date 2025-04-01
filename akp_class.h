@@ -57,7 +57,6 @@ public:
 private:
     volatile uint   rx_blk_count;
     quint16         tx_blk_count;
-//    quint16         cmd_id;
     QUdpSocket*     udp_socket;
     QHostAddress    host;
     quint16         port;
@@ -69,7 +68,6 @@ private:
     bool            continuous_meserment;
 
     QTimer          timer;
-//    int             timer_id;
     int             timer_interval;
 
     void    send_cmd(TCtrlPocket &ctl_pocket);
@@ -77,13 +75,11 @@ private:
 public:
     qint32  get_dept_step(void)                 {return dept_step_cm;}
 
-//    void    set_timer_interval(int time_ms)     {timer_interval = time_ms;}
     int     get_timer_interval(void)            {return timer_interval;}
 
 signals:
     void connectionClosed  (void);
     void dataUpdate        (const uint blk_cnt, const TDataPocket &data);
-//    void netStatUpdate      (const quint16 rx_blk_cnt, const quint16 tx_blk_cnt, const QString sender_adr, const quint16 sender_port);
 
 private slots:
     void onUdpDataRx        (void);
@@ -99,8 +95,6 @@ public slots:
     void on_cmdDoSingleMeserment (void);
     void on_cmdStartMeserment    (void);
     void on_cmdStopMeserment     (void);
-
-//    void on_tool_start      (void);
 };
 //-----------------------------------------------------------------------------
 #endif // AKP_CLASS_H
