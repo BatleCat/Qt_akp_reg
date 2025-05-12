@@ -179,6 +179,7 @@ MainWindow::MainWindow(QWidget *parent) :
     vk1->setMaxAmpl(max_ampl);
     vk1->setXScale(FKDstep);
     vk1->setColorLevelBack(LevelColor);
+    vk1->setLineWidth(VKlineSize);
     vk1->setCaption(QString::fromUtf8("ВК-1 "));
 
     connect(this, &MainWindow::changeFKDstep,   vk1,        &Qt_VK::on_changeTimeScale  );
@@ -225,6 +226,7 @@ MainWindow::MainWindow(QWidget *parent) :
     vk2->setMaxAmpl(max_ampl);
     vk2->setXScale(FKDstep);
     vk2->setColorLevelBack(LevelColor);
+    vk2->setLineWidth(VKlineSize);
     vk2->setCaption(QString::fromUtf8("ВК-2 "));
 
     connect(this, &MainWindow::changeFKDstep,   vk2,        &Qt_VK::on_changeTimeScale  );
@@ -515,6 +517,7 @@ void MainWindow::on_dialogSetup(void)
         vk1->setColorLevelLine(LevelColor);
         vk1->setColorLine(VKColor);
         vk1->setColorText(TextColor);
+        vk1->setLineWidth(VKlineSize);
 
         time_line_vk1->setColorText(TextColor);
 
@@ -525,6 +528,7 @@ void MainWindow::on_dialogSetup(void)
         vk2->setColorLevelLine(LevelColor);
         vk2->setColorLine(VKColor);
         vk2->setColorText(TextColor);
+        vk2->setLineWidth(VKlineSize);
 
         time_line_vk2->setColorText(TextColor);
 
