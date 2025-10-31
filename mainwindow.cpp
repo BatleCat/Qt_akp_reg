@@ -18,7 +18,26 @@
 #include <QResizeEvent>
 //-----------------------------------------------------------------------------
 #include <memory.h>
-#include <winsock.h>
+#if defined(Q_OS_LINUX)
+    #include <sys/types.h>
+    #include <sys/socket.h>
+    #include <netdb.h>
+    #include <netinet/in.h>
+    #include <arpa/inet.h>
+#elif defined(Q_OS_WIN)
+    #include <winsock.h>
+#endif
+/*
+#ifdef linux
+    #include <sys/types.h>
+    #include <sys/socket.h>
+    #include <netdb.h>
+    #include <netinet/in.h>
+    #include <arpa/inet.h>
+#else
+    #include <winsock.h>
+#endif
+*/
 //-----------------------------------------------------------------------------
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -1036,7 +1055,11 @@ void MainWindow::load_settings(void)
     lastDepth       = Depth;
     DepthStep       = app_settings->value(QString::fromUtf8("/DepthStep"),     10                           ).toInt();
     curentDepthStep = 0;
+#if defined(Q_OS_LINUX)
+    FolderName      = QDir::toNativeSeparators(app_settings->value(QString::fromUtf8("/FolderName"),    QString::fromUtf8("./Скважины")     ).toString());
+#elif defined(Q_OS_WIN)
     FolderName      = app_settings->value(QString::fromUtf8("/FolderName"),    QString::fromUtf8("D:\\Скважины")     ).toString();
+#endif
     bExtFolderCtl   = app_settings->value(QString::fromUtf8("/ExtFolderCtl"),  true                        ).toBool();
     FileName        = QString::fromUtf8("%1/%2a.4sd").arg(FolderName).arg(WellNo);
     bWriteEnable    = false;
@@ -1109,6 +1132,8 @@ void MainWindow::save_settings(void)
     app_settings->setValue(QString::fromUtf8("/FkdLevel"),     fkd_level            );
 
     app_settings->endGroup();
+
+    app_settings->sync();
 }
 //-----------------------------------------------------------------------------
 /*
