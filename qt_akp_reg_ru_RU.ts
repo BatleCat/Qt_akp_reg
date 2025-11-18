@@ -219,113 +219,113 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="403"/>
+        <location filename="mainwindow.ui" line="282"/>
         <source>Прибор</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="442"/>
+        <location filename="mainwindow.ui" line="321"/>
         <source>Настройка ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="464"/>
+        <location filename="mainwindow.ui" line="343"/>
         <source>Пуск</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="486"/>
+        <location filename="mainwindow.ui" line="365"/>
         <source>Стоп</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="508"/>
+        <location filename="mainwindow.ui" line="387"/>
         <source>Запись</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="536"/>
+        <location filename="mainwindow.ui" line="415"/>
         <source>Амплитуда</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="569"/>
+        <location filename="mainwindow.ui" line="448"/>
         <source>Увеличить</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="588"/>
+        <location filename="mainwindow.ui" line="467"/>
         <source>Уменьшить</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="616"/>
+        <location filename="mainwindow.ui" line="495"/>
         <source>Уровень ФКД</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="649"/>
+        <location filename="mainwindow.ui" line="528"/>
         <source>Поднять</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="668"/>
+        <location filename="mainwindow.ui" line="547"/>
         <source>Опустить</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="696"/>
+        <location filename="mainwindow.ui" line="575"/>
         <source>Режим излучателя</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="717"/>
-        <location filename="mainwindow.ui" line="797"/>
+        <location filename="mainwindow.ui" line="596"/>
+        <location filename="mainwindow.ui" line="676"/>
         <source>Монополь</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="724"/>
+        <location filename="mainwindow.ui" line="603"/>
         <source>20 кГц</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="731"/>
+        <location filename="mainwindow.ui" line="610"/>
         <source>2 периода</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="776"/>
+        <location filename="mainwindow.ui" line="655"/>
         <source>Режим приемников</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="804"/>
+        <location filename="mainwindow.ui" line="683"/>
         <source>Задержка 0 мкс</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="811"/>
+        <location filename="mainwindow.ui" line="690"/>
         <source>Тд = 2 мкс</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="818"/>
+        <location filename="mainwindow.ui" line="697"/>
         <source>КУ = 16</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="825"/>
+        <location filename="mainwindow.ui" line="704"/>
         <source>Интервал = 1024 мкс</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="905"/>
+        <location filename="mainwindow.ui" line="784"/>
         <source>№ прибора: ххх</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="912"/>
+        <location filename="mainwindow.ui" line="791"/>
         <source>Версия прошивки: Х.Х</source>
         <translation type="unfinished"></translation>
     </message>
