@@ -771,7 +771,7 @@ void MainWindow::on_pushButtonStop(void)
 
     ui->pushButton_Settings->setDisabled(false);
 
-    bWriteEnable = false;
+//    bWriteEnable = false;
 
     disconnect(&akp,    &akp_class::dataUpdate,     &akp_file,      &qt_akp_file_save::onDataUpdate );
     akp_file.close_file();
