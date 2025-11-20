@@ -128,7 +128,7 @@ private:
     QString FolderName;
     bool    bExtFolderCtl;
     QString FileName;
-    bool    bWriteEnable;
+    bool    bCvantumDept;
 
     QColor  MMColor;
     QColor  FonColor;

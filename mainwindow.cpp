@@ -750,7 +750,9 @@ void MainWindow::on_pushButtonStart(void)
 
     ui->pushButton_Settings->setDisabled(true);
 
-    emit cmdSetDeptStep(0);       //???
+    bCvantumDept = false;
+    curentDepthStep = 0;
+    emit cmdSetDeptStep(curentDepthStep);
 
     startDepth = lastDepth;
 
@@ -761,25 +763,25 @@ void MainWindow::on_pushButtonStart(void)
 //-------------------------------------------------------------------
 void MainWindow::on_pushButtonStop(void)
 {
-    ui->pushButton_Start->setDisabled(true);
-    ui->pushButton_Start->setVisible(true);
-
+    ui->pushButton_Stop->setDisabled(true);
     ui->pushButton_Stop->setVisible(false);
-    ui->pushButton_Stop->setDisabled(false);
+
+    ui->pushButton_Start->setVisible(true);
+    ui->pushButton_Start->setDisabled(true);
 
     ui->pushButton_Record->setDisabled(true);
 
     ui->pushButton_Settings->setDisabled(false);
 
-//    bWriteEnable = false;
-
     disconnect(&akp,    &akp_class::dataUpdate,     &akp_file,      &qt_akp_file_save::onDataUpdate );
-    akp_file.close_file();
 
+    bCvantumDept = false;
     curentDepthStep = 0;
-    emit cmdSetDeptStep(curentDepthStep);           //???
+    emit cmdSetDeptStep(curentDepthStep);
 
     startDepth = check_state.get_dept();
+
+    akp_file.close_file();
 }
 //-----------------------------------------------------------------------------
 void MainWindow::on_pushButtonRecord(void)
@@ -788,8 +790,9 @@ void MainWindow::on_pushButtonRecord(void)
 
     check_state.clear_block_count();    //???
 
+    bCvantumDept = true;
     curentDepthStep = -DepthStep;
-    emit cmdSetDeptStep(curentDepthStep);           //???
+    emit cmdSetDeptStep(curentDepthStep);
 
     startDepth = check_state.get_dept();
     //-------------------------------------------------------------------------
@@ -816,7 +819,6 @@ void MainWindow::on_pushButtonRecord(void)
 
     connect(&akp,   &akp_class::dataUpdate,     &akp_file,  &qt_akp_file_save::onDataUpdate );
     //-------------------------------------------------------------------------
-    bWriteEnable = true;
 
     fkd_vk1->clearData();
     fkd_vk2->clearData();
@@ -834,7 +836,7 @@ void MainWindow::on_showBadPocketCount(const int count)
 //-------------------------------------------------------------------
 void MainWindow::on_showDept(const qint32 dept)
 {
-    if ( ((lastDepth + curentDepthStep) != dept) && bWriteEnable )
+    if ( ((lastDepth + curentDepthStep) != dept) && bCvantumDept )
     {
         QColor color = Qt::red;
 
@@ -1062,7 +1064,7 @@ void MainWindow::load_settings(void)
 #endif
     bExtFolderCtl   = app_settings->value(QString::fromUtf8("/ExtFolderCtl"),  true                        ).toBool();
     FileName        = QString::fromUtf8("%1/%2a.4sd").arg(FolderName).arg(WellNo);
-    bWriteEnable    = false;
+    bCvantumDept    = false;
 
     QColor color = QColor(Qt::red);
     MMColor.setRgba(  app_settings->value(QString::fromUtf8("/MMColor"),       color.rgba()                ).toInt());
