@@ -129,7 +129,7 @@ MainWindow::MainWindow(QWidget *parent) :
     label_ML->setMinimumSize(ML_Size);
 //    label_ML->setFrameStyle(QFrame::Box);
     QColor color(Qt::red);
-    color = palette().background().color();
+    color = palette().window().color();
     label_ML->setStyleSheet(QString::fromUtf8("background-color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
     statusBar()->addPermanentWidget(label_ML);
     //-------------------------------------------------------------------------
@@ -844,7 +844,7 @@ void MainWindow::on_showDept(const qint32 dept)
     }
     else
     {
-        QColor color = palette().background().color();
+        QColor color = palette().window().color();
 
         statusBar()->setStyleSheet(QString::fromUtf8("background-color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
     }
@@ -874,7 +874,7 @@ void MainWindow::on_showML(const bool ml)
         color = MMColor;
         mlCol->setML(lastDepth);    //==========>>??????
     }
-    else    color = palette().background().color();
+    else    color = palette().window().color();
 
     label_ML->setStyleSheet(QString::fromUtf8("background-color: rgb(%1, %2, %3);").arg(color.red()).arg(color.green()).arg(color.blue()));
 }
@@ -1069,7 +1069,7 @@ void MainWindow::load_settings(void)
     QColor color = QColor(Qt::red);
     MMColor.setRgba(  app_settings->value(QString::fromUtf8("/MMColor"),       color.rgba()                ).toInt());
 
-    color = palette().background().color();
+    color = palette().window().color();
     FonColor.setRgba( app_settings->value(QString::fromUtf8("/FonColor"),      color.rgba()                ).toInt());
 
     color = QColor(Qt::green);
