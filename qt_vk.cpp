@@ -155,7 +155,7 @@ void Qt_VK::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     r.setLeft(10);
     r.setTop(2);
     r.setHeight(1.5 * fm.height());
-    r.setWidth(1.5 * fm.width(Caption));
+    r.setWidth(1.5 * fm.horizontalAdvance(Caption));
     painter->drawText(r, Caption);
 
     painter->restore();

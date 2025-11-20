@@ -50,7 +50,7 @@ void Qt_TIME_LINE::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     painter->fillRect(r, brush_back);
 
     painter->setPen(pen);
-    r.setRect(4, 2, fm.width(Caption), fm.height());
+    r.setRect(4, 2, fm.horizontalAdvance(Caption), fm.height());
     painter->drawText(r, Caption);
 
     t = time_zero;
