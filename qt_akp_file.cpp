@@ -925,14 +925,14 @@ void qt_akp_file_save::write_data(void)
     stream.setVersion(QDataStream::Qt_4_0);
 
     TAKP_FRAME* frame;
-    while(data_list.count() > 0)
+    while(!data_list.isEmpty())
     {
         frame = data_list.first();
         stream << *frame;
         delete frame;
+        frame = NULL;
         data_list.removeFirst();
     }
-
     file.flush();
     file.close();
 }
@@ -943,6 +943,8 @@ void qt_akp_file_save::close_file(void)
 
     bWriteEnable   = false;
     bFileNameValid = false;
+    if (NULL != akp_curent_frame) delete akp_curent_frame;
+    akp_curent_frame = NULL;
 }
 //---------------------------------------------------------------------------
 void qt_akp_file_save::start(void)
@@ -1008,9 +1010,7 @@ void qt_akp_file_save::onDataUpdate (const int blk_cnt, const TDataPocket &data)
         //-------------------------------------------------------------------------
         if (data_list.count() >= buf_len)
         {
-//            qDebug() << QString::fromUtf8("Старт записи");
             write_data();
-//            qDebug() << QString::fromUtf8("Стоп записи");
         }
     }
 }
