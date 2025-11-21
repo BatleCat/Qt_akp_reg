@@ -1,5 +1,20 @@
 #Qt_akp_reg: Project for work with AKP tool Release Notes
 
+## Qt_akp_reg Release v0.0.2.0 (21/11/2025)
+
+### NEW FEATURES
+ **New Features and Enhancements** 
+- рабочая программа регистрации для прибора АКП-76
+
+### Bug fixes
+-   исправил ошибку при которой при последующих записях в  файл добавлялся кадр
+из предыдущей записи
+
+### Development Tools
+
+-   [Qt 5.12.10]
+-   [MinGW 64 bit 7.30]
+
 ## Qt_akp_reg Release v0.0.1.0 (18/02/2025)
     Начальное состояние проекта.
     За основу взяты рабочие части проектов:
